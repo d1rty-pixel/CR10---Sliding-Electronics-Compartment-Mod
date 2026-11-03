@@ -20,6 +20,7 @@ from cadio import planar_faces, write_stl
 import cable
 import cable_thin as thin
 import tray
+import wiring
 
 # ============================================================ frame (measured, see docs/DESIGN.md)
 CELL_H = 80.0
@@ -268,6 +269,29 @@ def run_checks():
         front = min(b[0] for b in zs) - (xm - mod.X_MOVING_EXT)
         rep(f"{tag} chain pose moving end x {xm:.0f}: arc front x {front:.1f} in drawer coordinates (>= {DRAWER_FRONT_IN + 3:.0f})",
             front >= DRAWER_FRONT_IN + 3)
+    # wires: not printed, so outside the part collision test above, but they must not pierce any printed part
+    ws = wiring.wires()
+    for n, _, m, info in ws:
+        rep(f"{n}: manifold, one body", m.status().name == "NoError" and len(m.decompose()) == 1)
+        rep(f"{n}: no vertices closer than 0.1 mm", near_vertices(m) == 0)
+        need = wiring.MIN_R * info["d"]
+        free = [r for r, k in zip(info["radii"], info["kinks"]) if not k]
+        rmin = min(free, default=float("inf"))
+        rep(f"{n}: bend radius {rmin:.1f} >= {need:.0f} (4 x D)", rmin >= need - 1e-6)
+        if any(info["kinks"]):
+            print(f"  info  {n}: kink at the terminal, R {min(r for r, k in zip(info['radii'], info['kinks']) if k):.1f} (accepted)")
+        wb = m.bounding_box(); hit = []
+        for pn, pm in inst + wiring.bought_boxes():
+            pb = pm.bounding_box()
+            if any(wb[k] > pb[k + 3] or pb[k] > wb[k + 3] for k in range(3)): continue
+            if (m ^ pm).volume() > 1e-3: hit.append(pn)
+        rep(f"{n}: pierces no printed part / WAGO / PSU case{'' if not hit else ': ' + ', '.join(hit)}", not hit)
+    short = wiring.sheath_for_cores()
+    def body(a, b):   # a chain core is checked against the sheath without the end face it leaves from
+        return short if a[0] == wiring.SHEATH and wiring.is_chain_core(b[0]) else a[2]
+    bad = [f"{ws[i][0]} x {ws[j][0]}" for i in range(len(ws)) for j in range(i + 1, len(ws))
+           if (body(ws[i], ws[j]) ^ body(ws[j], ws[i])).volume() > 1e-3]
+    rep(f"wires do not intersect each other{'' if not bad else ': ' + '; '.join(bad)}", not bad)
     for n, m in local.items():
         bb = m.bounding_box(); print(f"  info  {n}: {bb[3]-bb[0]:.1f} x {bb[4]-bb[1]:.1f} x {bb[5]-bb[2]:.1f} mm, {m.volume()/1000:.1f} cm3")
     print("all checks passed" if ok else "CHECKS FAILED")
@@ -288,6 +312,7 @@ if __name__ == "__main__":
         if n in tcol: return TRAY_LAYER, tcol[n]
         return (CHAIN_LAYER, CHAIN_COL) if ischain(n) else (LAYER, COL)
     data = [{"name": n, "layer": style(n)[0], "color": list(style(n)[1]), "faces": planar_faces(m)} for n, m in inst]
+    data += [{"name": n, "layer": wiring.LAYER, "color": list(c), "faces": planar_faces(m)} for n, c, m, _ in wiring.wires()]
     with open(os.path.join(outdir, "parts.json"), "w") as f:
         json.dump(data, f)
     if "--check" in sys.argv:

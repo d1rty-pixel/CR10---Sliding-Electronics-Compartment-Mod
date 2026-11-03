@@ -6,7 +6,7 @@ from collections import Counter
 from core.layers import Layer
 
 PARTS_JSON = "/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/build/parts.json"
-GEN_LAYERS = ["Druckteile (gen)", "Schlepp (gen)", "Tray Druckteile (gen)"]
+GEN_LAYERS = ["Druckteile (gen)", "Schlepp (gen)", "Tray Druckteile (gen)", "Kabel (gen)"]
 OLD_LAYER = "Handbau (alt)"
 OLD_TOP = ("Panel Schalter", "Panel Anschluesse", "Front links", "Front rechts")   # hand-built groups from the 80 mm conversion
 # paths: top-level name, then child index or child name (drawer children shifted when the white ducts were deleted, 2026-11-03)
