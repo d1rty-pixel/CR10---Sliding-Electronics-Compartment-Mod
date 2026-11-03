@@ -51,7 +51,12 @@ W_Z0 = FLOOR_Z + T                        # standing on the floor
 
 ENTRY = (-109.0, -94.0, 27.0)             # chain cable (thin bracket exit x -108..-96, z 29..39)
 PE_SLOT = (-80.0, -74.0, 22.0)            # PE to the ring lug on the tray 2020; +x of the moving chain bracket (x <= -80.8)
-DUCT_WIN = (-140.0, -72.0, 17.5, 25.0)    # DC wires into the DC duct through its finger slots (z 16..25); bottom = hub floor top
+DUCT_WIN = (-140.0, -72.0, 17.5, 29.0)    # DC wires into the DC duct over the spout (spout()); floor top .. 1 under the duct lid (tray: z 30)
+# form fit to the DC duct (tray.DC): under DUCT_WIN the floor runs out as a rounded spout; its hook reaches behind the inner face of
+# the duct's +y wall (notched down to NOTCH_Z there), its skirt stands in front of the outer face down to the clip bottom (print bed)
+DUCT_Y1, DUCT_WALL = 473.0, 1.6          # outer +y face and wall of the DC duct (tray.DC yc 463, DUCT_W 20)
+SPOUT_R, SPOUT_GAP, SPOUT_Z0 = 4.0, 0.2, 6.0
+NOTCH_Z = FLOOR_Z - SPOUT_GAP            # 15.7: top of the notched duct wall under the spout bridge
 BOSS_R, BOSS_PILOT = 4.0, 2.8          # corner bosses concentric with the corner arcs, filled to the walls
 # (x, y, sx, sy): boss centre and the directions towards its two walls
 RED_BOSSES = ((X0 + 6.0, Y_RED - 6.0, -1, 1), (X1 - 6.0, Y_RED - 6.0, 1, 1))
@@ -201,8 +206,24 @@ def dc_base():
     b = b - box(X0 - 1, X0 + w + 1, LRS["y_dc"] + 2.0, YW[0], LRS["wire_z"], Z_TOP + 1)      # LRS DC terminals
     b = b - box(X1 - w - 1, X1 + 1, RS["y_dc"] + 1.6, YW[0], RS["wire_z"], Z_TOP + 1)        # RS DC terminals
     b = b - box(DUCT_WIN[0], DUCT_WIN[1], Y_DC - 1, Y_DC + w + 1, DUCT_WIN[2], DUCT_WIN[3])
-    b = _pilots(b, [c[:2] for c in DC_BOSSES] + [wall_boss(False)])
+    b = _pilots(b, [c[:2] for c in DC_BOSSES] + [wall_boss(False)]) + spout()
     return _vents(b, False)
+
+def spout_section():
+    """(y, z) section: floor top -> quarter round (R 4) -> hook behind the duct wall (45 deg tip), bridge over the wall, skirt"""
+    import math
+    yi, yo = DUCT_Y1 - DUCT_WALL - SPOUT_GAP, DUCT_Y1 + SPOUT_GAP      # 471.2 hook face / 473.2 skirt face
+    zf = FLOOR_Z + T                                                   # 17.5 = floor top = window bottom
+    cy, cz = yo + 0.3, zf - SPOUT_R                                    # arc centre (473.5, 13.5)
+    arc = [(cy + SPOUT_R * math.cos(math.radians(90 + 90 * j / 8)), cz + SPOUT_R * math.sin(math.radians(90 + 90 * j / 8))) for j in range(9)]
+    tip = cy - SPOUT_R
+    return [(Y_DC + T, SPOUT_Z0), (Y_DC + T, zf)] + arc + [(yi, cz - (yi - tip)), (yi, FLOOR_Z), (yo, FLOOR_Z), (yo, SPOUT_Z0)]
+
+def spout():
+    import numpy as np
+    x0, x1 = DUCT_WIN[0], DUCT_WIN[1]
+    cs = CrossSection([_ccw(spout_section())])
+    return Manifold.extrude(cs, x1 - x0).transform(np.array([[0, 0, 1, x0], [1, 0, 0, 0], [0, 1, 0, 0]], dtype=float))
 
 # ============================================================ lids (roof + port covers + skirts)
 BOLT = [(-1.0, 6.0), (3.0, 6.0), (0.6, 0.8), (3.2, 0.8), (-1.2, -7.0), (0.0, -1.2), (-2.8, -1.2)]   # engraved mains bolt

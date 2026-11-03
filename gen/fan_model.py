@@ -7,8 +7,10 @@ Catalogue San Ace 60L (C1137B001, p. 382): 60 +-0.5 square, 25 +-0.5 deep, flang
 aluminium frame, plastic impeller, 7 blades (drawing), leads AWG26 300 mm red + / black - / yellow sensor / brown control,
 lead exit at the side of the outlet flange. Assumptions (not dimensioned in the catalogue): bore d 57, hub d 32, frame body
 between the flanges = circle r 32.5 cut by the square, flange corner radius 3, 4 spokes on the outlet side (one carries the
-leads, turned to +y = into the gap between the holders), lead d 1.1, lead stub 2.5 mm beyond the frame.
-Local frame: axis x, outlet face x = 0 (on the holder plate), intake face x = 25, centre y = z = 0.
+leads), lead d 1.1. Mounting (user 2026-11-03): every fan turned 90 deg so the lead spoke points down (-z): the leads leave
+through the flange notch at the bottom of the outlet flange, which stands on the cross member; display stub ends 0.3 inside
+the frame edge (no overlap with the member).
+Local frame (built with the lead spoke at +y, turned to -z in main()): axis x, outlet face x = 0, intake face x = 25, centre y = z = 0.
 """
 import json, math, os, sys
 import numpy as np
@@ -62,7 +64,7 @@ def leads():
     out = []
     for i, col in enumerate(LEADS):
         z = (i - 1.5) * (LEAD_D + 0.15)                                # small gap: separate shells, no shared edges
-        w = Manifold.cylinder(S / 2 + 2.5 - HUB_R + 1.0, LEAD_D / 2, LEAD_D / 2, 12).rotate((-90, 0, 0)).translate((1.2, HUB_R - 1.0, z))
+        w = Manifold.cylinder(S / 2 - 0.3 - HUB_R + 1.0, LEAD_D / 2, LEAD_D / 2, 12).rotate((-90, 0, 0)).translate((1.2, HUB_R - 1.0, z))
         out.append((w, col))
     return out
 
@@ -72,11 +74,11 @@ def main():
     out = []
     for k, yc in enumerate(tray.FAN_YC):
         for m, col, nm in parts:
-            mw = m.translate((tray.FAN_X0, yc, zc))
+            mw = m.rotate((-90, 0, 0)).translate((tray.FAN_X0, yc, zc))     # lead spoke +y -> -z
             out.append(dict(fan=k + 1, part=nm, color=list(col), faces=planar_faces(mw)))
     os.makedirs("build", exist_ok=True)
     with open("build/fan60.json", "w") as f: json.dump(out, f)
-    f0 = frame().translate((tray.FAN_X0, tray.FAN_YC[0], zc)).bounding_box()
+    f0 = frame().rotate((-90, 0, 0)).translate((tray.FAN_X0, tray.FAN_YC[0], zc)).bounding_box()
     print("fan 1 frame bbox", [round(v, 1) for v in f0], "parts", len(out), "frame genus", frame().genus(), "impeller vol", round(impeller().volume() / 1000, 1))
 
 if __name__ == "__main__":

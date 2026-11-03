@@ -2,7 +2,7 @@
 
 Keine Aufgabe in Arbeit (Stand 2026-11-03).
 
-Nächste Aufgabe aus `docs/PLAN.md` („Offen“). Reihenfolge laut Absprache: Probedrucke auswerten (T-010: Ketten, `IEC Housing` und Rückwände aus T-026, `Fan Holder` aus T-028), sobald der Druck fertig ist. Offene Rückfragen stehen in den PLAN-Zeilen. Die DC-Kabelläufe (T-022) sind vertagt; der Pi ist seit T-030 gedreht (Ports −X, GPIO −Y). `todo.md` (untracked) ist vollständig abgearbeitet bzw. in PLAN übernommen.
+Nächste Aufgabe aus `docs/PLAN.md` („Offen“). Reihenfolge laut Absprache: Probedrucke auswerten (T-010: Ketten, `IEC Housing` und Rückwände aus T-026, `Fan Holder` aus T-028, Rutsche der gelben Box und Lüfterkanäle aus T-032), sobald der Druck fertig ist. Offene Rückfragen stehen in den PLAN-Zeilen. Die DC-Kabelläufe (T-022) sind vertagt; die Lüfterlitzen laufen seit T-032 in `Fan Data Duct`/`Fan DC Duct`. `todo.md` (untracked) ist vollständig abgearbeitet bzw. in PLAN übernommen.
 
 ## Nicht ändern
 - Keine Exporte; keine Commits/Push ohne Anweisung.

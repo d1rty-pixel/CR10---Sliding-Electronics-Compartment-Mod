@@ -20,6 +20,7 @@ from cadio import planar_faces, write_stl
 import cable
 import cable_thin as thin
 import tray
+import power_hub as hub
 import wiring
 
 # ============================================================ frame (measured, see docs/DESIGN.md)
@@ -240,8 +241,8 @@ def place_side_far(m, xc):  return rot(m, lambda u, v, h: (xc + u, SIDE_Y_FAR - 
 LAYER = "Druckteile (gen)"
 COL = (0.95, 0.5, 0.05)
 CHAIN_LAYER = "Schlepp (gen)"
-CHAIN_COL = (0.2, 0.5, 0.85)
-TRAY_LAYER = "Tray Druckteile (gen)"   # colour = filament: red 230 V, yellow 24/5 V, green data/bus, dark grey DIN holders
+CHAIN_COL = COL                # chains in the theme orange (user 2026-11-03, before blue)
+TRAY_LAYER = "Tray Druckteile (gen)"   # colour = filament: red 230 V, anthracite everything else (tray.COL_ANTHRACITE)
 
 def parts():
     sw, cn, hs, fp = switch_panel(), connector_panel(), iec_housing(), front_panel()
@@ -333,6 +334,28 @@ def run_checks():
         top = (dict(inst)[f"Fan Holder {k + 1}"] ^ cable.box(0, 1000, 0, 1000, 77.9, 200)).bounding_box()
         xr = max(fb[1], top[3], tray.FH_X1 + tray.FH_NUT) + cable.TRAVEL
         rep(f"Fan {k + 1} retracted: fan, holder top and nuts end x {xr:.1f} (< motor x 472)", xr < 472.0)
+    # fan ducts vs bought parts in the document (bbox scan 2026-11-03): rear cross member front x 31.2, rails R1a/R1b end x 9.0,
+    # RS-15-5 (x -48.5..26.06, y 530.8..581.8, z 25..53), 2040 of the wide chain to y 330.4; M4 heads of the lower fan screws
+    # (d 7, k 4 assumed: x 27.2..31.2, z 26.5..33.5 around y = fan centre +-25)
+    heads = [cable.box(27.2, 31.2, y - 3.5, y + 3.5, 26.5, 33.5) for yc in tray.FAN_YC for y in (yc - 25.0, yc + 25.0)]
+    for n in ("Fan DC Duct", "Fan Data Duct", "Fan DC Duct Lid", "Fan Data Duct Lid"):
+        m = dict(inst)[n]; bb = m.bounding_box()
+        rs = (m ^ cable.box(-48.5, 26.06, 530.8, 581.8, 25.0, 53.0)).volume()
+        rails = (m ^ cable.box(-361.5, 9.0, 509.5, 594.5, 5.0, 12.5)).volume()
+        hd = sum((m ^ h).volume() for h in heads)
+        rep(f"{n}: x {bb[0]:.1f}..{bb[3]:.1f} (< 31.2), y {bb[1]:.1f}..{bb[4]:.1f} (330.4..530.8), z top {bb[5]:.1f} (wall {tray.FD_ZT:.0f} / lid +1.6), "
+            f"RS {rs:.2f} / rails {rails:.2f} / fan screw heads {hd:.2f} mm3",
+            bb[3] < 31.2 and bb[1] >= 330.4 and bb[4] < 530.8 and abs(bb[5] - tray.FD_ZT - (1.6 if n.endswith("Lid") else 0.0)) < 1e-6 and rs < 1e-6 and rails < 1e-6 and hd < 1e-6)
+    cy = tray.DATA["yc"] + tray.DUCT_W / 2 + tray.FD_BEND_RI          # straight part of the power lane starts at the arc centre
+    ly = tray._lead_y()
+    rep(f"cross-over slots y {', '.join(f'{y:.1f}' for y in ly)} inside the straight power lane walls (y {cy:.1f}..{tray.FD_Y_END:.1f})",
+        all(cy <= y - tray.FD_SLOT_W / 2 and y + tray.FD_SLOT_W / 2 <= tray.FD_Y_END - tray.DUCT_T for y in ly))
+    tops = {n: dict(inst)[n].bounding_box()[5] for n in ("DC Duct Lid", "Data Duct Lid", "Fan DC Duct Lid", "Fan Data Duct Lid")}
+    rep(f"DC hub window top z {hub.DUCT_WIN[3]:.1f} = duct wall top {tray.FLOOR_Z + tray.DUCT_H:.1f} - 1", abs(hub.DUCT_WIN[3] - (tray.FLOOR_Z + tray.DUCT_H - 1.0)) < 1e-6)
+    rep("all duct lids at the same height: " + ", ".join(f"{k} {v:.1f}" for k, v in tops.items()), max(tops.values()) - min(tops.values()) < 1e-6)
+    sp = hub.spout_section(); hz = min(z for _, z in sp if _ < hub.DUCT_Y1 - hub.DUCT_WALL)
+    rep(f"DC hub spout: hook reaches {hub.NOTCH_Z - hz:.1f} below the notched duct wall (>= 3), skirt down to z {hub.SPOUT_Z0:.1f}",
+        hub.NOTCH_Z - hz >= 3.0)
     for mod, tag, pitch, zu, zl in ((thin, "thin", thin.PITCH, thin.ZU, thin.ZL), (cable, "wide", cable.CHP, cable.CHAIN_ZU, cable.CHAIN_ZL)):
         arc = math.degrees(2 * math.asin(pitch / (zu - zl)))
         hit, stop = mod.hinge_sweep(arc + 5.0)

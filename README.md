@@ -13,7 +13,7 @@ Ein parametrischer Python-Generator (`manifold3d`) ist die einzige Quelle der Ge
 | `gen/chain_link.py` | gemeinsames parametrisches Kettenglied + Klammer + Halter-Schnittstellen (Gabel, Zunge) für beide Ketten |
 | `gen/cable_base.py` | kleine Geometrie-Helfer (box, Zylinder, Prismen) |
 | `gen/cable_thin.py` | dünne 230-V-Kette (Parametersatz, Halter) und fester L-Kanal unter der Acrylplatte |
-| `gen/tray.py` | Tray-Teile: DC- und Datenkanal mit Deckeln, DIN-Wiegen und -Halter (Netzteile, Octopus, Pi) |
+| `gen/tray.py` | Tray-Teile: DC- und Datenkanal, Lüfterkanäle (gelb/grün) mit Deckeln, DIN-Wiegen und -Halter (Netzteile, Octopus, Pi), Lüfterhalter |
 | `gen/power_hub.py` | Power-Hub zwischen den Netzteilen: rote 230-V-Box und gelbe DC-Box mit Deckeln, WAGO-Taschen |
 | `gen/cadio.py` | Mesh-Export (Polygonflächen für IngeTrazo, STL) |
 | `gen/ingetrazo_import.py` | IngeTrazo-Skript: importiert `build/parts.json`, blendet Handbau-Vorgänger aus |

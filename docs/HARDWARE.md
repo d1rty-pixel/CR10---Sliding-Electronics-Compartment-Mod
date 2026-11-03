@@ -50,6 +50,7 @@ Weitere Lüfter: `Side Panel Fan60` (Lochbild 50 × 50, Ø3,4) ist nirgends plat
 | Auszugschienen | M5 + Nutenstein | **(offen)** | je 1 Loch mittig in Outer und Inner |
 | Kanal dünne Kette | M3 | 5 | `cable_thin.CH_SCREWS` |
 | Pi auf Halter | M2,5 | 4 | Lochbild 58 × 49 |
+| Lüfterkanäle gelb/grün (Boden) | M3, Länge offen (Wannenplatte `Gruppieren#15`, Material unbekannt, T-009) | 6 | `tray.fan_dc_duct()` / `fan_data_duct()` |
 | IEC Housing an Rear Panel Switch | M3 × 8 Senkkopf (ISO 10642) + Gewindeeinsatz M3 × 5,7 | je 4 | `iec_housing()`; Länge und Einsatztyp **(Annahme)** |
 | Zugentlastung 230-V-Mantel am IEC Housing | Kabelbinder ≤ 4,5 breit | 1 | `TIE_SLOT` |
 | Übrige (Kettenhalter, Hub-Deckel, Kanäle, Octopus) | M3 | **(offen)** | noch nicht gezählt |
