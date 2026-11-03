@@ -2,7 +2,7 @@
 
 Keine Aufgabe in Arbeit (Stand 2026-11-03).
 
-Nächste Aufgabe aus `docs/PLAN.md` („Offen“). Reihenfolge laut Absprache: Probedrucke auswerten (T-010: Ketten, neu auch `IEC Housing` und Rückwände aus T-026). Offene Rückfragen stehen in den PLAN-Zeilen. Die DC-Kabelläufe (T-022) sind vertagt. `todo.md` (untracked) ist vollständig abgearbeitet bzw. in PLAN übernommen.
+Nächste Aufgabe aus `docs/PLAN.md` („Offen“). Reihenfolge laut Absprache: Probedrucke auswerten (T-010: Ketten, `IEC Housing` und Rückwände aus T-026, neu auch `Fan Holder` aus T-028). Offene Rückfragen stehen in den PLAN-Zeilen. Die DC-Kabelläufe (T-022) sind vertagt. `todo.md` (untracked) ist vollständig abgearbeitet bzw. in PLAN übernommen.
 
 ## Nicht ändern
 - Keine Exporte; keine Commits/Push ohne Anweisung.

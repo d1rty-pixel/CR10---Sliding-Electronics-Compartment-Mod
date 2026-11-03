@@ -140,7 +140,7 @@ def hex_exclude(uc, vc, hu, hv):
 REAR_PAD = (40.0, 22.0)               # half sizes of the solid pad around the IEC (covers housing + ears)
 HS_IN = (55.0, 36.0)                  # housing inside (u x v): IEC_RECESS 53 x 34 + 1 per side
 HS_WALL = 2.5
-HS_BACK_X = 484.0                     # outer face of the housing back wall; retracted fan holders end at x 480.2
+HS_BACK_X = 484.0                     # outer face of the housing back wall; retracted fan holders + M4 nuts end at x 461.4
 HS_EAR = (8.0, 9.0, 9.0)              # ear: out of the wall (u), width (v), height (h)
 HS_SCREW_V = 12.0                     # screws at u = IEC_U +- (wall + ear/2), v = +-12
 INSERT = (4.0, 7.0)                   # heat-set insert M3 x 5.7: hole d, depth (assumption)
@@ -326,8 +326,13 @@ def run_checks():
         hit = [n for n, m in inst if (fm ^ m).volume() > 1e-3]
         rep(f"Fan {k + 1} body x {fb[0]:.1f}..{fb[1]:.1f} y {fb[2]:.1f}..{fb[3]:.1f} z {fb[4]:.1f}..{fb[5]:.1f}: no printed part inside{'' if not hit else ': ' + ', '.join(hit)}", not hit)
         hb = dict(inst)[f"Fan Holder {k + 1}"].bounding_box()
-        rep(f"Fan Holder {k + 1} y {hb[1]:.1f}..{hb[4]:.1f} (330.4..603), z top {hb[5]:.1f} (<= 83.5, thin channel 86.5)",
-            hb[1] >= 330.4 and hb[4] <= 603.0 and hb[5] <= 83.5)
+        rep(f"Fan Holder {k + 1} y {hb[1]:.1f}..{hb[4]:.1f} (330.4..603), z top {hb[5]:.1f} (<= 85, thin channel 86.5)",
+            hb[1] >= 330.4 and hb[4] <= 603.0 and hb[5] <= 85.0 + 1e-6)
+        # stepper motor of the stock frame (document Stock Frame/Group#4: x 472..514, y 392.4..463.4, z >= 77.9) cannot move:
+        # retracted fan, holder above z 77.9 and the M4 nuts behind the plate must stay in front of it
+        top = (dict(inst)[f"Fan Holder {k + 1}"] ^ cable.box(0, 1000, 0, 1000, 77.9, 200)).bounding_box()
+        xr = max(fb[1], top[3], tray.FH_X1 + tray.FH_NUT) + cable.TRAVEL
+        rep(f"Fan {k + 1} retracted: fan, holder top and nuts end x {xr:.1f} (< motor x 472)", xr < 472.0)
     for mod, tag, pitch, zu, zl in ((thin, "thin", thin.PITCH, thin.ZU, thin.ZL), (cable, "wide", cable.CHP, cable.CHAIN_ZU, cable.CHAIN_ZL)):
         arc = math.degrees(2 * math.asin(pitch / (zu - zl)))
         hit, stop = mod.hinge_sweep(arc + 5.0)

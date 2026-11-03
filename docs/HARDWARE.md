@@ -30,7 +30,7 @@ Gewählt, weil: Die 24-V-PWM-Varianten der 9LG-Reihe sind S (53 dB(A)), J (47), 
 
 Ansteuerung **(offen, T-022)**: Die PWM- und Tacho-Leitungen brauchen Pins am Octopus. Die Pegel des PWM-Eingangs stehen nicht im Katalog, dafür das Einzeldatenblatt holen.
 
-Weitere Lüfter: `Side Panel Fan60` (Lochbild 50 × 50, Ø3,4) ist nirgends platziert. Die Lüftersätze für Pi und Octopus baut der Nutzer selbst, die Typen sind **(offen)**.
+Weitere Lüfter: `Side Panel Fan60` (Lochbild 50 × 50, Ø3,4) ist nirgends platziert. Eigene Lüfter für Pi und Octopus entfallen (2026-11-03).
 
 ## Mechanik
 
@@ -45,8 +45,7 @@ Weitere Lüfter: `Side Panel Fan60` (Lochbild 50 × 50, Ø3,4) ist nirgends plat
 
 | Wo | Schraube | Stück | Quelle |
 |---|---|---:|---|
-| Lüfter an Halter | M4 × 35 + Mutter + Scheibe (durch Platte und beide Lüfterflansche) | 16 | `tray.fan_holder()` |
-| Lüfterhalter an Querholm, obere Nut | M5 + Nutenstein | 8 | `tray.fan_holder()` |
+| Lüfter an Halter | M4 × 35 + Mutter + Scheibe (Kopf am Auslassflansch, Mutter hinten auf der Halterplatte) | 16 | `tray.fan_holder()` |
 | Lüfterhalter an Querholm, hintere Nut | M5 + Nutenstein | 8 | `tray.fan_holder()` |
 | Auszugschienen | M5 + Nutenstein | **(offen)** | je 1 Loch mittig in Outer und Inner |
 | Kanal dünne Kette | M3 | 5 | `cable_thin.CH_SCREWS` |

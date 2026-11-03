@@ -18,6 +18,8 @@ Ein parametrischer Python-Generator (`manifold3d`) ist die einzige Quelle der Ge
 | `gen/cadio.py` | Mesh-Export (Polygonflächen für IngeTrazo, STL) |
 | `gen/ingetrazo_import.py` | IngeTrazo-Skript: importiert `build/parts.json`, blendet Handbau-Vorgänger aus |
 | `gen/vendor_import.py` | IngeTrazo-Skript: platziert Hersteller-Modelle aus `build/vendor/` (Layer `Electronics (vendor)`) |
+| `gen/fan_model.py` | Anzeigemodell des Lüfters San Ace 9LG0624P4H001 (Katalogmaße) -> `build/fan60.json` |
+| `gen/fan_import.py` | IngeTrazo-Skript: setzt `build/fan60.json` in die Gruppen `Luefter 60x60x25 #1..4` ein |
 | `gen/step_to_mesh.py` | Konverter STEP -> `build/vendor/*.json` (eigenes venv mit `cadquery-ocp`) |
 | `gen/bom_document.py` | IngeTrazo-Skript: erzeugt `docs/BOM.md` aus Dokument und `build/parts.json` (veraltet, siehe PLAN) |
 | `gen/data/` | `side_cover_mount.json` (Originalclip), `chain_link_user.json` (Nutzerglied, Vorlage des Schemas; von keinem Code gelesen) |
@@ -47,9 +49,10 @@ In IngeTrazo (MCP `run_python`, AI-Bridge muss laufen):
 ```python
 exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/ingetrazo_import.py", encoding="utf-8").read())
 exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/vendor_import.py", encoding="utf-8").read())
+exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/fan_import.py", encoding="utf-8").read())   # vorher: ./venv/bin/python -I gen/fan_model.py
 ```
 
-Das erste Skript ersetzt die Gruppen der Layer `Druckteile (gen)`, `Schlepp (gen)`, `Tray Druckteile (gen)`; das zweite ersetzt `Electronics (vendor)` (Platzhalter bleiben, nur unsichtbar). Stückliste neu erzeugen mit `gen/bom_document.py` auf demselben Weg.
+Das erste Skript ersetzt die Gruppen der Layer `Druckteile (gen)`, `Schlepp (gen)`, `Tray Druckteile (gen)`; das zweite ersetzt `Electronics (vendor)` (Platzhalter bleiben, nur unsichtbar); das dritte ersetzt die Meshes der vier Lüftergruppen (Name und Layer bleiben). Stückliste neu erzeugen mit `gen/bom_document.py` auf demselben Weg.
 
 ### Hersteller-Modelle konvertieren
 

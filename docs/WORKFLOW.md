@@ -21,6 +21,7 @@
 - **Berührende Körper bleiben getrennt:** manifold3d verschmilzt Körper, die sich nur flächig berühren, nicht. Überlappung 0,05 (Verschmelzung zu einem Körper) bis 0,5–1 mm bei dünnen Teilen.
 - **Near-Duplicate-Vertices:** `offset()`-Rundungen und Kreise an Wänden erzeugen Fast-Duplikate. Gegenmittel: exakte Bögen (`_rounded()` in `power_hub.py`), Grundkörper als ein Block minus Hohlraum, Deckelaussparungen in 2D, Extrusion aus einem (x,z)- oder (y,z)-Schnitt statt Vereinigung koplanarer Flächen (Splitter-Vertices < 0,1 mm), Hex-Gitter per `HEX_SHIFT` verschieben.
 - `planar_faces()` in `gen/cadio.py` fasst koplanare Dreiecke zu Polygonflächen mit Löchern zusammen (Import). Kanten mit 4 Flächen im Import: Manifold sagt ok, meist Berührkante; nach dem Import „alle Kanten 2 Flächen“ prüfen.
+- Kaufteil-Modell austauschen ohne Löschen: `g.mesh = neues_Mesh` behält Name und Layer der Gruppe (so macht es `gen/fan_import.py`); meldet `changed: False`, wirkt aber.
 - Hersteller-Importe: die Wicklung der Polygone wird gegen die STEP-Normale geprüft (wie `addo` in `ingetrazo_import.py`), sonst Fläche gedreht.
 
 ## Referenzexport

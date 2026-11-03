@@ -6,7 +6,7 @@ low voltage DC in the yellow hub box and the yellow duct, data and bus lines in 
 
 Layout along x on the high-y side (tray inside x -378.8..31.2): LRS-350 x -373.75..-158.75 (terminals +x), hub x -158.25..-49,
 RS-15-5 x -48.5..26.06 (terminals -x, y 530.8..581.8), about 5 mm to the drawer frame / rear cross member (hub.LRS_DX / RS_DX).
-Four 60 x 60 x 25 fans (24 V PWM) behind the rear cross member (2020 L=334 #1) blow -x into the tray, through the vented hub boxes.
+Four 60 x 60 x 25 fans (24 V PWM) on the rear cross member (2020 L=334 #1) blow -x into the tray, through the vented hub boxes.
 """
 import math
 import numpy as np
@@ -56,7 +56,7 @@ def _duct_y(y0, y1, xc, slots=True, keep=None):
             d = d - box(x0 - 1, x1 + 1, y - SLOT_W / 2, y + SLOT_W / 2, FLOOR_Z + DUCT_H - SLOT_D, FLOOR_Z + DUCT_H + 1)
     return d
 
-# data duct: from the wide chain bracket exit (x -56..-38, y 330) along the low-y edge to the front end of the Octopus
+# data duct: from the wide chain bracket exit (x -56..-38, y 330) along the low-y edge to the Pi at the front (open front end)
 DATA = dict(x=(-300.0, -35.0), yc=340.0, screws=(-280.0, -190.0, -100.0))
 # DC duct: straight along x between the PSUs and Octopus/Pi; the DC wires come in from the yellow hub box through its finger slots
 DC = dict(yc=463.0, x=(-300.0, -45.0), screws=((-280.0, 463.0), (-210.0, 463.0), (-150.0, 463.0), (-60.0, 463.0)))
@@ -78,7 +78,7 @@ def data_duct():
     return _floor_screws(d, [(x, DATA["yc"]) for x in DATA["screws"]])
 
 def dc_duct():
-    """open front end (cables to the Octopus), closed rear end"""
+    """open front end, closed rear end"""
     xa, xb = DC["x"]; yc = DC["yc"]
     h, t, zf, zt = DUCT_W / 2, DUCT_T, FLOOR_Z + 2.0, FLOOR_Z + DUCT_H
     d = box(xa, xb, yc - h, yc + h, FLOOR_Z, zt) - box(xa - 1, xb - t, yc - h + t, yc + h - t, zf, zt + 1)
@@ -175,84 +175,77 @@ def octopus_holder(xh):
         m = m + (cyl_z(xh, y, 19.0, 31.0, 7.0, 24) - cyl_z(xh, y, 23.0, 32.0, 2.8, 16))
     return m - release_cut(xh, RAIL_R2, 21.0)
 
+# logic rail R2 (x -305..-40): Pi 4 at the front, Octopus at the rear end close to the 4 fans (stepper drivers in the
+# strongest airflow; swapped 2026-11-03, before: Octopus x -300..-140, Pi x -125..-40)
 PI_YC = RAIL_R2                       # Pi 4 centred over the logic rail (hole pattern centre)
+PI_X0 = -300.0                        # Pi board -x edge (board 85 long, holes 3.5 in, 58 apart)
+OCTO_X0 = -200.0                      # Octopus board -x edge (board 160 long, hole columns 5 in, 150 apart)
+OCTO_HOLDER_X = (OCTO_X0 + 5.0, OCTO_X0 + 155.0)
 
 def pi_holder():
     """plate under the Pi 4 (holes 58 x 49, M2.5), board bottom z 31; release slots inside the clips, clear of the standoffs"""
-    x0, x1, yc = -125.0, -60.0, PI_YC
+    x0, x1, yc = PI_X0, PI_X0 + 65.0, PI_YC
     m = clip(x0, x0 + 14.0, RAIL_R2) + clip(x1 - 14.0, x1, RAIL_R2) + box(x0, x1, yc - 28.0, yc + 28.0, CLIP_TOP - 1.0, 19.0)
     m = m - box(x0 + 14.0, x1 - 14.0, yc - 18.0, yc + 18.0, CLIP_TOP - 1, 20.0)          # window, saves material
-    for x in (-121.5, -63.5):
+    for x in (PI_X0 + 3.5, PI_X0 + 61.5):
         for y in (yc - 24.5, yc + 24.5):
             m = m + (cyl_z(x, y, 18.9, 31.0, 6.0, 24) - cyl_z(x, y, 22.0, 32.0, 2.2, 16))
     for xc in (x0 + 10.0, x1 - 10.0): m = m - release_cut(xc, RAIL_R2, 20.0)
     return m
 
-# ============================================================ 4 x 60 mm fans behind the rear cross member
-# 2020 L=334 #1 (document): x 31.2..51.2, y 290.8..624.8, z 5..25, top slot centre x 41.2, rear slot centre z 15.
+# ============================================================ 4 x 60 mm fans standing on the rear cross member
+# 2020 L=334 #1 (document): x 31.2..51.2, y 290.8..624.8, z 5..25, rear slot centre z 15. Its bottom face lies on the tray
+# floor plate (Gruppieren#15, z 0..5) and is not reachable -> the holder is screwed to the rear slot only.
 # Fans (bought, in the document): Sanyo Denki San Ace 60L 9LG0624P4H001, 24 V, 4-wire PWM (25 kHz) + pulse sensor,
-# 60 x 60 x 25 (data sheet: 60 +-0.5, 25 +-0.5, flanges 4 +-0.3, 8 x d 4.3 on 50 x 50, vent opening 59 / 29.7, leads AWG26 300 mm).
-# Axis x, blowing -x over the cross member into the tray; they sit behind the member (x > 51.2), the holder carries them from the
-# intake side. Limits: chain lanes y 290..330 (wide, upper run z 80.7+) and y 603..627 (thin bracket z 83.9+); thin channel
-# (fixed, z 86.5..102, x 114..417, y 573.4..628.5) passes over the moving holder -> fan and holder top z <= FAN_ZTOP.
-# Mounting: M4 x 35 through plate and both fan flanges (nut on the fan front flange); holder to the member with 2 x M5 + T-nut
-# into the top slot and 2 x M5 + T-nut into the rear slot (screwdriver through the access holes in the plate).
+# 60 x 60 x 25 (catalogue p. 382: 60 +-0.5, 25 +-0.5, flanges 4 +-0.3, 8 x d 4.3 on 50 x 50, leads AWG26 300 mm).
+# Axis x, blowing -x into the tray. They stand on the top face of the member (outlet face flush with its front face x 31.2),
+# because the stepper motor of the stock frame (Stock Frame/Group#4, x 472..514, y 392..463, z >= 77.9) cannot move:
+# retracted (stroke 396) fan + holder + nuts end at x 460.4.
+# Limits: chain lanes y 290..330 (wide, upper run z 80.7+) and y 603..627 (thin bracket z 83.9+); thin channel
+# (fixed, z 86.5..102, x 114..424, y 573.4..628.5) passes over the moving fan 4 -> fan and holder top z 85 (1.5 clear).
+# RS-15-5 ends x 26.06 (z 25..53): screw heads on the outlet flange of fan 4 leave about 2 mm.
+# Holder: plate on the intake side (x 56.2..61.2, z 7..85) with a spacer block behind the member (x 51.2..56.2, z 7..25; it
+# also carries the 5 mm of fan behind the member), 2 x M5 + T-nut in the rear slot. Fan: 4 x M4 x 35 from the outlet side
+# through both flanges and the plate, nut + washer on the back of the plate. Section constant along y (62 wide, fan 60):
+# the 4.5 gaps between the holders take the fan leads (exit at +y) to the back of the plate; no cable shelf (user).
 PROFILE_X, PROFILE_TOP, PROFILE_REAR_Z = (31.2, 51.2), 25.0, 15.0
-FAN = dict(size=60.0, depth=25.0, pitch=50.0, hole=4.5, vent=59.0, vent_flat=29.7)
+FAN = dict(size=60.0, depth=25.0, pitch=50.0, hole=4.5, bore=57.0)
 FAN_N, FAN_PITCH_Y = 4, 66.5
 FAN_YC0 = 466.75                      # centre of the fan row: between the chain lanes (330.4 .. 603)
 FAN_YC = tuple(FAN_YC0 + (k - (FAN_N - 1) / 2) * FAN_PITCH_Y for k in range(FAN_N))
-FAN_ZTOP = 83.0                       # fan top; thin channel bottom 86.5
-FAN_X0 = 55.2                         # fan -x face: 4 mm corner block behind the member (x 51.2..55.2)
-FH_W = 66.0                           # holder width along y (gap 0.5 between neighbours)
-FH_T = 4.0                            # plate / lip / foot thickness
-FH_SIDE = 2.5                         # side walls, 0.5 clear of the fan
-FH_SHELF = (19.5, FAN_ZTOP - FAN["size"])     # shelf under the fan, z 19.5..23
-FH_FLOOR = (7.0, 9.0)                 # cable trough floor; trough x 55.2..plate, z 9..19.5 (open at both y ends, continuous over 4 holders)
-FH_FOOT_Y = 19.0                      # foot half width (lower fan screws at +-25 with nut stay free)
-FH_WALL_TOP = 60.0                    # side walls: triangle from the trough to the plate
-FH_RIM = 5.0                          # shelf frame width under the fan frame
-FH_SCREW_DY = 11.0                    # M5 positions +-11 from the fan centre (top and rear slot)
+FAN_X0 = PROFILE_X[0]                 # fan outlet face = front face of the member
+FAN_ZTOP = PROFILE_TOP + FAN["size"]  # 85; thin channel bottom 86.5
+FH_W = 62.0                           # holder width along y (fan 60; 4.5 gaps between the holders for the leads)
+FH_T = 5.0                            # plate on the fan intake face
+FH_X1 = FAN_X0 + FAN["depth"] + FH_T  # 61.2, back of the plate
+FH_Z0 = 7.0                           # holder bottom (tray floor plate ends at x 51.2, z 5)
+FH_SCREW_DY = 18.0                    # M5 positions +-18 from the fan centre (rear slot, z 15)
+FH_NUT = 3.2 + 1.0                    # M4 nut + washer behind the plate (for the retracted check)
 
 def fan_box(yc):
     """(x0, x1, y0, y1, z0, z1) of one fan body"""
     h = FAN["size"] / 2
-    return (FAN_X0, FAN_X0 + FAN["depth"], yc - h, yc + h, FAN_ZTOP - FAN["size"], FAN_ZTOP)
+    return (FAN_X0, FAN_X0 + FAN["depth"], yc - h, yc + h, PROFILE_TOP, FAN_ZTOP)
 
-def _vent(yc, zc):
-    """intake opening per data sheet: 59 square, corners cut to a 29.7 flat"""
-    a, f = FAN["vent"] / 2, FAN["vent_flat"] / 2
-    pts = [(f, a), (-f, a), (-a, f), (-a, -f), (-f, -a), (f, -a), (a, -f), (a, f)]
-    return CrossSection([np.array([(yc + u, zc + v) for u, v in pts])])
+def _vent_oct(yc, zc, r):
+    """octagon with inscribed radius r (covers the round fan bore; flat top bridges when printed on the side)"""
+    R = r / math.cos(math.radians(22.5))
+    return CrossSection([np.array([(yc + R * math.cos(math.radians(22.5 + 45 * k)), zc + R * math.sin(math.radians(22.5 + 45 * k))) for k in range(8)])])
 
 def fan_holder(yc):
-    """one fan: plate on the intake side, shelf + cable trough behind the member, L wrap over the member's top/rear corner"""
+    """one fan standing on the member: plate on the intake side, spacer block behind the member"""
     fx0, fx1, fy0, fy1, fz0, fz1 = fan_box(yc)
-    px0, px1 = fx1, fx1 + FH_T
     y0, y1 = yc - FH_W / 2, yc + FH_W / 2
     zc = (fz0 + fz1) / 2
-    m = box(px0, px1, y0, y1, FH_FLOOR[0], fz1)                                       # plate
-    m = m + box(PROFILE_X[1], px1, y0, y1, FH_SHELF[0], FH_SHELF[1])                  # shelf (fan stands on it)
-    m = m + box(PROFILE_X[1], px1, y0, y1, *FH_FLOOR)                                 # trough floor
-    m = m + box(PROFILE_X[1], FAN_X0, y0, y1, FH_FLOOR[0], FH_SHELF[1])               # lip on the rear face
-    m = m + box(PROFILE_X[0], FAN_X0, yc - FH_FOOT_Y, yc + FH_FOOT_Y, PROFILE_TOP, PROFILE_TOP + FH_T)   # foot on the top face
-    m = m + box(PROFILE_X[1], FAN_X0, yc - FH_FOOT_Y, yc + FH_FOOT_Y, FH_SHELF[1], PROFILE_TOP + FH_T)  # corner block
-    wall = CrossSection([_ccw([(PROFILE_X[1], FH_FLOOR[0]), (px1, FH_FLOOR[0]), (px1, FH_WALL_TOP), (FAN_X0, FH_SHELF[1])])])
-    for wy0 in (y0, y1 - FH_SIDE):                                                    # side walls beside the fan
-        m = m + _plate_y(wall, wy0, wy0 + FH_SIDE)
-    m = m - _yz_prism(_vent(yc, zc), px0 - 1, px1 + 1)
+    x0, x1 = PROFILE_X[1], FH_X1
+    sec = [(x0, FH_Z0), (x1, FH_Z0), (x1, fz1), (fx1, fz1), (fx1, PROFILE_TOP), (x0, PROFILE_TOP)]
+    m = _plate_y(CrossSection([_ccw(sec)]), y0, y1)                                     # block + plate, one section
+    m = m - _yz_prism(_vent_oct(yc, zc, FAN["bore"] / 2), fx1 - 1, x1 + 1)
     for dy in (-1, 1):
         for dz in (-1, 1):
-            m = m - _yz_prism(CrossSection.circle(FAN["hole"] / 2, 16).translate((yc + dy * FAN["pitch"] / 2, zc + dz * FAN["pitch"] / 2)), px0 - 1, px1 + 1)
+            m = m - _yz_prism(CrossSection.circle(FAN["hole"] / 2, 20).translate((yc + dy * FAN["pitch"] / 2, zc + dz * FAN["pitch"] / 2)), fx1 - 1, x1 + 1)
     for dy in (-FH_SCREW_DY, FH_SCREW_DY):
-        y = yc + dy
-        m = m - cyl_z((PROFILE_X[0] + PROFILE_X[1]) / 2, y, PROFILE_TOP - 1, PROFILE_TOP + FH_T + 1, 5.5, 24)   # M5 top slot
-        m = m - _yz_prism(CrossSection.circle(5.5 / 2, 24).translate((y, PROFILE_REAR_Z)), PROFILE_X[1] - 1, FAN_X0 + 1)   # M5 rear slot
-        m = m - _yz_prism(CrossSection.circle(10.0 / 2, 24).translate((y, PROFILE_REAR_Z)), px0 - 1, px1 + 1)   # access for the key
-    m = m - box(FAN_X0 + FH_RIM, px0 - FH_RIM, yc - FAN["size"] / 2 + FH_RIM, yc + FAN["size"] / 2 - FH_RIM, FH_SHELF[0] - 1, FH_SHELF[1] + 1)   # shelf = frame; lead drops into the trough
-    for x in (FAN_X0 + 5.0, px0 - 7.0):                                               # cable tie slots in the trough floor
-        for dy in (-20.0, 20.0):
-            m = m - box(x, x + 2.0, yc + dy - 2.5, yc + dy + 2.5, FH_FLOOR[0] - 1, FH_FLOOR[1] + 1)
+        m = m - _yz_prism(CrossSection.circle(5.5 / 2, 24).translate((yc + dy, PROFILE_REAR_Z)), x0 - 1, x1 + 1)   # M5 rear slot
     return m
 
 HUB_CLIP_X = ((hub.X0 + 6.0, hub.X0 + 20.0), (hub.X1 - 20.0, hub.X1 - 6.0))   # inside the R 6 corner arcs (latch end y 603.7)
@@ -281,10 +274,10 @@ def parts():
         m = psu_cradle(xc); out.append((f"DIN PSU24 Cradle {k + 1}", COL_DIN, m, side(m)))
     for k, xc in enumerate(PSU5_CRADLE_X):
         m = psu5_cradle(xc); out.append((f"DIN PSU5 Cradle {k + 1}", COL_DIN, m, side(m)))
-    for k, xh in enumerate((-295.0, -145.0)):
+    for k, xh in enumerate(OCTO_HOLDER_X):
         m = octopus_holder(xh); out.append((f"DIN Octopus Holder {k + 1}", COL_DIN, m, side(m)))
     m = pi_holder(); out.append(("DIN Pi Holder", COL_DIN, m, side(m)))
-    side_y = lambda m: m.rotate((90, 0, 0))               # fan holders: section in (x, z) along y -> print on a side wall
+    on_back = lambda m: m.rotate((0, 90, 0))              # fan holders: back face of the plate on the bed, block on top, holes vertical
     for k, yc in enumerate(FAN_YC):
-        m = fan_holder(yc); out.append((f"Fan Holder {k + 1}", COL_DIN, m, side_y(m)))
+        m = fan_holder(yc); out.append((f"Fan Holder {k + 1}", COL_DIN, m, on_back(m)))
     return out
