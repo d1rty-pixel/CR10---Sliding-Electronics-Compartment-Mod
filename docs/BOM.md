@@ -63,10 +63,10 @@ Auszug
 
 | Teil | Stück |
 |---|---:|
-| Bezel Ring | 4 |
+| Bezel Ring | 2 |
+| Front Panel Hex | 2 |
 | Switch Plug | 1 |
 | Connector Plug | 1 |
-| Front Grille | 2 |
 | Side Panel Hex | 4 |
 
 `Side Panel Fan60` existiert nur als STL und ist noch nicht platziert.

@@ -25,4 +25,4 @@
 
 ## Referenzexport
 
-`build/igz_reference.json` entsteht per `run_python` im offenen Dokument (Weltboxen in mm, Pfad `groups[i].children[k]…`, 287 Teile). Er ist nach dem Umbau auf 80 mm erzeugt worden, Teile über Z 105 wurden dabei um +25 mm verschoben, Pfosten und Seitenpaneele gestreckt. Das Dokument hat sich seitdem stark verändert (Layer, Elektronik, Ketten); Referenz `Group#80` unverändert lassen.
+`build/igz_reference.json` entsteht per `run_python` im offenen Dokument (Weltboxen in mm, Pfad `groups[i].children[k]…`, 287 Teile). Er ist nach dem Umbau auf 80 mm erzeugt worden, Teile über Z 105 wurden dabei um +25 mm verschoben, Pfosten und Seitenpaneele gestreckt. Das Dokument hat sich seitdem stark verändert (Layer, Elektronik, Ketten); die frühere Referenzgruppe `Group#80` wurde auf Nutzeranweisung gelöscht (T-025, 2026-11-03).

@@ -11,7 +11,7 @@ Stand 2026-11-03 (HANDOFF STAND 15). Alle Maße in mm, Weltkoordinaten des IngeT
 
 ## Rahmen, Zellen, Profile
 
-Profile sind Kaufteile (20×20 / 20×40, „Profil Typ B Nut 6“, Nut 6, M3-Nutensteine), nur im Dokument, benannt `<Typ> L=<mm> #n`. Zellenumbau auf 80 mm: oberer Aufbau (+25 Z), Eckpfosten und Seitenpaneele (Hex) per Instanz-Xform gestreckt, Frontgitter/Platten/Anschlüsse +12,5 Z, 4 Zierrahmen Z 25–105 (Fenster Z 42,5–87,5). Alte Ringe `#45/#52/#37` nur ausgeblendet.
+Profile sind Kaufteile (20×20 / 20×40, „Profil Typ B Nut 6“, Nut 6, M3-Nutensteine), nur im Dokument, benannt `<Typ> L=<mm> #n`. Zellenumbau auf 80 mm: oberer Aufbau (+25 Z), Eckpfosten und Seitenpaneele (Hex) per Instanz-Xform gestreckt, Frontgitter/Platten/Anschlüsse +12,5 Z, Zierrahmen Z 25–105 (Fenster Z 42,5–87,5; vorn seit T-025 durch Hex-Paneele ersetzt). Alte Ringe `#45/#52/#37` nur ausgeblendet.
 
 | Baugruppe (Top-Level) | Layer | Inhalt |
 |---|---|---|
@@ -19,7 +19,6 @@ Profile sind Kaufteile (20×20 / 20×40, „Profil Typ B Nut 6“, Nut 6, M3-Nut
 | `Mod Frame Base` (ex `Gruppieren#11`) | `Mod Base` | fester Unterbau: 2040 L80 ×7, 2020 L400 ×1, 2020 L500 ×2 |
 | `Mod Frame Drawer` (ex `Gruppieren#36`) | `Mod Drawer` | Auszug/Tray: 2020 L334 ×1, 2020 L80 ×2, 2040 L80 ×1, 2020 L400 ×2, 2040 L410 ×1, 2020 L410 ×1; Wannenplatte `Gruppieren#15` (Material unbekannt) |
 | `Stock Foot` (ex `Gruppieren#2`, 1–4) | `Stock Feet` | Original-Füße, später am Mod-Rahmen anschrauben |
-| `Gruppieren#48`, `#39` | 0 | Altlasten (Honeycomb von Hand), nicht anfassen |
 
 Alte Layer `Mod Frame`/`CR10 - Frame` bleiben unberührt und unsichtbar. Die weißen Kabelkanäle im Drawer (25×25, `Gruppieren#30` ×3, `#33`, `#26`, `#25`, `#7`) wurden gelöscht. Schrauben und Nutensteine sind nicht im Modell. Stückliste: `docs/BOM.md`.
 
@@ -41,20 +40,20 @@ Lokales Druckkoordinatensystem: u, v quer, h von der Außenfläche nach innen; S
 
 | Parameter | Wert |
 |---|---|
-| Zierrahmen / Bezel Ring | 160 × 80 × 3 (`RING_T`), Fenster 150,4 × 45,4 (`FIT` 0,2 je Seite), 4 Instanzen (hinten/vorn × links/rechts) |
+| Zierrahmen / Bezel Ring | 160 × 80 × 3 (`RING_T`), Fenster 150,4 × 45,4 (`FIT` 0,2 je Seite), 2 Instanzen (hinten links/rechts, um die Plugs) |
 | Plug | 150 × 45, Deckblech 2 außen + Rahmen 4 innen mit Tasche |
 | Keystone-Ausschnitt | 14,6 × 19,2, Raster 24 (`SEG`), 4 Plätze |
 | GX16-4 | Loch Ø16,2 |
 | Hex-Raster (Original `Gruppieren#46`) | Flat-Top, Schlüsselweite 17,32, Eckenradius 1,7, Raster 19,4 (Steg 2,1), `HEX_SHIFT` (4,0) gegen Splitter < 0,1 mm |
-| Side Panel Hex | 199,5 × 79,5, Rahmen 5 mm (`PANEL_RIM`), Hexfeld 2 mm dick (`GRID_T`); 4 Instanzen: `SIDE_X0` a 55 / b 295, Länge 200 |
+| Side Panel Hex | 199,5 × 79,5, Rahmen 5 mm (`PANEL_RIM`), Hexfeld 2 mm dick (`GRID_T`), gemeinsamer Code `hex_panel()` mit dem Frontpaneel; 4 Instanzen: `SIDE_X0` a 55 / b 295, Länge 200 |
 | Side Panel Fan60 | nur STL: 60-mm-Lüfter Ø57, 4 × Ø3,4 auf 50 × 50; Hexe im Radius 48 entfallen; nirgends platziert (Lüfterposition offen) |
-| Front Grille | 150 × 45 × 2, Hex wie Original, 2 mm Rand; 2 Instanzen |
+| Front Panel Hex | 159,5 × 79,5 (`FRONT_PANEL_W` = `CELL_W` − 0,5), sonst wie Side Panel Hex (Rahmen 5, Hexfeld 2, Dicke 3), Gitter mittig (`FRONT_HEX_SHIFT` (0, 0), splitterfrei), Laschen auf den Bezel-Lagen (±40); 2 Instanzen vorn links/rechts. Ersetzt Bezel Ring + Front Grille vorn (T-025), 15,4 cm³ je Teil |
 
 **Rückplatten** (`place_rear`): `Switch Plug` auf `CELL_YC["right"]` (Y 483–633, Schalter-Mitte Y 553,4 = 558 − `IEC_U` 4,6, Z 65); `Connector Plug` auf `"left"` (Y 283–433, Check-Zelle 278..438): GX16-4 plus 4 Keystones (RJ45, USB, USB, Blind). Die Plugs wurden getauscht, damit der Netzschalter auf der Seite der dünnen 230-V-Kette liegt.
 
 **Switch Plug / IEC-GS-1-100** (Snap-in, keine Schrauben): Ausschnitt `IEC_CUT` 47 × 27,8 R2 (+2·FIT), `IEC_WALL` 1,0 (Blech in der Tasche auf 1,0 gedünnt), `IEC_RECESS` 53 × 34 (Haken ±15,3 + Federweg). Alter Schraubausschnitt 29,2 × 33,2 + 2 × Ø5,2 entfernt. Rastkraft auf gedrucktem 1,0-mm-Rand ungetestet.
 
-**Cover Mount** (gemeinsame Komponente `cover_mount()`): exakte Kopie des Originalteils `Side Cover - Mount` (131 Eckpunkte, 963 mm³, Lasche 19,7 × 13 × 5, Senkung Ø7 × 1, Loch Ø4), Mesh und vier Lagen in `gen/data/side_cover_mount.json`. Bezel-Ringe übernehmen die Lagen (±40), Seitenpaneele schieben sie 20 mm nach außen (±60, `MT_SIDE_SHIFT`). Wurzel 0,5 mm im Teil (`MT_OVERLAP`, damit es verschmilzt), `MT_ROOT_FIX` −0,3. Laschen liegen immer auf Z 25 bzw. 105 (Check). Die Originalclips sind Panelhalter (Kaufteil).
+**Cover Mount** (gemeinsame Komponente `cover_mount()`): exakte Kopie des Originalteils `Side Cover - Mount` (131 Eckpunkte, 963 mm³, Lasche 19,7 × 13 × 5, Senkung Ø7 × 1, Loch Ø4), Mesh und vier Lagen in `gen/data/side_cover_mount.json`. Bezel-Ringe und Frontpaneele übernehmen die Lagen (±40), Seitenpaneele schieben sie 20 mm nach außen (±60, `MT_SIDE_SHIFT`). Wurzel 0,5 mm im Teil (`MT_OVERLAP`, damit es verschmilzt), `MT_ROOT_FIX` −0,3. Laschen liegen immer auf Z 25 bzw. 105 (Check). Die Originalclips sind Panelhalter (Kaufteil).
 
 Nicht gedruckt (Kaufteile): Profile, Schienen, Hutschienen, Alu-Eckverbinder (Druckguss), Original-Panelclips.
 
@@ -65,8 +64,8 @@ Nicht gedruckt (Kaufteile): Profile, Schienen, Hutschienen, Alu-Eckverbinder (Dr
 | LRS-350-24 (Vendor/Platzhalter) | −373,75..−158,75 | 475..590 | 25..55,9 | Klemmen +X; 5,05 mm zum Auszugrahmen (X −378,8); DIN-Wiegen bei X −348,75/−183,75 (20 breit) |
 | Power-Hub (Basis) | −158,25..−49 | 475..604 | 5..58 | rot Y 557..604, gelb Y 475..557 |
 | RS-15-5 | −48,5..26,06 | 530,8..581,8 | 25..53 | Klemmen −X; 2 Wiegen X −35,5..−23,5 / −4..8 (zweite bleibt auf den Schienen, Ende X 9), Y 528,8..583,8; 5,14 mm bis Querholm (X 31,2) |
-| Lüfter 40 × 40 × 10 (Kaufteil, Dokument) | 33..43 | 536,3..576,3 | 28..68 | Achse X, bläst −X über das RS-15-5 in die Hub-Boxen; steht auf `PSU Fan Holder` |
-| `PSU Fan Holder` (gen) | 31,2..51,2 | 518,3..594,3 | 25..68 | Fuß auf dem Querholm `2020 L=334 #1` (Oberkante Z 25), 2 × M5 + Nutenstein in der oberen Nut (X 41,2, Y 524,3 / 588,3); Platte X 43..46 auf der Ansaugseite mit Ø38-Öffnung und 4 × Ø3,4 auf 32 × 32 (**Annahme**: übliches 4010-Lochbild), 2 Stützrippen |
+| 4 × Lüfter 60 × 60 × 25 (Kaufteil, Dokument, San Ace 9LG0624P4H001) | 55,2..80,2 | Mitten 367 / 433,5 / 500 / 566,5 (je ±30) | 23..83 | hinter dem Querholm, Achse X, blasen −X ins Tray; Modelle `Luefter 60x60x25 #1..4` + `… Nabe` (Layer `Electronics (neu)`) |
+| `Fan Holder 1..4` (gen, `tray.fan_holder()`) | 31,2..84,2 | je 66 breit, 334,0..599,5 (Raster 66,5) | 7..83 | siehe „Lüfterhalter“ |
 | BTT Octopus | −300..−140 | 352..452 | PCB-Unterkante 31 | Einspeisung/Heizer +X oben, USB-C +X unten, Motor/Sensor unten (ungefähr, ungeprüft); DIN-Halter X −295/−145 |
 | Raspberry Pi 4 | −125..−40 | 374..430 (Lochmitte 402 = R2) | PCB-Unterkante 31 | Ports +X, USB-C −Y, GPIO +Y; Halter X −125..−60, Y 374..430 |
 | DC-Kanal (gelb) | −300..−45 | Mitte 463 (453..473) | 5..25 | 20 × 20, Deckel über volle Länge, Fingerschlitze (Raster 10) |
@@ -76,6 +75,8 @@ Nicht gedruckt (Kaufteile): Profile, Schienen, Hutschienen, Alu-Eckverbinder (Dr
 | Hutschiene R2 (Logik) | −305..−40 | Mitte 402 (384,5..419,5) = Octopus-Mitte | 5..12,5 | unter Octopus und Pi (Pi mittig darüber) |
 | PE-Öse Tray | −74..−50 | 615 (auf 2020) | ca. 26 | siehe PE-Erdung |
 | PE-Öse Rahmen | 525 | 570 | – | siehe PE-Erdung |
+
+**Lüfterhalter** (`tray.fan_holder(yc)`, 4 gleiche Teile, eins pro Lüfter, 24,5 cm³): Die Lüfter sitzen hinter dem Querholm `2020 L=334 #1` (X 31,2..51,2, Z 5..25), damit 25 mm Bautiefe nicht ins RS-15-5 (endet X 26,06) ragen. Der Halter umgreift die obere hintere Profilecke: ein Fuß auf der Oberseite (X 31,2..55,2, Z 25..29, Y ±19, 2 × M5 in die obere Nut bei Y ±11) und eine Lippe an der Rückseite (X 51,2..55,2, 2 × M5 in die hintere Nut, Z 15). Die Platte liegt auf der Ansaugseite (X 80,2..84,2, Z 7..83) und hat die Lüftungsöffnung laut Datenblatt (59 im Quadrat, Fase auf 29,7) sowie 4 × Ø4,5 auf 50 × 50. Der Lüfter wird mit 4 × M4 × 35 durch Platte und beide Flansche geschraubt, die Mutter sitzt am vorderen Flansch. Eine Ablage (Rahmen 5 breit, Z 19,5..23) trägt den Lüfter. Darunter liegt ein Kabelkanal (X 55,2..80,2, Z 9..19,5, Boden Z 7..9). Er ist an beiden Y-Enden offen, über die 4 Halter durchgehend und hat 4 Kabelbinderschlitze je Halter. Die Lüfterlitze fällt durch die Ablage hinein (Litzenaustritt nach unten drehen). Die Schraubenschlüssel für die hinteren M5 gehen durch Ø10-Löcher in der Platte. Dazu kommen 2 dreieckige Seitenwände (2,5) neben dem Lüfter. Gedruckt wird auf einer Seitenwand. Grenzen: Die Kettenspuren Y 290..330 (Obertrum ab Z 80,7) und 603..627 bleiben frei. Oberkante Z 83, darüber liegt der Kanal der dünnen Kette (Z 86,5, ortsfest, das Tray fährt darunter durch). Bei Hub 396 liegt der Halter bei X 427..480 und damit 30 mm vor dem IEC-Heck (X 510,4). Der Fahrweg kollidiert mit `Stock Frame/Group#4/#19/#1` (X 472..514, ab Z 77,9) → T-008. Die Checks prüfen Lüfterkörper gegen alle Druckteile und Halter in Y 330,4..603 bei Z ≤ 83,5.
 
 DIN-Teile (`tray.py`, Clips für EN 50022 35 × 7,5, Rail-Oberkante Z 12,5): `DIN PSU24 Cradle 1/2` (20 breit), `DIN PSU5 Cradle 1/2` (12 breit, X −35,5..−23,5 und −4..8), `DIN Octopus Holder 1/2` (Balken unter einer Lochspalte, Lochraster 150 × 90), `DIN Pi Holder` (Löcher 58 × 49, M2,5). Clips (`tray._clip_cs`, alle aus einem Code): feste Nase −Y, gefederter Schieber +Y, **alle Riegel zeigen nach +Y**, damit sich benachbarte Halter nicht gegenseitig blockieren. Schieber (Print-in-Place, ein Körper): Nase 1,3 unter dem Flansch, Rampe zum Aufrasten, Mäanderfeder aus 3 Stegen 0,6 (Spalt 0,5) an einem Pfosten des Clips, Schieber 0,4 unter der Clipbasis; Riegelseite bis +26,7 ab Schienenmitte (`LATCH_END`). Lösen: Schlitz von oben (`RELEASE` +18,8..+22,6 ab Schienenmitte, 5 lang in X), Schraubendreher in die Kerbe, Schieber 1,5 nach +Y hebeln; ein Stift ≤ 1,4 in den entstehenden Spalt (Schlitzkante −Y / Kerbwand) hält ihn offen, so lassen sich Halter mit 2 Clips nacheinander entriegeln. LRS-Wiegen und RS-Wiege je 2 Clips (A + B). Lösen der Wiegen erst nach Abnahme des Netzteils (Schlitze A unter dem Gerät; Schlitz B der LRS-Wiegen bei Y 595,8..599,6 frei). Pi-Halter: Clips 14 breit, Schlitze X −115 / −70 (neben den Domen). Hub: rote Box auf R1b, gelbe auf R1a, je 2 Clips, keine Bodenschrauben. Lüfter-Sets von Pi/Octopus sind Nutzer-Handbau: Octopus-Lüfter X −312..−302 / Y 382..422, Pi-Lüfter X −102..−62 / Y 432..442; deren Halterfüße Z 30..33 schweben (offen).
 

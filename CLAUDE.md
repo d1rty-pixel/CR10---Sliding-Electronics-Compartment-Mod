@@ -16,6 +16,7 @@ Persönliches 3D-Druck-/CAD-Projekt, Git-Repo `github.com/d1rty-pixel/CR10---Sli
 | `docs/PLAN.md` | Aufgaben: In Arbeit / Offen / Blockiert |
 | `docs/done/<YYYY-MM>.md` | Archiv erledigter Aufgaben |
 | `docs/BOM.md` | Stückliste (Erzeugung: `gen/bom_document.py` in IngeTrazo) |
+| `docs/HARDWARE.md` | Kaufteile-Stückliste (von Hand, Mengen aus Modell/Code) |
 | `.claude/HANDOFF.md` | nur die Aufgabe(n) „In Arbeit“ |
 
 ## Befehle
@@ -28,13 +29,13 @@ Persönliches 3D-Druck-/CAD-Projekt, Git-Repo `github.com/d1rty-pixel/CR10---Sli
 - Alle Halterungen entstehen aus einem Code und sind identisch. Generierte Teile nie anschneiden; Kaufteile wandern, nie ein Halter.
 - Kaufteile (Profile, Schienen, Netzteile, Pi, Octopus, WAGO, IEC-Stecker) nur im Dokument, nicht im Generator.
 - Kollisionen, Manifold/Ein-Körper und Near-Vertex-Check (< 0,1 mm) müssen bestehen; nach dem Import alle Kanten 2 Flächen.
-- Gruppen im Dokument per Namen suchen, nicht per Index; `Group#80` (Referenz) nicht ändern.
+- Gruppen im Dokument per Namen suchen, nicht per Index.
 - Details und Fallstricke: `docs/DESIGN.md`, `docs/WORKFLOW.md`.
 
 ## Handoff-Hygiene (Pflicht nach jeder abgeschlossenen Aufgabe)
 a. `docs/PLAN.md`: Status der Aufgabe setzen; erledigte Aufgaben nach `docs/done/<YYYY-MM>.md` verschieben (Datum, Ergebnis, Entscheidung); neu gefundene Aufgaben mit neuer ID (T-nnn, fortlaufend) eintragen.
 b. `.claude/HANDOFF.md` neu schreiben: nur die Aufgabe(n) „In Arbeit“ mit ID, Ziel, relevanten Dateien, nötigen Fakten, Stand, nächstem Schritt, „Nicht ändern“; oder „keine Aufgabe in Arbeit“.
-c. `README.md`, `docs/DESIGN.md`, `docs/COMPONENTS.md`, `docs/WORKFLOW.md`, `docs/BOM.md` auf Werte prüfen, die die Aufgabe geändert hat, und nachziehen (BOM per `gen/bom_document.py` in IngeTrazo, wenn sich das Modell geändert hat).
+c. `README.md`, `docs/DESIGN.md`, `docs/COMPONENTS.md`, `docs/WORKFLOW.md`, `docs/BOM.md`, `docs/HARDWARE.md` auf Werte prüfen, die die Aufgabe geändert hat, und nachziehen (BOM per `gen/bom_document.py` in IngeTrazo, wenn sich das Modell geändert hat).
 d. Sync-Check: jede ID im HANDOFF ist in PLAN „In Arbeit“ und umgekehrt.
 e. Ergebnis in einer Zeile melden (z. B. „Hygiene: PLAN ok, HANDOFF T-001, Docs DESIGN aktualisiert, Sync ok“).
 

@@ -41,6 +41,7 @@ RING_T = 3.0
 PLUG_W, PLUG_H = 150.0, 45.0
 PLUG_SHEET, PLUG_FRAME = 2.0, 4.0     # outer sheet / inner frame with pocket
 PANEL_W, PANEL_H, PANEL_T = SIDE_LEN - 0.5, CELL_H - 0.5, 3.0
+FRONT_PANEL_W = CELL_W - 0.5           # front hex panel, same rim/grid as the side panels
 PANEL_RIM = 5.0                       # frame around the hex field (as on the original panels)
 GRID_T = 2.0                          # hex web thickness (original grille insert)
 # honeycomb of the original grille: flat-top holes, across flats 17.32, rounded corners, pitch 19.4 (web 2.1)
@@ -75,9 +76,11 @@ def plate(cs, t, h0=0.0):
     return Manifold.extrude(cs, t).translate([0, 0, h0])
 
 HEX_SHIFT = (4.0, 0.0)    # lattice offset found by search: no cut hex leaves a sliver under 0.1 mm (IngeTrazo merges them)
+FRONT_HEX_SHIFT = (0.0, 0.0)   # same search for the 159.5 wide front panel: centred lattice is free of slivers
 
-def honeycomb(w, h, exclude=None, min_area=15.0):
+def honeycomb(w, h, exclude=None, min_area=15.0, shift=None):
     """holes of the original honeycomb clipped to a w x h window centred on 0 (cut hexes at the border like the original)"""
+    sh = HEX_SHIFT if shift is None else shift
     ap = HEX_AF / 2 - HEX_RC
     R = ap / math.cos(math.radians(30))
     hexcs = CrossSection([np.array([(R * math.cos(math.radians(60 * k)), R * math.sin(math.radians(60 * k))) for k in range(6)])]).offset(HEX_RC, JoinType.Round, 2.0, 6)
@@ -87,7 +90,7 @@ def honeycomb(w, h, exclude=None, min_area=15.0):
     nc = int(w / 2 / dx) + 2; nr = int(h / 2 / HEX_PITCH) + 2
     for c in range(-nc, nc + 1):
         for r in range(-nr, nr + 1):
-            x = c * dx + HEX_SHIFT[0]; y = r * HEX_PITCH + (HEX_PITCH / 2 if c % 2 else 0) + HEX_SHIFT[1]
+            x = c * dx + sh[0]; y = r * HEX_PITCH + (HEX_PITCH / 2 if c % 2 else 0) + sh[1]
             if exclude and exclude(x, y): continue
             piece = hexcs.translate((x, y)) ^ win
             if piece.area() >= min_area: cells.append(piece)
@@ -146,22 +149,26 @@ def connector_plug():
     holes = [at(circle(GX16), 50.0, 0.0)] + [at(CrossSection.square(KEY, True), u, 0.0) for u in (17.0, -7.0, -31.0, -55.0)]
     return plug(holes, rrect(132.0, 39.0, 3.5))
 
-def front_grille():
-    rim = 2.0
-    return plate(rrect(PLUG_W, PLUG_H, 0.5) - honeycomb(PLUG_W - 2 * rim, PLUG_H - 2 * rim), GRID_T)
-
-def side_panel(fan=False):
-    ww, wh = PANEL_W - 2 * PANEL_RIM, PANEL_H - 2 * PANEL_RIM
+def hex_panel(w, kind, fan=False, shift=None):
+    """cover panel: PANEL_RIM frame around a full hex field (one code for side and front panels)"""
+    ww, wh = w - 2 * PANEL_RIM, PANEL_H - 2 * PANEL_RIM
     ex = (lambda x, y: math.hypot(x, y) < 48.0) if fan else None
-    frame = plate(rrect(PANEL_W, PANEL_H, 1.0) - CrossSection.square((ww - 1.0, wh - 1.0), True), PANEL_T)   # 0.5 mm overlap with the grid
-    grid = plate(CrossSection.square((ww, wh), True) - honeycomb(ww, wh, ex), GRID_T)
+    frame = plate(rrect(w, PANEL_H, 1.0) - CrossSection.square((ww - 1.0, wh - 1.0), True), PANEL_T)   # 0.5 mm overlap with the grid
+    grid = plate(CrossSection.square((ww, wh), True) - honeycomb(ww, wh, ex, shift=shift), GRID_T)
     p = frame + grid
     if fan:
         cutter = plate(circle(FAN60["hole"], 48), PANEL_T + 2, -1.0)
         for sx in (-1, 1):
             for sy in (-1, 1): cutter = cutter + plate(at(circle(FAN60["screw"], 12), sx * FAN60["pitch"] / 2, sy * FAN60["pitch"] / 2), PANEL_T + 2, -1.0)
         p = p - cutter
-    return with_mounts(p, "side", PANEL_T)
+    return with_mounts(p, kind, PANEL_T)
+
+def side_panel(fan=False):
+    return hex_panel(PANEL_W, "side", fan)
+
+def front_panel():
+    # replaces bezel ring + front grille at the drawer front; tabs at the bezel positions (+-40)
+    return hex_panel(FRONT_PANEL_W, "bezel", shift=FRONT_HEX_SHIFT)
 
 # ---- placement: (u, v, h) -> world, rotations only ------------------------------------
 def rot(m, f):
@@ -180,14 +187,13 @@ CHAIN_COL = (0.2, 0.5, 0.85)
 TRAY_LAYER = "Tray Druckteile (gen)"   # colour = filament: red 230 V, yellow 24/5 V, green data/bus, dark grey DIN holders
 
 def parts():
-    ring, sw, cn, fg = bezel_ring(), switch_plug(), connector_plug(), front_grille()
+    ring, sw, cn, fp = bezel_ring(), switch_plug(), connector_plug(), front_panel()
     sp, spf = side_panel(False), side_panel(True)
-    local = dict([("Bezel Ring", ring), ("Switch Plug", sw), ("Connector Plug", cn), ("Front Grille", fg),
+    local = dict([("Bezel Ring", ring), ("Switch Plug", sw), ("Connector Plug", cn), ("Front Panel Hex", fp),
                   ("Side Panel Hex", sp), ("Side Panel Fan60", spf)])
     inst = [("Bezel Rear Left", place_rear(ring, CELL_YC["left"])), ("Bezel Rear Right", place_rear(ring, CELL_YC["right"])),
-            ("Bezel Front Left", place_front(ring, CELL_YC["left"])), ("Bezel Front Right", place_front(ring, CELL_YC["right"])),
-            ("Switch Plug", place_rear(sw, CELL_YC["right"])), ("Connector Plug", place_rear(cn, CELL_YC["left"])),
-            ("Front Grille Left", place_front(fg, CELL_YC["left"])), ("Front Grille Right", place_front(fg, CELL_YC["right"]))]
+            ("Front Panel Left", place_front(fp, CELL_YC["left"])), ("Front Panel Right", place_front(fp, CELL_YC["right"])),
+            ("Switch Plug", place_rear(sw, CELL_YC["right"])), ("Connector Plug", place_rear(cn, CELL_YC["left"]))]
     for k, x0 in SIDE_X0.items():
         inst.append((f"Side Panel Near {k}", place_side_near(sp, x0 + SIDE_LEN / 2)))
         inst.append((f"Side Panel Far {k}", place_side_far(sp, x0 + SIDE_LEN / 2)))
@@ -237,7 +243,7 @@ def run_checks():
     rep(f"connector plug inside cell y {b[1]:.1f}..{b[4]:.1f} (278..438)", b[1] > 278 and b[4] < 438)
     # every mount tab must sit exactly on the cell edge (rail face) and over the rail centre line
     for name, m in inst:
-        if not (name.startswith("Bezel") or name.startswith("Side")): continue
+        if not name.startswith(("Bezel", "Side", "Front Panel")): continue
         bb = m.bounding_box()
         rep(f"{name}: tabs reach the rail faces z {bb[2]:.2f} / {bb[5]:.2f} (25 / 105)", abs(bb[2] - Z0) < 1e-6 and abs(bb[5] - Z1) < 1e-6)
     for n in ("Chain Bracket Fixed",):
@@ -248,6 +254,14 @@ def run_checks():
         cb = dict(inst)[n].bounding_box()
         rep(f"{n} inside y {cb[1]:.1f}..{cb[4]:.1f} (535..{ymax:.0f}), z {cb[2]:.1f}..{cb[5]:.1f} (25..102)",
             cb[1] >= 535 and cb[4] <= ymax + 1e-6 and cb[2] >= 25 - 1e-6 and cb[5] <= thin.ZT + 1e-6)
+    # 60 mm fans (bought, document): bodies free of every printed part; holders between the chain lanes, below the thin channel
+    for k, yc in enumerate(tray.FAN_YC):
+        fb = tray.fan_box(yc); fm = cable.box(*fb)
+        hit = [n for n, m in inst if (fm ^ m).volume() > 1e-3]
+        rep(f"Fan {k + 1} body x {fb[0]:.1f}..{fb[1]:.1f} y {fb[2]:.1f}..{fb[3]:.1f} z {fb[4]:.1f}..{fb[5]:.1f}: no printed part inside{'' if not hit else ': ' + ', '.join(hit)}", not hit)
+        hb = dict(inst)[f"Fan Holder {k + 1}"].bounding_box()
+        rep(f"Fan Holder {k + 1} y {hb[1]:.1f}..{hb[4]:.1f} (330.4..603), z top {hb[5]:.1f} (<= 83.5, thin channel 86.5)",
+            hb[1] >= 330.4 and hb[4] <= 603.0 and hb[5] <= 83.5)
     arc = math.degrees(2 * math.asin(thin.PITCH / (thin.ZU - thin.ZL)))
     hit, stop = thin.hinge_sweep(arc + 5.0)
     rep(f"thin hinge incl. clamps free from 0 to {arc + 5.0:.0f} deg (arc needs {arc:.1f}){'' if hit is None else f': collision at {hit:.0f} deg'}", hit is None)

@@ -1,6 +1,6 @@
 # Kaufteile und 3D-Modelle
 
-Stand 2026-11-03. Kaufteile liegen nur im IngeTrazo-Dokument (nicht im Generator). Quelle der Komponentenauswahl: `CR10 Standalone Mod - Documentation.pdf` (alte Version: DIN EN 50022 2 × 300–350, Sunon 60er Lüfter, IEC-GS-1-100, Keystones, LRS-250/350-24 bzw. RS-15-5, Voron-DIN-Halter). Werte mit **(ungeprüft)** oder **(Annahme)** sind nicht aus Datenblatt oder Messung belegt.
+Stand 2026-11-03. Kaufteile liegen nur im IngeTrazo-Dokument (nicht im Generator). Die Bestellliste steht in `docs/HARDWARE.md`. Quelle der Komponentenauswahl: `CR10 Standalone Mod - Documentation.pdf` (alte Version: DIN EN 50022 2 × 300–350, Sunon 60er Lüfter, IEC-GS-1-100, Keystones, LRS-250/350-24 bzw. RS-15-5, Voron-DIN-Halter). Werte mit **(ungeprüft)** oder **(Annahme)** sind nicht aus Datenblatt oder Messung belegt.
 
 ## Mean Well LRS-350-24 (24 V, Hauptnetzteil)
 
@@ -93,7 +93,7 @@ Faustregel (nicht geprüft): Cat6/USB dynamisch ca. 8–10 × D = 36..60 mm, nur
 | Auszugschienen | Vollauszug-Schubladenschienen, dreiteilig, 450 lang, 2 Stück; M5 mit Nutensteinen, Loch Ø5,5 mittig in Outer und Inner; Hub 396 geschätzt |
 | Hutschienen | EN 50022 35 × 7,5, Höhe 12,5 über Tray-Boden |
 | Lüfter | Sunon 60 mm (laut PDF), Ø57 Ausschnitt, 4 × Ø3,4 auf 50 × 50; Pi/Octopus-Lüfter-Sets Nutzer-Handbau |
-| Netzteil-Lüfter | 40 × 40 × 10 (Nutzer 2026-11-03), Typ, Spannung und Hersteller offen; Lochbild 32 × 32 für M3 **(Annahme)**; im Dokument als schlichter Rahmen `Luefter 40x40x10 (PSU, blaest -X)` (Layer `Electronics (neu)`) |
+| Lüfter Querholm | 4 × Sanyo Denki San Ace 60L 9LG0624P4H001 (24 V, 4-Draht PWM 25 kHz + Impulssensor, 60 × 60 × 25, 8 × Ø4,3 auf 50 × 50, Flansch 4, Litzen AWG26 300 mm rot +/schwarz −/gelb Sensor/braun Control; 35 dB(A) bei 100 %). Quelle: Katalog San Ace 60L S. 291/292. Daten und Begründung in `docs/HARDWARE.md`; im Dokument `Luefter 60x60x25 #1..4` (Layer `Electronics (neu)`) |
 | Alu-Eckverbinder, Original-Füße, Panelclips | Kaufteile bzw. Original, nicht modelliert |
 
 ## Quellen der 3D-Modelle

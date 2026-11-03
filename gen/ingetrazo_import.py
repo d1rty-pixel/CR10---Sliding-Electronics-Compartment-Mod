@@ -48,7 +48,7 @@ for g in [g for g in groups if g.layer in GEN_LAYERS and "(new)" not in str(g.na
 # 2. hide hand-built predecessors (idempotent: only groups still outside the generated layers)
 _layer(OLD_LAYER, visible=False)
 for g in groups:
-    if str(g.name).startswith(OLD_TOP) and g.layer not in GEN_LAYERS: g.layer = OLD_LAYER
+    if str(g.name).startswith(OLD_TOP) and g.layer not in GEN_LAYERS: g.layer = OLD_LAYER; g.hidden = True   # layer "Handbau (alt)" is visible
 for pth in OLD_NESTED:
     try:
         g = [t for t in groups if str(t.name) == pth[0]][0]

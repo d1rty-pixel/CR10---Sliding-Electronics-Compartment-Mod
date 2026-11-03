@@ -6,7 +6,7 @@ low voltage DC in the yellow hub box and the yellow duct, data and bus lines in 
 
 Layout along x on the high-y side (tray inside x -378.8..31.2): LRS-350 x -373.75..-158.75 (terminals +x), hub x -158.25..-49,
 RS-15-5 x -48.5..26.06 (terminals -x, y 530.8..581.8), about 5 mm to the drawer frame / rear cross member (hub.LRS_DX / RS_DX).
-A 40 x 40 x 10 fan on the rear cross member (2020 L=334 #1) blows -x over the RS-15-5 and through the vented hub boxes.
+Four 60 x 60 x 25 fans (24 V PWM) behind the rear cross member (2020 L=334 #1) blow -x into the tray, through the vented hub boxes.
 """
 import math
 import numpy as np
@@ -188,39 +188,71 @@ def pi_holder():
     for xc in (x0 + 10.0, x1 - 10.0): m = m - release_cut(xc, RAIL_R2, 20.0)
     return m
 
-# ============================================================ PSU fan on the rear cross member
-# 2020 L=334 #1 (document): x 31.2..51.2, y 290.8..624.8, z 5..25, top slot centre x 41.2.
-# Fan 40 x 40 x 10 (bought, in the document), axis x, blowing -x; centred on the RS-15-5 (y 556.3), standing on the foot.
-# Hole pattern 32 x 32 for M3 (assumption: usual 4010 frame, not checked against a data sheet).
-PROFILE_X, PROFILE_TOP = (31.2, 51.2), 25.0
-FAN = dict(size=40.0, depth=10.0, pitch=32.0, hole=3.4, bore=38.0, yc=556.3)
-FAN_FOOT_T, FAN_PLATE_T = 3.0, 3.0
-FAN_X0 = 33.0                         # fan -x face (RS ends x 26.06); the plate sits on its +x (intake) side
-FAN_SCREWS_Y = (FAN["yc"] - 32.0, FAN["yc"] + 32.0)   # M5 + T-nut in the top slot, outside the fan and the gussets
+# ============================================================ 4 x 60 mm fans behind the rear cross member
+# 2020 L=334 #1 (document): x 31.2..51.2, y 290.8..624.8, z 5..25, top slot centre x 41.2, rear slot centre z 15.
+# Fans (bought, in the document): Sanyo Denki San Ace 60L 9LG0624P4H001, 24 V, 4-wire PWM (25 kHz) + pulse sensor,
+# 60 x 60 x 25 (data sheet: 60 +-0.5, 25 +-0.5, flanges 4 +-0.3, 8 x d 4.3 on 50 x 50, vent opening 59 / 29.7, leads AWG26 300 mm).
+# Axis x, blowing -x over the cross member into the tray; they sit behind the member (x > 51.2), the holder carries them from the
+# intake side. Limits: chain lanes y 290..330 (wide, upper run z 80.7+) and y 603..627 (thin bracket z 83.9+); thin channel
+# (fixed, z 86.5..102, x 114..417, y 573.4..628.5) passes over the moving holder -> fan and holder top z <= FAN_ZTOP.
+# Mounting: M4 x 35 through plate and both fan flanges (nut on the fan front flange); holder to the member with 2 x M5 + T-nut
+# into the top slot and 2 x M5 + T-nut into the rear slot (screwdriver through the access holes in the plate).
+PROFILE_X, PROFILE_TOP, PROFILE_REAR_Z = (31.2, 51.2), 25.0, 15.0
+FAN = dict(size=60.0, depth=25.0, pitch=50.0, hole=4.5, vent=59.0, vent_flat=29.7)
+FAN_N, FAN_PITCH_Y = 4, 66.5
+FAN_YC0 = 466.75                      # centre of the fan row: between the chain lanes (330.4 .. 603)
+FAN_YC = tuple(FAN_YC0 + (k - (FAN_N - 1) / 2) * FAN_PITCH_Y for k in range(FAN_N))
+FAN_ZTOP = 83.0                       # fan top; thin channel bottom 86.5
+FAN_X0 = 55.2                         # fan -x face: 4 mm corner block behind the member (x 51.2..55.2)
+FH_W = 66.0                           # holder width along y (gap 0.5 between neighbours)
+FH_T = 4.0                            # plate / lip / foot thickness
+FH_SIDE = 2.5                         # side walls, 0.5 clear of the fan
+FH_SHELF = (19.5, FAN_ZTOP - FAN["size"])     # shelf under the fan, z 19.5..23
+FH_FLOOR = (7.0, 9.0)                 # cable trough floor; trough x 55.2..plate, z 9..19.5 (open at both y ends, continuous over 4 holders)
+FH_FOOT_Y = 19.0                      # foot half width (lower fan screws at +-25 with nut stay free)
+FH_WALL_TOP = 60.0                    # side walls: triangle from the trough to the plate
+FH_RIM = 5.0                          # shelf frame width under the fan frame
+FH_SCREW_DY = 11.0                    # M5 positions +-11 from the fan centre (top and rear slot)
 
-def fan_box():
-    """(x0, x1, y0, y1, z0, z1) of the fan body"""
-    h = FAN["size"] / 2; z0 = PROFILE_TOP + FAN_FOOT_T
-    return (FAN_X0, FAN_X0 + FAN["depth"], FAN["yc"] - h, FAN["yc"] + h, z0, z0 + FAN["size"])
+def fan_box(yc):
+    """(x0, x1, y0, y1, z0, z1) of one fan body"""
+    h = FAN["size"] / 2
+    return (FAN_X0, FAN_X0 + FAN["depth"], yc - h, yc + h, FAN_ZTOP - FAN["size"], FAN_ZTOP)
 
-def fan_holder():
-    """foot on the cross member (2 x M5 into the top slot), upright plate behind the fan (bore + 4 x M3), 2 gussets"""
-    fx0, fx1, fy0, fy1, fz0, fz1 = fan_box()
-    ys = FAN_SCREWS_Y
-    foot = box(PROFILE_X[0], PROFILE_X[1], ys[0] - 6.0, ys[1] + 6.0, PROFILE_TOP, fz0)
-    px0, px1 = fx1, fx1 + FAN_PLATE_T
-    plate = box(px0, px1, fy0 - 3.0, fy1 + 3.0, fz0 - 1.0, fz1)
-    m = foot + plate
-    for y0 in (fy0 - 3.0, fy1):                                    # triangular gussets behind the plate, outside the fan
-        tri = CrossSection([_ccw([(px1 - 1.0, fz0 - 1.0), (PROFILE_X[1], fz0 - 1.0), (px1 - 1.0, fz1 - 6.0)])])
-        m = m + _plate_y(tri, y0, y0 + 3.0)
-    yc, zc = FAN["yc"], (fz0 + fz1) / 2
-    m = m - _yz_prism(CrossSection.circle(FAN["bore"] / 2, 48).translate((yc, zc)), px0 - 1, px1 + 1)
+def _vent(yc, zc):
+    """intake opening per data sheet: 59 square, corners cut to a 29.7 flat"""
+    a, f = FAN["vent"] / 2, FAN["vent_flat"] / 2
+    pts = [(f, a), (-f, a), (-a, f), (-a, -f), (-f, -a), (f, -a), (a, -f), (a, f)]
+    return CrossSection([np.array([(yc + u, zc + v) for u, v in pts])])
+
+def fan_holder(yc):
+    """one fan: plate on the intake side, shelf + cable trough behind the member, L wrap over the member's top/rear corner"""
+    fx0, fx1, fy0, fy1, fz0, fz1 = fan_box(yc)
+    px0, px1 = fx1, fx1 + FH_T
+    y0, y1 = yc - FH_W / 2, yc + FH_W / 2
+    zc = (fz0 + fz1) / 2
+    m = box(px0, px1, y0, y1, FH_FLOOR[0], fz1)                                       # plate
+    m = m + box(PROFILE_X[1], px1, y0, y1, FH_SHELF[0], FH_SHELF[1])                  # shelf (fan stands on it)
+    m = m + box(PROFILE_X[1], px1, y0, y1, *FH_FLOOR)                                 # trough floor
+    m = m + box(PROFILE_X[1], FAN_X0, y0, y1, FH_FLOOR[0], FH_SHELF[1])               # lip on the rear face
+    m = m + box(PROFILE_X[0], FAN_X0, yc - FH_FOOT_Y, yc + FH_FOOT_Y, PROFILE_TOP, PROFILE_TOP + FH_T)   # foot on the top face
+    m = m + box(PROFILE_X[1], FAN_X0, yc - FH_FOOT_Y, yc + FH_FOOT_Y, FH_SHELF[1], PROFILE_TOP + FH_T)  # corner block
+    wall = CrossSection([_ccw([(PROFILE_X[1], FH_FLOOR[0]), (px1, FH_FLOOR[0]), (px1, FH_WALL_TOP), (FAN_X0, FH_SHELF[1])])])
+    for wy0 in (y0, y1 - FH_SIDE):                                                    # side walls beside the fan
+        m = m + _plate_y(wall, wy0, wy0 + FH_SIDE)
+    m = m - _yz_prism(_vent(yc, zc), px0 - 1, px1 + 1)
     for dy in (-1, 1):
         for dz in (-1, 1):
             m = m - _yz_prism(CrossSection.circle(FAN["hole"] / 2, 16).translate((yc + dy * FAN["pitch"] / 2, zc + dz * FAN["pitch"] / 2)), px0 - 1, px1 + 1)
-    for y in ys:
-        m = m - cyl_z((PROFILE_X[0] + PROFILE_X[1]) / 2, y, PROFILE_TOP - 1, fz0 + 1, 5.5, 24)
+    for dy in (-FH_SCREW_DY, FH_SCREW_DY):
+        y = yc + dy
+        m = m - cyl_z((PROFILE_X[0] + PROFILE_X[1]) / 2, y, PROFILE_TOP - 1, PROFILE_TOP + FH_T + 1, 5.5, 24)   # M5 top slot
+        m = m - _yz_prism(CrossSection.circle(5.5 / 2, 24).translate((y, PROFILE_REAR_Z)), PROFILE_X[1] - 1, FAN_X0 + 1)   # M5 rear slot
+        m = m - _yz_prism(CrossSection.circle(10.0 / 2, 24).translate((y, PROFILE_REAR_Z)), px0 - 1, px1 + 1)   # access for the key
+    m = m - box(FAN_X0 + FH_RIM, px0 - FH_RIM, yc - FAN["size"] / 2 + FH_RIM, yc + FAN["size"] / 2 - FH_RIM, FH_SHELF[0] - 1, FH_SHELF[1] + 1)   # shelf = frame; lead drops into the trough
+    for x in (FAN_X0 + 5.0, px0 - 7.0):                                               # cable tie slots in the trough floor
+        for dy in (-20.0, 20.0):
+            m = m - box(x, x + 2.0, yc + dy - 2.5, yc + dy + 2.5, FH_FLOOR[0] - 1, FH_FLOOR[1] + 1)
     return m
 
 HUB_CLIP_X = ((hub.X0 + 6.0, hub.X0 + 20.0), (hub.X1 - 20.0, hub.X1 - 6.0))   # inside the R 6 corner arcs (latch end y 603.7)
@@ -252,5 +284,7 @@ def parts():
     for k, xh in enumerate((-295.0, -145.0)):
         m = octopus_holder(xh); out.append((f"DIN Octopus Holder {k + 1}", COL_DIN, m, side(m)))
     m = pi_holder(); out.append(("DIN Pi Holder", COL_DIN, m, side(m)))
-    m = fan_holder(); out.append(("PSU Fan Holder", COL_DIN, m, m))
+    side_y = lambda m: m.rotate((90, 0, 0))               # fan holders: section in (x, z) along y -> print on a side wall
+    for k, yc in enumerate(FAN_YC):
+        m = fan_holder(yc); out.append((f"Fan Holder {k + 1}", COL_DIN, m, side_y(m)))
     return out

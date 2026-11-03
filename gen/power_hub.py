@@ -129,7 +129,7 @@ def _pilots(m, pts):
         m = m - cyl_z(x, y, Z_TOP - 12.0, Z_TOP + 1, BOSS_PILOT, 16)
     return m
 
-# ============================================================ vents (fan behind the RS-15-5 blows -x through both boxes onto the LRS)
+# ============================================================ vents (the 4 fans behind the rear cross member blow -x through both boxes onto the LRS)
 VENT_W, VENT_PITCH = 2.5, 5.0             # vertical strip slots in both x walls of both boxes
 VENT_Z0 = FLOOR_Z + T + 2.0               # 2.0 above the floor top
 VENT_ZT = Z_TOP - 4.0                     # below the lid lip (z 56..58)

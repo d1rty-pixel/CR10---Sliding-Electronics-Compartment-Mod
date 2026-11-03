@@ -63,4 +63,5 @@ Das erste Skript ersetzt die Gruppen der Layer `Druckteile (gen)`, `Schlepp (gen
 | [docs/PLAN.md](docs/PLAN.md) | Aufgabenliste (In Arbeit / Offen / Blockiert) |
 | [docs/done/2026-11.md](docs/done/2026-11.md) | Archiv erledigter Aufgaben |
 | [docs/BOM.md](docs/BOM.md) | Stückliste (Profile, Zukauf, Druckteile; teilweise veraltet) |
+| [docs/HARDWARE.md](docs/HARDWARE.md) | Kaufteile-Stückliste (von Hand gepflegt: Elektronik, Lüfter, Mechanik, Schrauben) |
 | [CLAUDE.md](CLAUDE.md) | Projektanweisungen und Handoff-Hygiene |
