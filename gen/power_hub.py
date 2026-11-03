@@ -45,7 +45,7 @@ W_Y0 = RW[1] + 0.2                       # back of the WAGO
 W_Z0 = FLOOR_Z + T                        # standing on the floor
 
 ENTRY = (-109.0, -94.0, 27.0)             # chain cable (thin bracket exit x -108..-96, z 29..39)
-PE_SLOT = (-86.0, -78.0, 22.0)            # PE to the ring lug on the tray 2020 (x -74..-50, y 615, z 26)
+PE_SLOT = (-80.0, -74.0, 22.0)            # PE to the ring lug on the tray 2020; +x of the moving chain bracket (x <= -80.8)
 DUCT_WIN = (-140.0, -72.0, 17.5, 25.0)    # DC wires into the DC duct through its finger slots (z 16..25); bottom = hub floor top
 BOSS_R, BOSS_PILOT = 4.0, 2.8          # corner bosses concentric with the corner arcs, filled to the walls
 # (x, y, sx, sy): boss centre and the directions towards its two walls
