@@ -2,7 +2,7 @@
 
 Keine Aufgabe in Arbeit (Stand 2026-11-03).
 
-Nächste Aufgabe aus `docs/PLAN.md` („Offen“). Reihenfolge laut Absprache: T-026 (hintere Druckteile) -> T-016 (breite Kette). Offene Rückfragen stehen in den PLAN-Zeilen. Die DC-Kabelläufe (T-022) sind vertagt. `todo.md` (untracked) ist mit T-016/T-025/T-026/T-027 vollständig in PLAN übernommen.
+Nächste Aufgabe aus `docs/PLAN.md` („Offen“). Reihenfolge laut Absprache: T-026 (hintere Druckteile), danach Probedruck der Ketten auswerten (T-010). Offene Rückfragen stehen in den PLAN-Zeilen. Die DC-Kabelläufe (T-022) sind vertagt. `todo.md` (untracked) ist vollständig in PLAN übernommen.
 
 ## Nicht ändern
 - Keine Exporte; keine Commits/Push ohne Anweisung.

@@ -84,31 +84,31 @@ Farbe der Druckteile = Filament: rot 230 V, gelb 24/5 V, grün Daten/Bus, dunkel
 
 ## Kabelschleppketten
 
-Zwei Ketten, Obertrum fest an der Acrylplatte (Z 102), Untertrum am Tray, 180-Grad-Bogen vorn (−x). Platz Z 25..102 = 77. Kabel: Lapp ÖLFLEX FD 855 P 3G1,5 (siehe COMPONENTS). Bogenradius der Ketten liegt unter R_dyn 36,5 des Kabels (Datenblatt ungeprüft, PLAN T-004).
+Zwei Ketten, Obertrum fest an der Acrylplatte (Z 102), Untertrum am Tray, 180-Grad-Bogen vorn (−x). Platz Z 25..102 = 77. Kabel: Lapp ÖLFLEX FD 855 P 3G1,5 (siehe COMPONENTS). Bogenradius der Ketten (breit 24,75, dünn 28,35) liegt unter R_dyn 36,5 des Kabels (Datenblatt ungeprüft, PLAN T-004).
 
 | Parameter | Breit (`cable.py`) | Dünn (`cable_thin.py`) |
 |---|---|---|
 | Aufgabe | CAN, 24/5 V, Sensoren, USB, Netzwerk | 230 V |
 | Spur | Y 290..330, Mitte 310 (2040) | Mitte Y 615 (2020, Spur 605..627), Kette Y 606,1..623,9 |
-| Glieder / Teilung | 11 / 29,5 (= Bogenradius, 3 Glieder je 180°) | 12 / 26 |
+| Glieder / Teilung | 11 / 29,5 | 12 / 26 |
 | Plattenradius (Höhe) | 9 (18) | 7,5 (15) |
 | Plattendicke / Spalt Inner-Outer | 3,0 / 0,3 | 1,8 / 0,3 |
-| Innenmaß | 27,4 × ca. 12 | 10 × 10 |
+| Innenmaß | 27,4 × 12,5 (Balken Z −9..−6,5, Klammersteg ab Z 6) | 10 × 10 |
 | Außenbreite | 40 (\|y\| 20) | 17,8 |
-| Pivothöhe oben / unten | 92,5 / 34,5 | 91,4 / 34,7 (Bogenradius 28,35) |
+| Pivothöhe oben / unten | 87,25 / 37,75 (Bogenradius 24,75; gesucht: Glieder Z 25,2..101,8 in allen Lagen, gerade Trume 96,25 / 28,75) | 91,4 / 34,7 (Bogenradius 28,35) |
 | `X_MOVING_EXT` (bewegtes Ende, ausgefahren) | −83,5 | −128,5 (`X_SHIFT` 45) |
 | `X_FIXED` (festes Ende, Hubmitte) | 114,5 | 69,5 |
-| Anschlag (`STOP_H`) | 2,7 (gekürzt, Hülle) | = R (voll, eckig) |
-| Gelenk | Zapfen Ø4 hinten, Loch Ø4,4 + Schlitz 3,6 zur Deckelseite | Steg X 12,5..15,5, Balken Z −7,5..−5,5 |
-| Glied | Kopie von `Chain Link (new)` (`chain_link_user.json`; Zapfen X −3,5, Loch X 26), Anschlagecken zurückgeschnitten, Außennuten für Klammer | parametrisch nach gleichem Schema (R 9 → 7,5) |
-| Klammer (`lid()`) | U-Klammer außen über die Backen, Arme 1,5 × 3,7, Haken 0,8 in Außennut; Basis `LID_BASE_Z` 80,7..83,3 ragt unter das Glied | Bogen 1,8 bündig in Nut der Innenplatten (Kerbe X 8,3..12,2), ganz in der Gliedhülle |
-| Scharnier-Check | kein Sweep-Check | `hinge_sweep`: 0..60° frei (Bogen braucht 54,6), Anschlag bei −1,5° |
-| Druck | Glieder stehend auf der Unterkante, Klammer Boden unten, ohne Support | wie breit |
+| Anschlag (`STOP_H`) | = R (voll, eckig) | = R (voll, eckig) |
+| Gelenk | Zapfen Ø4 hinten, Loch Ø4,4 + Schlitz 3,6 zur Deckelseite; Steg X 14,5..17,5, Balken 2,5 | Steg X 12,5..15,5, Balken Z −7,5..−5,5 |
+| Glied | gemeinsamer Code `chain_link.Link` (Schema von `Chain Link (new)`, `chain_link_user.json`), Parametersatz breit | `chain_link.Link`, Parametersatz dünn |
+| Klammer (`lid()`) | Bogen 2,0 bündig in Kerbe der Innenplatten (X 9,8..14,2), Arme 1,5, Haken 0,8 in Nut Z 1,5..4,0; ganz in der Gliedhülle | Bogen 1,8 bündig in Nut der Innenplatten (Kerbe X 8,3..12,2), ganz in der Gliedhülle |
+| Scharnier-Check | `hinge_sweep`: 0..78° frei (Bogen braucht 73,2), Anschlag bei −1,5° | `hinge_sweep`: 0..60° frei (Bogen braucht 54,6), Anschlag bei −1,5° |
+| Druck | Glieder stehend auf dem Balken (Platten senkrecht), Klammer mit dem Bogen auf dem Bett, ohne Support | wie breit |
 
 **X_SHIFT** der dünnen Kette (45 mm nach vorn): ihr Kabelaustritt landet auf dem Power-Hub (Eingang X −109..−94). Bogenfront eingefahren in Tray-Koordinaten −379,0 (Frontplatte −383, nur ca. 4 mm; Check verlangt >= −380 bzw. `DRAWER_FRONT_IN` + 3).
 
 **Endhalter** (Layer `Schlepp (gen)`):
-- breit fest: Gabel um Pivot X 114,5 / Z 92,5, 2 M3 durch die Acrylplatte in Mutterntaschen, Trichter 27 → 16 mm in den (noch nicht gebauten) festen Kanal; für das Kabelbündel zu eng (PLAN T-013). Breit beweglich: Zapfenzunge auf dem 2040 (2 M3 in Hammermuttern, Y 300/320), Kabel in Viertelkurve (Mittellinie R 24 > R_fest 22, Nut 18 breit, 14 tief) durch die +y-Fläche in den Datenkanal (X −60..−35), Austritt Z ca. 27–37.
+- breit fest: Gabel (`Link.fork`) um Pivot X 114,5 / Z 87,25, Körper ab X +12 (Gegenstück zum Innenplatten-Anschlag), 2 M3 durch die Acrylplatte in Mutterntaschen, Trichter ab Z 83,25, 27 → 16 mm in den (noch nicht gebauten) festen Kanal; für das Kabelbündel zu eng (PLAN T-013). Breit beweglich: Zapfenzunge (`Link.tongue`) auf dem 2040, Körper ab X +9,2 (Gegenstück zur Außen-Anschlagecke), 2 M3 in Hammermuttern (Y 300/320), Kabel in Viertelkurve (Mittellinie R 24 > R_fest 22, Nut 18 breit, Boden Z 31,25 = Balkenoberkante) durch die +y-Fläche in den Datenkanal (X −60..−35), Austritt Z 31,25..46,75.
 - dünn fest: Gabel um Pivot X 69,5 / Z 91,4, 2 M3 von oben bei Y 607 (< 618), Tunnel 10 breit. Dünn beweglich: Zunge + Körper auf dem 2020, 2 M3 in Hammermuttern Y 615, Viertelkreis-Nut R 24 / 9,6 breit nach −y; Kabelaustritt X −108..−96, Z 29..39 (zum Hub-Eingang).
 
 ## Fester Kanal der dünnen Kette (`Thin Channel`)

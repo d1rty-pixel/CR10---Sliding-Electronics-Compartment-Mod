@@ -1,14 +1,13 @@
 """Thin 230 V drag chain on the far side of the tray (high y, 2020 at y 605..625), its end brackets and the fixed channel.
 
-Parametric link (not a scaled copy of the user link): pins on the rear (inner) plates, hole + snap slot in the front (outer)
-plates, joggle web between them, short closed bar on the outer side of the bend, open inner side closed by an outer U clamp.
-Chain frame: x along the chain, rear pivot at the origin, front pivot at (PITCH, 0, 0), bar on -z, open side +z.
+Link and clamp: chain_link.Link (shared with the wide chain), thin parameter set.
 """
 import math
 import numpy as np
 from manifold3d import Manifold, CrossSection
 import cable
-from cable import box, cyl_z, hex_z, _ccw, _plate_y, _prism_x
+from cable_base import box, cyl_z, hex_z, _ccw, _plate_y, _prism_x
+from chain_link import Link
 
 # ============================================================ placement (world mm)
 CHAIN_Y = 615.0                      # slot centre of the 2020 on the tray; outer rail of the far slide starts at y 627
@@ -22,105 +21,25 @@ X_MOVING_EXT = cable.X_MOVING_EXT - X_SHIFT
 TRAVEL = cable.TRAVEL
 X_FIXED = cable.X_FIXED - X_SHIFT    # still the middle of the travel
 
-# ============================================================ link
-# Same scheme as the user component "Chain Link (new)" (data/chain_link_user.json, pitch 29.5, R 9), scaled by rule, not by stretching:
-# inner plates (pins at the rear pivot) run to the front face of the web; on the bar half they reach back behind the pivot and stop
-# against the web of the previous link. Outer plates (hole at the front pivot) are square at the front on the bar half and stop
-# against the stepped rear of the next outer plate (bar half starts at R + 0.2 behind its pivot, open half only at the web);
-# that step leaves the clamp window on the open side. Square stop corners are kept only STOP_H high (envelope in the arc).
-Y_IN = 5.0                           # inner clear width 10
-T = 1.8                              # plate thickness
-GAP = 0.3
-Y_INNER = (Y_IN, Y_IN + T)                          # inner plates with pins, 5.0..6.8
-Y_GAP = (Y_INNER[1], Y_INNER[1] + GAP)              # filled only on the bar half and at the web
-Y_OUTER = (Y_GAP[1], Y_GAP[1] + T)                  # outer plates with hole, 7.1..8.9
-W0, W1 = 12.5, 15.5                  # web (user: 14.5..17.5 at pitch 29.5 = pitch - 15 .. pitch - 12)
-OUT_GAP, IN_GAP = 0.2, 0.1           # stop clearances as on the user component
-O0 = R + OUT_GAP                     # rear of the outer plate on the bar half
-INNER_EXT = PITCH - W1 - IN_GAP      # inner plate behind the pivot on the bar half (10.4)
-BAR = (2.5, W0 - 0.5, -R, -R + 2.0)  # closed bar between the inner plates, z -7.5..-5.5 -> clear height to the lid 10
-STOP_H = R                           # square stop corners over the full bar half (anti-sag) as on the user component
-PIN_D, HOLE_D, SLOT_W = 4.0, 4.4, 3.6
-PIN_Y = (Y_INNER[1] - 0.8, Y_OUTER[1] - 0.4)
-
-def _plate(cs, yr):
-    m = Manifold()
-    for y0, y1 in ((yr[0], yr[1]), (-yr[1], -yr[0])): m = m + _plate_y(cs, y0, y1)
-    return m
-
-def _circ(x, z, r, seg=48):
-    return CrossSection.circle(r, seg).translate((x, z))
-
-def _rect(x0, x1, z0, z1):
-    return CrossSection.square((x1 - x0, z1 - z0)).translate((x0, z0))
-
-def _pins(x, z):
-    m = Manifold()
-    for s in (-1, 1):
-        ya, yb = s * PIN_Y[0], s * PIN_Y[1]
-        m = m + cable.cyl_y(x, z, min(ya, yb), max(ya, yb), PIN_D)
-    return m
-
-def _hole_cs(x, z, slot=+1):
-    sl = _rect(x - SLOT_W / 2, x + SLOT_W / 2, z if slot > 0 else z - R - 1, z + R + 1 if slot > 0 else z)
-    return _circ(x, z, HOLE_D / 2, 24) + sl
-
-def _inner_cs(px=0.0, x1=W1):
-    return _circ(px, 0, R) + _rect(px, x1, -R, R) + _rect(px - INNER_EXT, px, -STOP_H, 0)
-
-def _outer_cs(px, x0_bar, x0_open):
-    """outer plate around the pivot px (hole); bar half from x0_bar, open half from x0_open, square stop corner in front"""
-    return (_rect(x0_bar, px, -R, 0) + _rect(x0_open, px, 0, R) + _circ(px, 0, R) + _rect(px, px + R, -STOP_H, 0)) - _hole_cs(px, 0, +1)
-
-# clamp window on the open half, outer face of the inner plates: between the round end of the previous outer plate and the own web
-CLAMP_X = (R + 0.8, W0 - 0.3)
-GROOVE_Z, GROOVE_D = (1.2, 3.2), 0.6
-CAP_T, CAP_FIT = 1.8, 0.2            # clamp bow sunk into a notch in the open edge of the inner plates, flush with the link
-CAP_Z = (R - CAP_T, R)
+# ============================================================ link (shared code: chain_link.Link, thin parameter set)
+LINK = Link(R=R, pitch=PITCH, y_in=5.0, t=1.8, w0=12.5, w1=15.5)   # inner clear width 10, web 12.5..15.5 (user: pitch - 15 .. - 12)
+Y_IN, T = LINK.Y_IN, LINK.T
+Y_INNER, Y_GAP, Y_OUTER = LINK.Y_INNER, LINK.Y_GAP, LINK.Y_OUTER     # 5.0..6.8 / 6.8..7.1 / 7.1..8.9
+W0, W1, O0, INNER_EXT, STOP_H = LINK.W0, LINK.W1, LINK.O0, LINK.INNER_EXT, LINK.STOP_H
+CLAMP_X, CAP_Z = LINK.CLAMP_X, LINK.CAP_Z
+_circ, _rect, _hole_cs, _plate, _pins = LINK.circ, LINK.rect, LINK.hole_cs, LINK.plate, LINK.pins
 
 def link():
-    """built from y slabs whose (x, z) sections meet exactly: unions of coplanar outer faces of mixed primitives leave slivers"""
-    web = _rect(W0, W1, -R, R)
-    m = _plate_y(_rect(*BAR), -Y_IN, Y_IN)
-    m = m + _plate(_inner_cs(), Y_INNER) + _plate(_rect(O0, W0, -R, 0) + web, Y_GAP) + _plate(_outer_cs(PITCH, O0, W0) + web, Y_OUTER)
-    m = m + _pins(0, 0)
-    for s in (-1, 1):
-        y0, y1 = sorted((s * (Y_INNER[1] - GROOVE_D), s * (Y_INNER[1] + 0.2)))
-        m = m - box(CLAMP_X[0], CLAMP_X[1], y0, y1, GROOVE_Z[0], GROOVE_Z[1])
-    return m - box(CLAMP_X[0], CLAMP_X[1], -Y_INNER[1] - 0.5, Y_INNER[1] + 0.5, CAP_Z[0] - CAP_FIT, R + 1)
-
-# ---- lid: U clamp over the open side, arms on the outer face of the inner plates inside the clamp window, hooks in the grooves
-ARM_Y = (Y_INNER[1] + 0.2, Y_INNER[1] + 1.4)        # 7.0..8.2, within the outer plate width
-STUB_Z = (R - 3.0, CAP_Z[0])                        # closes the opening between the inner plates, clear height 10 below it
-ARM_Z0 = 1.0
+    return LINK.link()
 
 def lid():
-    """constant section along x: built as one (y, z) cross-section and extruded once (no coplanar unions of separate solids)"""
-    x0, x1 = CLAMP_X[0] + CAP_FIT, CLAMP_X[1] - CAP_FIT
-    sq = lambda y0, y1, z0, z1: CrossSection.square((y1 - y0, z1 - z0)).translate((y0, z0))
-    cs = sq(-ARM_Y[1], ARM_Y[1], CAP_Z[0], CAP_Z[1]) + sq(-(Y_IN - 0.2), Y_IN - 0.2, STUB_Z[0], CAP_Z[0] + 0.1)
-    for s in (-1, 1):
-        ya, yb = sorted((s * ARM_Y[0], s * ARM_Y[1]))
-        cs = cs + sq(ya, yb, ARM_Z0, CAP_Z[1])
-        yi, yt = s * (ARM_Y[0] + 0.5), s * (Y_INNER[1] - GROOVE_D + 0.1)    # hook tip 0.1 short of the groove bottom
-        hook = [(yi, GROOVE_Z[0] + 0.2), (yt, GROOVE_Z[0] + 1.1), (yt, GROOVE_Z[1] - 0.2), (yi, GROOVE_Z[1] - 0.2)]   # ramp leads, flat face retains
-        cs = cs + CrossSection([_ccw(hook)])
-    return Manifold.extrude(cs, x1 - x0).transform(np.array([[0, 0, 1, x0], [1, 0, 0, 0], [0, 1, 0, 0]], dtype=float))
-
-def _bent(m, phi_deg):
-    """m as the next link, pivot (PITCH, 0, 0), bent by phi towards the open side (+z)"""
-    c, s = math.cos(math.radians(phi_deg)), math.sin(math.radians(phi_deg))
-    return m.transform(np.array([[c, 0, -s, PITCH], [0, 1, 0, 0], [s, 0, c, 0]]))
+    return LINK.lid()
 
 def hinge_sweep(max_deg, step=1.0):
-    """(first angle in 0..max_deg where two neighbours incl. clamps collide or None, stop engages within -1.5 deg)"""
-    a = link() + lid()
-    for k in range(int(max_deg / step) + 1):
-        if (a ^ _bent(a, k * step)).volume() > 1e-3: return k * step, None
-    return None, (link() ^ _bent(link(), -1.5)).volume() > 1e-3
+    return LINK.hinge_sweep(max_deg, step)
 
 def lid_print():
-    return lid().rotate((180, 0, 0))
+    return LINK.lid_print()
 
 def chain_links(x_m):
     P, xc = cable.chain_pivots(x_m, n=N_LINKS, x_f=X_FIXED, chp=PITCH, zu=ZU, zl=ZL)

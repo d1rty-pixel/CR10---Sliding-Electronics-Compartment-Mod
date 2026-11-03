@@ -9,8 +9,10 @@ Ein parametrischer Python-Generator (`manifold3d`) ist die einzige Quelle der Ge
 | Pfad | Inhalt |
 |---|---|
 | `gen/cr10mod.py` | Generator-Hauptmodul: Rahmenkonstanten, Blenden/Plugs/Paneele, Teileliste `parts()`, Checks (`build --check`), STL-/JSON-Ausgabe |
-| `gen/cable.py` | breite Schleppkette (Glied nach Nutzerkomponente, Klammer, feste/bewegliche Endhalter) |
-| `gen/cable_thin.py` | dünne 230-V-Kette (parametrisches Glied, Klammer, Halter) und fester L-Kanal unter der Acrylplatte |
+| `gen/cable.py` | breite Schleppkette (Parametersatz, Bahn, feste/bewegliche Endhalter) |
+| `gen/chain_link.py` | gemeinsames parametrisches Kettenglied + Klammer + Halter-Schnittstellen (Gabel, Zunge) für beide Ketten |
+| `gen/cable_base.py` | kleine Geometrie-Helfer (box, Zylinder, Prismen) |
+| `gen/cable_thin.py` | dünne 230-V-Kette (Parametersatz, Halter) und fester L-Kanal unter der Acrylplatte |
 | `gen/tray.py` | Tray-Teile: DC- und Datenkanal mit Deckeln, DIN-Wiegen und -Halter (Netzteile, Octopus, Pi) |
 | `gen/power_hub.py` | Power-Hub zwischen den Netzteilen: rote 230-V-Box und gelbe DC-Box mit Deckeln, WAGO-Taschen |
 | `gen/cadio.py` | Mesh-Export (Polygonflächen für IngeTrazo, STL) |
@@ -18,7 +20,7 @@ Ein parametrischer Python-Generator (`manifold3d`) ist die einzige Quelle der Ge
 | `gen/vendor_import.py` | IngeTrazo-Skript: platziert Hersteller-Modelle aus `build/vendor/` (Layer `Electronics (vendor)`) |
 | `gen/step_to_mesh.py` | Konverter STEP -> `build/vendor/*.json` (eigenes venv mit `cadquery-ocp`) |
 | `gen/bom_document.py` | IngeTrazo-Skript: erzeugt `docs/BOM.md` aus Dokument und `build/parts.json` (veraltet, siehe PLAN) |
-| `gen/data/` | `side_cover_mount.json` (Originalclip), `chain_link_user.json` (Nutzerglied der breiten Kette) |
+| `gen/data/` | `side_cover_mount.json` (Originalclip), `chain_link_user.json` (Nutzerglied, Vorlage des Schemas; von keinem Code gelesen) |
 | `model/CR10-Sliding-Electronics-Compartment-Mod.igz` | IngeTrazo-Dokument: Rahmen, Kaufteile (Profile, Schienen, Netzteile, Platinen, WAGO), Handbau-Teile und importierte Druckteile |
 | `build/parts.json` | Druckteile in Einbaulage (für IngeTrazo), erzeugt, nicht im Repo |
 | `build/stl/` | STLs in Drucklage, erzeugt, nicht im Repo |

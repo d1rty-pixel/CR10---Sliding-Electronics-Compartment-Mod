@@ -262,10 +262,11 @@ def run_checks():
         hb = dict(inst)[f"Fan Holder {k + 1}"].bounding_box()
         rep(f"Fan Holder {k + 1} y {hb[1]:.1f}..{hb[4]:.1f} (330.4..603), z top {hb[5]:.1f} (<= 83.5, thin channel 86.5)",
             hb[1] >= 330.4 and hb[4] <= 603.0 and hb[5] <= 83.5)
-    arc = math.degrees(2 * math.asin(thin.PITCH / (thin.ZU - thin.ZL)))
-    hit, stop = thin.hinge_sweep(arc + 5.0)
-    rep(f"thin hinge incl. clamps free from 0 to {arc + 5.0:.0f} deg (arc needs {arc:.1f}){'' if hit is None else f': collision at {hit:.0f} deg'}", hit is None)
-    rep("thin hinge: stop engages against bending outwards (collision at -1.5 deg)", bool(stop))
+    for mod, tag, pitch, zu, zl in ((thin, "thin", thin.PITCH, thin.ZU, thin.ZL), (cable, "wide", cable.CHP, cable.CHAIN_ZU, cable.CHAIN_ZL)):
+        arc = math.degrees(2 * math.asin(pitch / (zu - zl)))
+        hit, stop = mod.hinge_sweep(arc + 5.0)
+        rep(f"{tag} hinge incl. clamps free from 0 to {arc + 5.0:.0f} deg (arc needs {arc:.1f}){'' if hit is None else f': collision at {hit:.0f} deg'}", hit is None)
+        rep(f"{tag} hinge: stop engages against bending outwards (collision at -1.5 deg)", bool(stop))
     poses = [(cable, "wide", xm) for xm in (cable.X_MOVING_EXT, cable.X_MOVING_EXT + cable.TRAVEL / 2, cable.X_MOVING_EXT + cable.TRAVEL)]
     poses += [(thin, "thin", xm) for xm in (thin.X_MOVING_EXT, thin.X_MOVING_EXT + thin.TRAVEL / 2, thin.X_MOVING_EXT + thin.TRAVEL)]
     for mod, tag, xm in poses:
