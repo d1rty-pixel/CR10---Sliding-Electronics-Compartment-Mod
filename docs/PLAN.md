@@ -8,16 +8,14 @@ Legende: ID `T-nnn` fortlaufend, nie wiederverwendet. Tabellen: **In Arbeit** (a
 
 ## In Arbeit
 
-| ID | Aufgabe | Details / Akzeptanz | Abhängigkeit / Entscheidung |
-|---|---|---|---|
-| T-001 | Kabelrouten als modellierte Litzen (`gen/wiring.py`) | Neues Modul, Rohre entlang geglätteter Pfade (Parallel-Transport, 12 Segmente, Kappen, Manifold), Layer `Kabel (gen)`, nicht als STL, nicht im Kollisionstest der Druckteile, aber eigener Check Litzen vs Druckteile (Wände/Deckel nicht durchstoßen). Routen und Farben siehe HANDOFF. Biegeradien >= 4 × D. Akzeptanz: `build --check` ok, Import ok, Sichtprüfung, keine Durchstoßung. **Stand 2026-11-03:** 230 V fertig (Mantel + 10 Adern, Checks grün, Import ok; Knick an LRS FG, RS FG, RS N nach Nutzerentscheidung; `PE_SLOT` nach X −80..−74 verschoben). Offen: DC-Routen | Octopus-Klemmenlage ungeprüft (T-003), Abnahme durch Nutzer (Schleifen einiger Adern, T-021) |
+_keine_
 
 ## Offen
 
 | ID | Aufgabe | Details / Akzeptanz | Abhängigkeit / Entscheidung |
 |---|---|---|---|
 | T-002 | Lüfterhalter Pi/Octopus und Lüfterposition | Halterfüße (Z 30..33) schweben nach dem Verschieben (Octopus-Lüfter X −312..−302 / Y 382..422, Pi-Lüfter X −102..−62 / Y 432..442, mit dem Pi +22 Y verschoben); ggf. als Generator-Teil auf DIN neu. Danach Lüfterposition festlegen, `Side Panel Fan60` platzieren; Kollisionsprüfung Halterfüße gegen Wanne | – |
-| T-003 | Anschlusslagen verifizieren | Octopus-Klemmen (X ca. −145, Y 370..445), PCB-Unterseite z −1,6, Pi-Anschlüsse gegen Datenblatt/STEP prüfen | vor Abnahme T-001 |
+| T-003 | Anschlusslagen verifizieren | Octopus-Leistungsklemmen J67 erledigt (2026-11-03, Lage + Belegung in `docs/COMPONENTS.md`). Offen: PCB-Unterseite z −1,6, Pi-GPIO (5 V Pin 2/4, GND Pin 6) im STEP lokalisieren | vor T-022 |
 | T-004 | Biegeradien gegen Lapp-Datenblatt prüfen | R_fest 22 / R_dyn 36,5 aus Notiz; Kette breit R 29, dünn R 28,35, Viertelkurven R 24 in den Haltern. Ergebnis in `docs/COMPONENTS.md`; falls R_dyn gilt: Radius/Pivot/Kabelwahl neu | – |
 | T-005 | Bogenfront dünne Kette zur Frontplatte | eingefahren −379,0 in Tray-Koordinaten gegen Frontplatte −383 (ca. 4 mm, Check >= −380); prüfen, ob Reserve reicht, sonst `X_SHIFT` anpassen | – |
 | T-006 | Fahrsimulation Schienen/Tray, Kollision gegen Dokument | Fern-Schienen folgen Nah per Skript; Kollision Tray-Teile gegen Dokument bisher nur per Bbox | – |
@@ -26,9 +24,9 @@ Legende: ID `T-nnn` fortlaufend, nie wiederverwendet. Tabellen: **In Arbeit** (a
 | T-009 | Befestigung Kanäle in die Wannenplatte | DC-/Datenkanal: M3 in `Gruppieren#15` (Material unbekannt), Bohrungen nötig; Hub-Boxen sitzen auf den Hutschienen R1a/R1b (erledigt) | Material klären |
 | T-010 | Probedrucke und Tests | Breite Kette: Klammer-Rastkräfte, Zapfen, Brücke/Überhänge; dünne Kette: Schnappgelenk, Klammer (3,2–3,5 breit, Haken 0,6), Überhänge Anschlagecken, Austritt Z 29..39; Durchhang freies Obertrum (breit ca. 217 mm, evtl. Rampe am Tray-Querprofil X 31–51); Hub-/Kanaldeckel (Rastwulst), DIN-Clips mit Federschieber (Print-in-Place: Spalte 0,4/0,5 lösen sich?, Federweg 1,5, Dehnung der Stege 0,6, Rastkraft, Lösen per Schraubendreher, Passung EN 50022; Hub-Boxen werden stehend gedruckt, Wiegen liegend), IEC-Snap-in auf 1,0-mm-Rand | Druckteile vorhanden |
 | T-011 | BOM aktualisieren | `gen/bom_document.py` kennt Ketten, Kanäle, Tray-Teile, Elektronik nicht; erweitern, `docs/BOM.md` neu erzeugen (Schrauben/Nutensteine nicht im Modell) | – |
-| T-012 | Skizzenlayer `Kabelweg (Skizze)` löschen | ausgeblendet, veraltet, keine Geometriequelle | nach T-001 |
-| T-020 | Tray-PE-Öse im Dokument an die Litze anpassen | Litze endet bei X −63, Y 615, Z 26,6 (Hülse des Kabelschuhs), Öse bisher X −74..−50; Kaufteil im Dokument verschieben/drehen | – |
-| T-021 | 230-V-Routen glätten, Router ins Repo | Stützpunkte stammen aus einer Offline-Strafkostensuche (Scratch-Skript, nicht im Repo); mehrere Adern machen große Schleifen (u. a. PE Kette, PE Tray, PE RS, L LRS), weil R ≥ 12 im Hub eng ist. Router als `gen/tools/` übernehmen und Routen von Hand/mit Längengewicht nachziehen | Abnahme T-001 |
+| T-012 | Skizzenlayer `Kabelweg (Skizze)` löschen | ausgeblendet, veraltet, keine Geometriequelle | nach T-022 |
+| T-022 | Kabelläufe als Litzen neu (`gen/wiring.py`) | Vom Nutzer vertagt (2026-11-03). Alle Routen neu, auch 230 V: die Litzen wurden gelöscht, weil Netzteile und Hub-Boxen verschoben sind (Stützpunkt-Skripte in `.claude/router/` passen nicht mehr). 230 V: Kette -> WAGO -> LRS/RS, PE zur Tray-Öse (Öse im Dokument X −74..−50, Y 615 an die Litze anpassen). DC: LRS 3 Paare (−V Y 552,25/542,75/533,25, +V 523,75/514,25/504,75) -> Octopus J67 MOTOR_POWER/POWER/BED_POWER (Lage und Belegung in `docs/COMPONENTS.md`); RS-Paar (−V 553,1, +V 545,5) -> Pi GPIO 5 V; Netzteil-Lüfter (T-024); durch `DUCT_WIN` (X −140..−72, Z 17,5..25) in den DC-Kanal (Y 453..473). Problem: nur 13,4 mm zwischen J67-Front (X −139,1) und Pi (X −125,7); Optionen: 90°-Bogen R ≈ 12 nach ±Y, Pi nach +X verschieben (dann T-002), oder R < 12 am Klemmenknick erlauben. Gleiche Checks wie zuvor | Nutzerentscheidung Platz vor J67; T-003 (Pi-GPIO) |
+| T-024 | Netzteil-Lüfter festlegen und Luftweg prüfen | 40 × 40 × 10 auf `PSU Fan Holder`: Typ/Spannung (24 V vom LRS oder 5 V vom RS) wählen, Lochbild 32 × 32 / M3 gegen Datenblatt prüfen, Probelauf: erreicht die Luft durch die Schlitze das LRS-350? Blasrichtung des LRS-eigenen Lüfters prüfen (nicht gegeneinander) | – |
 
 ## Blockiert / Entscheidung Nutzer
 

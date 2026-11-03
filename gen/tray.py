@@ -4,13 +4,14 @@ Separation: mains only inside the red hub box (power_hub.py: WAGO 221-413 for L 
 low voltage DC in the yellow hub box and the yellow duct, data and bus lines in the green duct along the wide chain. Purchased parts
 (PSUs, Pi, Octopus, WAGO, rails, lugs) are models in the document (layers "Electronics (neu)" / "Electronics (vendor)").
 
-Layout along x on the high-y side (tray inside x -379..31): LRS-350 x -364..-149 (terminals +x), hub x -148.5..-63.5,
-RS-15-5 x -63..12 (terminals -x, y 530.8..581.8), 19 mm to the rear cross member.
+Layout along x on the high-y side (tray inside x -378.8..31.2): LRS-350 x -373.75..-158.75 (terminals +x), hub x -158.25..-49,
+RS-15-5 x -48.5..26.06 (terminals -x, y 530.8..581.8), about 5 mm to the drawer frame / rear cross member (hub.LRS_DX / RS_DX).
+A 40 x 40 x 10 fan on the rear cross member (2020 L=334 #1) blows -x over the RS-15-5 and through the vented hub boxes.
 """
 import math
 import numpy as np
 from manifold3d import Manifold, CrossSection
-from cable import box, cyl_z, _ccw
+from cable import box, cyl_z, _ccw, _plate_y
 import power_hub as hub
 
 FLOOR_Z = 5.0                        # top of the tray floor plate
@@ -158,7 +159,8 @@ def psu_cradle(xc, y0=473.0, y1=592.0, top=25.0, lip=8.0, w=20.0):
         m = m - release_cut(xc, rail, top + 1)
     return m
 
-PSU5_CRADLE_X = (-44.0, 0.0)          # two narrow saddles under the RS-15-5 body (x -52..12), 8 in from x -50..6
+PSU5_CRADLE_X = (-44.0 + hub.RS_DX, 2.0)   # two narrow saddles under the RS-15-5 body (x -37.5..26.06); the second stays on the
+                                          # power rails (end x 9): x -4..8
 PSU5_CRADLE_W = 12.0
 
 def psu5_cradle(xc):
@@ -186,6 +188,41 @@ def pi_holder():
     for xc in (x0 + 10.0, x1 - 10.0): m = m - release_cut(xc, RAIL_R2, 20.0)
     return m
 
+# ============================================================ PSU fan on the rear cross member
+# 2020 L=334 #1 (document): x 31.2..51.2, y 290.8..624.8, z 5..25, top slot centre x 41.2.
+# Fan 40 x 40 x 10 (bought, in the document), axis x, blowing -x; centred on the RS-15-5 (y 556.3), standing on the foot.
+# Hole pattern 32 x 32 for M3 (assumption: usual 4010 frame, not checked against a data sheet).
+PROFILE_X, PROFILE_TOP = (31.2, 51.2), 25.0
+FAN = dict(size=40.0, depth=10.0, pitch=32.0, hole=3.4, bore=38.0, yc=556.3)
+FAN_FOOT_T, FAN_PLATE_T = 3.0, 3.0
+FAN_X0 = 33.0                         # fan -x face (RS ends x 26.06); the plate sits on its +x (intake) side
+FAN_SCREWS_Y = (FAN["yc"] - 32.0, FAN["yc"] + 32.0)   # M5 + T-nut in the top slot, outside the fan and the gussets
+
+def fan_box():
+    """(x0, x1, y0, y1, z0, z1) of the fan body"""
+    h = FAN["size"] / 2; z0 = PROFILE_TOP + FAN_FOOT_T
+    return (FAN_X0, FAN_X0 + FAN["depth"], FAN["yc"] - h, FAN["yc"] + h, z0, z0 + FAN["size"])
+
+def fan_holder():
+    """foot on the cross member (2 x M5 into the top slot), upright plate behind the fan (bore + 4 x M3), 2 gussets"""
+    fx0, fx1, fy0, fy1, fz0, fz1 = fan_box()
+    ys = FAN_SCREWS_Y
+    foot = box(PROFILE_X[0], PROFILE_X[1], ys[0] - 6.0, ys[1] + 6.0, PROFILE_TOP, fz0)
+    px0, px1 = fx1, fx1 + FAN_PLATE_T
+    plate = box(px0, px1, fy0 - 3.0, fy1 + 3.0, fz0 - 1.0, fz1)
+    m = foot + plate
+    for y0 in (fy0 - 3.0, fy1):                                    # triangular gussets behind the plate, outside the fan
+        tri = CrossSection([_ccw([(px1 - 1.0, fz0 - 1.0), (PROFILE_X[1], fz0 - 1.0), (px1 - 1.0, fz1 - 6.0)])])
+        m = m + _plate_y(tri, y0, y0 + 3.0)
+    yc, zc = FAN["yc"], (fz0 + fz1) / 2
+    m = m - _yz_prism(CrossSection.circle(FAN["bore"] / 2, 48).translate((yc, zc)), px0 - 1, px1 + 1)
+    for dy in (-1, 1):
+        for dz in (-1, 1):
+            m = m - _yz_prism(CrossSection.circle(FAN["hole"] / 2, 16).translate((yc + dy * FAN["pitch"] / 2, zc + dz * FAN["pitch"] / 2)), px0 - 1, px1 + 1)
+    for y in ys:
+        m = m - cyl_z((PROFILE_X[0] + PROFILE_X[1]) / 2, y, PROFILE_TOP - 1, fz0 + 1, 5.5, 24)
+    return m
+
 HUB_CLIP_X = ((hub.X0 + 6.0, hub.X0 + 20.0), (hub.X1 - 20.0, hub.X1 - 6.0))   # inside the R 6 corner arcs (latch end y 603.7)
 HUB_RELEASE_X = (hub.X0 + 17.0, hub.X1 - 17.0)           # release slots on the inner side of the clips, clear of the corner bosses
 
@@ -208,11 +245,12 @@ def parts():
            ("DC Hub Lid", COL_DC, hub.dc_lid(), flip(hub.dc_lid())),
            ("DC Duct", COL_DC, dc_duct(), dc_duct()), ("DC Duct Lid", COL_DC, dc_lid(), flip(dc_lid())),
            ("Data Duct", COL_DATA, data_duct(), data_duct()), ("Data Duct Lid", COL_DATA, data_lid(), flip(data_lid()))]
-    for k, xc in enumerate((-339.0, -174.0)):                # 25 mm in from the LRS-350 ends (x -364..-149)
+    for k, xc in enumerate((-339.0 + hub.LRS_DX, -174.0 + hub.LRS_DX)):   # 25 mm in from the LRS-350 ends
         m = psu_cradle(xc); out.append((f"DIN PSU24 Cradle {k + 1}", COL_DIN, m, side(m)))
     for k, xc in enumerate(PSU5_CRADLE_X):
         m = psu5_cradle(xc); out.append((f"DIN PSU5 Cradle {k + 1}", COL_DIN, m, side(m)))
     for k, xh in enumerate((-295.0, -145.0)):
         m = octopus_holder(xh); out.append((f"DIN Octopus Holder {k + 1}", COL_DIN, m, side(m)))
     m = pi_holder(); out.append(("DIN Pi Holder", COL_DIN, m, side(m)))
+    m = fan_holder(); out.append(("PSU Fan Holder", COL_DIN, m, m))
     return out

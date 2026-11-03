@@ -62,9 +62,11 @@ Nicht gedruckt (Kaufteile): Profile, Schienen, Hutschienen, Alu-Eckverbinder (Dr
 
 | Element | X | Y | Z | Anmerkung |
 |---|---|---|---|---|
-| LRS-350-24 (Vendor/Platzhalter) | −364..−149 | 475..590 | 25..55,9 | Klemmen +X; DIN-Wiegen bei X −339/−174 (20 breit) |
-| Power-Hub (Basis) | −148,5..−63,5 | 475..604 | 5..58 | rot Y 557..604, gelb Y 475..557 |
-| RS-15-5 | −63..12 | 530,8..581,8 | 25..53 | Klemmen −X; 2 Wiegen X −50..−38 / −6..6, Y 528,8..583,8; 19 mm bis Querholm |
+| LRS-350-24 (Vendor/Platzhalter) | −373,75..−158,75 | 475..590 | 25..55,9 | Klemmen +X; 5,05 mm zum Auszugrahmen (X −378,8); DIN-Wiegen bei X −348,75/−183,75 (20 breit) |
+| Power-Hub (Basis) | −158,25..−49 | 475..604 | 5..58 | rot Y 557..604, gelb Y 475..557 |
+| RS-15-5 | −48,5..26,06 | 530,8..581,8 | 25..53 | Klemmen −X; 2 Wiegen X −35,5..−23,5 / −4..8 (zweite bleibt auf den Schienen, Ende X 9), Y 528,8..583,8; 5,14 mm bis Querholm (X 31,2) |
+| Lüfter 40 × 40 × 10 (Kaufteil, Dokument) | 33..43 | 536,3..576,3 | 28..68 | Achse X, bläst −X über das RS-15-5 in die Hub-Boxen; steht auf `PSU Fan Holder` |
+| `PSU Fan Holder` (gen) | 31,2..51,2 | 518,3..594,3 | 25..68 | Fuß auf dem Querholm `2020 L=334 #1` (Oberkante Z 25), 2 × M5 + Nutenstein in der oberen Nut (X 41,2, Y 524,3 / 588,3); Platte X 43..46 auf der Ansaugseite mit Ø38-Öffnung und 4 × Ø3,4 auf 32 × 32 (**Annahme**: übliches 4010-Lochbild), 2 Stützrippen |
 | BTT Octopus | −300..−140 | 352..452 | PCB-Unterkante 31 | Einspeisung/Heizer +X oben, USB-C +X unten, Motor/Sensor unten (ungefähr, ungeprüft); DIN-Halter X −295/−145 |
 | Raspberry Pi 4 | −125..−40 | 374..430 (Lochmitte 402 = R2) | PCB-Unterkante 31 | Ports +X, USB-C −Y, GPIO +Y; Halter X −125..−60, Y 374..430 |
 | DC-Kanal (gelb) | −300..−45 | Mitte 463 (453..473) | 5..25 | 20 × 20, Deckel über volle Länge, Fingerschlitze (Raster 10) |
@@ -75,7 +77,7 @@ Nicht gedruckt (Kaufteile): Profile, Schienen, Hutschienen, Alu-Eckverbinder (Dr
 | PE-Öse Tray | −74..−50 | 615 (auf 2020) | ca. 26 | siehe PE-Erdung |
 | PE-Öse Rahmen | 525 | 570 | – | siehe PE-Erdung |
 
-DIN-Teile (`tray.py`, Clips für EN 50022 35 × 7,5, Rail-Oberkante Z 12,5): `DIN PSU24 Cradle 1/2` (20 breit), `DIN PSU5 Cradle 1/2` (12 breit, X −50..−38 und −6..6), `DIN Octopus Holder 1/2` (Balken unter einer Lochspalte, Lochraster 150 × 90), `DIN Pi Holder` (Löcher 58 × 49, M2,5). Clips (`tray._clip_cs`, alle aus einem Code): feste Nase −Y, gefederter Schieber +Y, **alle Riegel zeigen nach +Y**, damit sich benachbarte Halter nicht gegenseitig blockieren. Schieber (Print-in-Place, ein Körper): Nase 1,3 unter dem Flansch, Rampe zum Aufrasten, Mäanderfeder aus 3 Stegen 0,6 (Spalt 0,5) an einem Pfosten des Clips, Schieber 0,4 unter der Clipbasis; Riegelseite bis +26,7 ab Schienenmitte (`LATCH_END`). Lösen: Schlitz von oben (`RELEASE` +18,8..+22,6 ab Schienenmitte, 5 lang in X), Schraubendreher in die Kerbe, Schieber 1,5 nach +Y hebeln; ein Stift ≤ 1,4 in den entstehenden Spalt (Schlitzkante −Y / Kerbwand) hält ihn offen, so lassen sich Halter mit 2 Clips nacheinander entriegeln. LRS-Wiegen und RS-Wiege je 2 Clips (A + B). Lösen der Wiegen erst nach Abnahme des Netzteils (Schlitze A unter dem Gerät; Schlitz B der LRS-Wiegen bei Y 595,8..599,6 frei). Pi-Halter: Clips 14 breit, Schlitze X −115 / −70 (neben den Domen). Hub: rote Box auf R1b, gelbe auf R1a, je 2 Clips, keine Bodenschrauben. Lüfter-Sets von Pi/Octopus sind Nutzer-Handbau: Octopus-Lüfter X −312..−302 / Y 382..422, Pi-Lüfter X −102..−62 / Y 432..442; deren Halterfüße Z 30..33 schweben (offen).
+DIN-Teile (`tray.py`, Clips für EN 50022 35 × 7,5, Rail-Oberkante Z 12,5): `DIN PSU24 Cradle 1/2` (20 breit), `DIN PSU5 Cradle 1/2` (12 breit, X −35,5..−23,5 und −4..8), `DIN Octopus Holder 1/2` (Balken unter einer Lochspalte, Lochraster 150 × 90), `DIN Pi Holder` (Löcher 58 × 49, M2,5). Clips (`tray._clip_cs`, alle aus einem Code): feste Nase −Y, gefederter Schieber +Y, **alle Riegel zeigen nach +Y**, damit sich benachbarte Halter nicht gegenseitig blockieren. Schieber (Print-in-Place, ein Körper): Nase 1,3 unter dem Flansch, Rampe zum Aufrasten, Mäanderfeder aus 3 Stegen 0,6 (Spalt 0,5) an einem Pfosten des Clips, Schieber 0,4 unter der Clipbasis; Riegelseite bis +26,7 ab Schienenmitte (`LATCH_END`). Lösen: Schlitz von oben (`RELEASE` +18,8..+22,6 ab Schienenmitte, 5 lang in X), Schraubendreher in die Kerbe, Schieber 1,5 nach +Y hebeln; ein Stift ≤ 1,4 in den entstehenden Spalt (Schlitzkante −Y / Kerbwand) hält ihn offen, so lassen sich Halter mit 2 Clips nacheinander entriegeln. LRS-Wiegen und RS-Wiege je 2 Clips (A + B). Lösen der Wiegen erst nach Abnahme des Netzteils (Schlitze A unter dem Gerät; Schlitz B der LRS-Wiegen bei Y 595,8..599,6 frei). Pi-Halter: Clips 14 breit, Schlitze X −115 / −70 (neben den Domen). Hub: rote Box auf R1b, gelbe auf R1a, je 2 Clips, keine Bodenschrauben. Lüfter-Sets von Pi/Octopus sind Nutzer-Handbau: Octopus-Lüfter X −312..−302 / Y 382..422, Pi-Lüfter X −102..−62 / Y 432..442; deren Halterfüße Z 30..33 schweben (offen).
 
 Farbe der Druckteile = Filament: rot 230 V, gelb 24/5 V, grün Daten/Bus, dunkelgrau DIN-Halter; Ketten blau (`CHAIN_COL`), Blenden/Plugs orange.
 
@@ -114,35 +116,28 @@ Offen oben, unter der Acrylplatte (Boden `CH_ZB` Z 86,5, Oberkante 102), Flansch
 
 ## Power-Hub (`power_hub.py`)
 
-Beide Netzteile haben die AC/DC-Klemmengrenze auf **Y 557** (`Y_DIV`). Zwei getrennte Boxen (rot Netz +Y, gelb DC −Y, je einfarbig), jede mit eigener Wand auf der Grenze: Doppelwand gelb Y 555,3..556,9 (`YW`), rot 557,1..558,7 (`RW`), 0,2 Spalt. Jede Box sitzt auf ihrer eigenen Hutschiene (rot R1b, gelb R1a) mit 2 vollen Clips (`tray.hub_base`, X −142,5..−128,5 und −83,5..−69,5, innerhalb der R-6-Eckbögen) und hat eigene Deckelschrauben; keine Verbindung nötig. Lösen: Deckel ab, Schraubendreher durch die Bodenschlitze (X −134..−129 und −83..−78; rot Y 595,8..599,6, gelb Y 545,8..549,6). Basis X −148,5..−63,5 (0,5 Spiel zum LRS-Gehäuseende −149 und zum RS-Block −63), Boden Z 15,9..17,5 auf den Clips, Wände bis Z 58 (`Z_TOP`), Boden/Wand 1,6 (`T`).
+Beide Netzteile haben die AC/DC-Klemmengrenze auf **Y 557** (`Y_DIV`). Zwei getrennte Boxen (rot Netz +Y, gelb DC −Y, je einfarbig), jede mit eigener Wand auf der Grenze: Doppelwand gelb Y 555,3..556,9 (`YW`), rot 557,1..558,7 (`RW`), 0,2 Spalt. Jede Box sitzt auf ihrer eigenen Hutschiene (rot R1b, gelb R1a) mit 2 vollen Clips (`tray.hub_base`, X −152,25..−138,25 und −69..−55, innerhalb der R-6-Eckbögen) und hat eigene Deckelschrauben; keine Verbindung nötig. Lösen: Deckel ab, Schraubendreher durch die Bodenschlitze (X −143,75..−138,75 und −68,5..−63,5; rot Y 595,8..599,6, gelb Y 545,8..549,6). Netzteillagen per `LRS_DX` −9,75 / `RS_DX` +14,5 gegen die STEP-Lage (Nutzer 2026-11-03: beide Netzteile ca. 5 mm an die Tray-Kante, damit die Boxen länger werden und die Verdrahtung einfacher; binär exakte Werte, −9,8/+14,6 erzeugten in IngeTrazo Kanten der Länge 0 an den Deckeln). Basis X −158,25..−49 (0,5 Spiel zum LRS-Gehäuseende −158,75 und zum RS-Block −48,5), Boden Z 15,9..17,5 auf den Clips, Wände bis Z 58 (`Z_TOP`), Boden/Wand 1,6 (`T`).
 
 | Teil | Wert |
 |---|---|
 | Mains Hub Base/Lid (rot) | Y 557,1..604 (`Y_RED`; 2020 des Trays ab 605) |
 | DC Hub Base/Lid (gelb) | Y 475..556,9 (`Y_DC`; DC-Kanal bis 473) |
-| WAGO-Taschen (`wago_slots()`) | stehend an der roten Wand, Y 558,9..567,2, Z 17,5..36,1, Einführung oben, Hebel +Y; L X −143,15..−124,45; N −123,05..−104,35; PE −93,75..−68,85 (Lücke `SEAM_GAP` 8 für den Wand-Dom); freie Rippen (1,2) mit Fußlippen und Rastnasen |
+| WAGO-Taschen (`wago_slots()`) | stehend an der roten Wand, Y 558,9..567,2, Z 17,5..36,1, Einführung oben, Hebel +Y; L X −140,775..−122,075; N −120,675..−101,975; PE −91,375..−66,475 (Lücke `SEAM_GAP` 8 für den Wand-Dom); freie Rippen (1,2) mit Fußlippen und Rastnasen |
 | WAGO-Breiten (`WAGOS`) | L/N 221-413: 18,7 (Tiefe 18,6, Dicke 8,3); PE 221-414: 24,9 (angenommen) |
 | Eingang 230 V Kette (`ENTRY`) | +Y-Wand X −109..−94 ab Z 27, Kabelbinder-Zugentlastung innen |
 | PE-Schlitz (`PE_SLOT`) | X −80..−74 (Z 22) zur Tray-Öse; 2026-11-03 von X −86..−78 verschoben, weil dort nur 2,8 mm bis zum beweglichen Kettenbügel (`Thin Bracket Moving` bis X −80,8, ab Y 605) frei waren (Ader Ø 3) |
 | DC-Fenster (`DUCT_WIN`) | −Y-Wand X −140..−72, Z 17,5..25 (ab Hub-Bodenoberkante), auf die Fingerschlitze des DC-Kanals (Z 16..25) |
-| Deckel | 1,6, Port-Hauben über beide Klemmblöcke (LRS bis X −168, RS bis X −48), Schürzen auf die Gehäuse, je Deckel eigene Grenzschürze auf `RW` bzw. `YW` bis Z 49 (LRS) / 44,2 (RS); Blitz graviert |
-| Befestigung | je Deckel 3 M3 mit vollen Bohrungen, alle Dome im eigenen Teil: 2 Eck-Dome (r 4, konzentrisch zum Eck-Radius `R_BASE` 6, voll mit den Außenwänden verbunden) + 1 Wand-Dom (`wall_boss`, r 3,5, X −99,05; rot Y 560,7 in der Lücke N/PE, gelb Y 553,3); keine Bodenschrauben |
-| Klemmblock LRS (Code) | X −166,1..−151,5, Y 498,5..585,5; Oberkante Gehäuse 55,9; `wire_z` 30 = Oberkante der abgesenkten Hub-Wand vor den Klemmen (Leitereintritt Z ca. 36) |
-| Klemmblock RS (Code) | Y 540,9..580,6, `block_x` −52, Oberkante Block 43,7 / Gehäuse 53,0; `wire_z` 29 = Oberkante der abgesenkten Hub-Wand (Leitereintritt Z ca. 33) |
+| Lüftungsschlitze (`vent_slots()`) | senkrechte Streifen 2,5 breit, Raster 5, in beiden X-Wänden beider Boxen (rot 12, gelb 26); Z 19,5..54 (unter der Deckellippe), unter den Klemmen-Ausschnitten nur bis `wire_z` − 2; 1,5 Steg zu Ausschnitten, Eck-Domen und Grenzwand. Luftweg: Lüfter hinter dem RS-15-5 bläst −X, Eintritt durch die +X-Wände (frei neben dem RS: gelb Y 486..530, rot Y 582..592), Austritt durch die −X-Wände auf das LRS-350. Wirkung nicht berechnet oder gemessen |
+| Deckel | 1,6, Port-Hauben über beide Klemmblöcke (LRS bis X −177,75, RS bis X −33,5), Schürzen auf die Gehäuse, je Deckel eigene Grenzschürze auf `RW` bzw. `YW` bis Z 49 (LRS) / 44,2 (RS); Blitz graviert |
+| Befestigung | je Deckel 3 M3 mit vollen Bohrungen, alle Dome im eigenen Teil: 2 Eck-Dome (r 4, konzentrisch zum Eck-Radius `R_BASE` 6, voll mit den Außenwänden verbunden) + 1 Wand-Dom (`wall_boss`, r 3,5, X −96,675; rot Y 560,7 in der Lücke N/PE, gelb Y 553,3); keine Bodenschrauben |
+| Klemmblock LRS (Code) | X −175,85..−161,25, Y 498,5..585,5; Oberkante Gehäuse 55,9; `wire_z` 30 = Oberkante der abgesenkten Hub-Wand vor den Klemmen (Leitereintritt Z ca. 36) |
+| Klemmblock RS (Code) | Y 540,9..580,6, `block_x` −37,5, Oberkante Block 43,7 / Gehäuse 53,0; `wire_z` 29 = Oberkante der abgesenkten Hub-Wand (Leitereintritt Z ca. 33) |
 
 Pin-Positionen für die Verdrahtung: `docs/COMPONENTS.md`.
 
-## Verdrahtung 230 V (`wiring.py`)
+## Verdrahtung (`wiring.py`)
 
-Modellierte Litzen auf Layer `Kabel (gen)`, nicht als STL, nicht im Kollisionstest der Druckteile, aber eigener Check: Litze gegen alle Druckteile, WAGO-Körper und Netzteilgehäuse (Boxen), Litzen untereinander, Biegeradius ≥ 4 × D.
-
-- Geometrie: Polylinie mit Kreisbogen-Ecken (Radius exakt bekannt, bis 15), Rohr mit 12 Segmenten, Ringe per Parallel-Transport, flache Kappen.
-- Stützpunkte: offline per Strafkosten-Suche gefunden (Schnittvolumen, Radiusdefizit, Länge) und fest im Code; der Generator rechnet nicht selbst.
-- Mantel Ø 7,3 (grau, **Annahme**) vom Kettenbügel (Y 605) bis hinter die Zugentlastung (Y 594,5); Adern Ø 3,0 (**Annahme**), L braun, N blau, PE grün-gelb.
-- WAGO-Eintritt senkrecht von oben bei Y 561,4 (**Annahme**: Löcher auf der −Y-Hälfte, Hebel +Y), gleichmäßig über die WAGO-Breite. Belegung: L/N k0 LRS, k1 Kette, k2 RS; PE k0 LRS, k1 Kette, k2 Tray-Öse, k3 RS.
-- Klemmen waagrecht: LRS bis X −151,5 auf Z 36, RS bis X −63 auf Z 33 (Eintrittshöhen „ca.“, **ungeprüft**).
-- Knick (Nutzerentscheidung 2026-11-03): LRS FG, RS FG und RS N laufen über die äußere WAGO-Rippe (bis Z 37,9; zur Wand nur 2,45 frei) und fallen kurz vor der Klemme ab; dort ist R < 4 × D zugelassen, der Check meldet den Radius als Info.
-- PE zur Tray-Öse: durch `PE_SLOT` (X −77, Z 26,6), auf der 2020 nach +X, Litzenende X −63, Y 615 (Kabelschuh-Hülse dort; Öse im Dokument ggf. nachziehen).
+Die modellierten 230-V-Litzen wurden am 2026-11-03 gelöscht (Nutzer): Netzteile und Hub-Boxen haben sich verschoben, die Stützpunkte passen nicht mehr. Neue Routen werden vorerst nicht erzeugt (T-022). `wiring.py` behält Rohr- und Bogen-Code (`fillet_path`, `tube`) und die Checks in `cr10mod.py`; `ROUTES` ist leer, der Layer `Kabel (gen)` bleibt leer.
 
 ## PE-Erdung
 

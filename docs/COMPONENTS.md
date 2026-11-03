@@ -6,7 +6,7 @@ Stand 2026-11-03. Kaufteile liegen nur im IngeTrazo-Dokument (nicht im Generator
 
 - Gehäuse 215 × 115 × 30 (wie LRS-200). Das PDF nennt LRS-350-24 oder LRS-250-24; offizielles STEP ist LRS-350. Im Dokument Platzhalter `PSU LRS-200-24` (Layer `Electronics (Platzhalter)`, unsichtbar) und Vendor-Modell `PSU Mean Well LRS-350-24`.
 - Pinbelegung (9 Pins, Raster 9,5, Pin 9 auf der Lüfterseite): 1 AC/L, 2 AC/N, 3 FG, 4–6 −V, 7–9 +V.
-- Lage Welt (LRS X −364..−149, Klemmen +X): Klemmblock X −166,1..−151,5, Y 498,5..585,5; Schrauben oben Z 48; Leitereintritt Z ca. 36.
+- Lage Welt (LRS X −373,75..−158,75 seit 2026-11-03, vorher −364..−149; Klemmen +X): Klemmblock X −175,85..−161,25, Y 498,5..585,5; Schrauben oben Z 48; Leitereintritt Z ca. 36.
 
 | Pin | Funktion | Welt-Y |
 |---|---|---|
@@ -24,7 +24,7 @@ Stand 2026-11-03. Kaufteile liegen nur im IngeTrazo-Dokument (nicht im Generator
 
 - Das PDF nennt RS-15-5 (nicht LRS-15). Vendor-Modell `PSU Mean Well RS-15-5`, Platzhalter `PSU LRS-15-5`.
 - Pinbelegung (5 Pins, Raster 7,62, +V auf der ADJ/LED-Seite): 1 AC/L, 2 AC/N, 3 FG, 4 −V, 5 +V.
-- Lage Welt (X −63..12, Y 530,8..581,8, Klemmen −X, um Y +23,8 verschoben, nicht gedreht): Schrauben bei X ca. −60, oben Z 43,7; Eintritt Z ca. 33.
+- Lage Welt (X −48,5..26,06 seit 2026-11-03, vorher −63..11,56; Y 530,8..581,8, Klemmen −X, um Y +23,8 verschoben, nicht gedreht): Schrauben bei X ca. −45,5, oben Z 43,7; Eintritt Z ca. 33.
 
 | Pin | Funktion | Welt-Y |
 |---|---|---|
@@ -63,7 +63,9 @@ Leitereinführungen für die Litzen in `wiring.py`: Mitte Y 561,4 (Hälfte −Y 
 
 - STEP V1.0 wird für V1.1 verwendet (es gibt kein V1.1-STEP). Platzhalter `BTT Octopus V1.1`, Vendor `BTT Octopus (V1.0 STEP)`. PCB-Unterseite im Quellmodell z −1,6 **(Annahme, nicht gemessen)**; PCB im STEP hell statt schwarz; 689 Kleinteile < 2 mm weggelassen.
 - Lage: X −300..−140, Y 352..452, PCB-Unterkante Z 31; Schraubklemmen +X, Motorstecker −Y; Lochraster 150 × 90.
-- Klemmenpositionen: Einspeisung/Heizer +X oben, USB-C +X unten; Lage am +X-Rand X ca. −145, Y 370..445 **(ungeprüft)**; Zuordnung der Pins DCIN/MOTOR/BED für die Verdrahtung ungeprüft.
+- Leistungsklemmblock (J67, 8-polig) am +X-Rand, im STEP gemessen (2026-11-03): Gehäusefront X −139,1, Y 367,0..443,4, Z 32,6..47,1; Schraubenköpfe X −146,1, Z 43,4 (Oberseite); Raster 9,5; Klemmkammern Z 40,0..47,1, offen nach +X und oben. Kabeleintritt von +X; das STEP hat keine Drahtöffnungen, Eintrittshöhe ca. Z 41..44 **(Annahme)**.
+- Belegung laut BTT-Pinout `Firmware/Klipper/Images/octopus_pinout.png` (Repo bigtreetech/BIGTREETECH-OCTOPUS-V1.0), auf die Einbaulage (180°) umgerechnet, nach steigendem Y: 371,9 MOTOR_POWER GND (−), 381,4 MOTOR_POWER VM (+), 390,9 POWER GND (−), 400,4 POWER 24V (+), 409,9 BED_POWER GND (−), 419,4 BED_POWER BED_P (+), 428,9 BED_OUT BED_P (+), 438,4 BED_OUT (−). Sicherungen: MOTOR_POWER F1 15 A, POWER F3, BED_POWER F2 15 A. Heizerklemmen HE0..HE3 (J64) an der +Y-Kante.
+- Freiraum vor J67: Pi beginnt bei X −125,7 (Y 372,3..430,7), Abstand zur Klemmenfront 13,4 mm; Pi-Bauteile im Streifen X −125,7..−115,7 bis Z 40,9.
 
 ## Raspberry Pi 4 Model B
 
@@ -91,6 +93,7 @@ Faustregel (nicht geprüft): Cat6/USB dynamisch ca. 8–10 × D = 36..60 mm, nur
 | Auszugschienen | Vollauszug-Schubladenschienen, dreiteilig, 450 lang, 2 Stück; M5 mit Nutensteinen, Loch Ø5,5 mittig in Outer und Inner; Hub 396 geschätzt |
 | Hutschienen | EN 50022 35 × 7,5, Höhe 12,5 über Tray-Boden |
 | Lüfter | Sunon 60 mm (laut PDF), Ø57 Ausschnitt, 4 × Ø3,4 auf 50 × 50; Pi/Octopus-Lüfter-Sets Nutzer-Handbau |
+| Netzteil-Lüfter | 40 × 40 × 10 (Nutzer 2026-11-03), Typ, Spannung und Hersteller offen; Lochbild 32 × 32 für M3 **(Annahme)**; im Dokument als schlichter Rahmen `Luefter 40x40x10 (PSU, blaest -X)` (Layer `Electronics (neu)`) |
 | Alu-Eckverbinder, Original-Füße, Panelclips | Kaufteile bzw. Original, nicht modelliert |
 
 ## Quellen der 3D-Modelle

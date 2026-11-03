@@ -12,15 +12,20 @@ from cable import box, cyl_z, _ccw, _plate_y
 # the boxes clip onto the power rails (tray.py); floor on the clip base
 FLOOR_Z, T, LID_T = 15.9, 1.6, 1.6         # clip base top is z 16 (tray.CLIP_TOP): 0.1 overlap so the clip fuses
 Z_TOP = 58.0                              # top of the base walls = underside of the lids (LRS top 55.9, RS top 53.0)
-X0, X1 = -148.5, -63.5                    # base between the PSUs: 0.5 to the LRS case end (x -149) and the RS block (x -63)
+# PSU positions (user 2026-11-03: both PSUs about 5 mm from the tray edges): LRS-350 x -373.75..-158.75 (drawer frame inside
+# -378.8), RS-15-5 x -48.5..26.06 incl. terminals (rear cross member 2020 L=334 from x 31.2). Shift against the vendor STEP
+# placement (LRS -364..-149, RS -63..11.56); the document groups are moved by the same amounts. Binary-exact values on purpose:
+# -9.8 / 14.6 left float noise that IngeTrazo turned into zero-length edges on the lids.
+LRS_DX, RS_DX = -9.75, 14.5
+X0, X1 = -148.5 + LRS_DX, -63.5 + RS_DX    # base between the PSUs: 0.5 to the LRS case end and to the RS block
 Y_DIV = 557.0                             # AC / DC boundary of both PSUs
 Y_RED, Y_DC = 604.0, 475.0                # outer +y face (2020 of the tray from 605) / outer -y face (DC duct up to 473)
 RW = (Y_DIV + 0.1, Y_DIV + 0.1 + T)          # red wall on the boundary
 YW = (Y_DIV - 0.1 - T, Y_DIV - 0.1)          # yellow wall on the boundary
 
 # PSU terminal blocks (from the vendor STEP models as placed in the document)
-LRS = dict(x_hood=-168.0, top=55.9, y_red=590.0, y_dc=497.0, wire_z=30.0)        # block x -166.1..-151.5, y 498.5..585.5
-RS = dict(x_hood=-48.0, top=53.0, block_x=-52.0, block_top=43.7, y_red=582.4, y_dc=539.3, wire_z=29.0)   # block y 540.9..580.6
+LRS = dict(x_hood=-168.0 + LRS_DX, top=55.9, y_red=590.0, y_dc=497.0, wire_z=30.0)   # block x -166.1..-151.5 (+LRS_DX), y 498.5..585.5
+RS = dict(x_hood=-48.0 + RS_DX, top=53.0, block_x=-52.0 + RS_DX, block_top=43.7, y_red=582.4, y_dc=539.3, wire_z=29.0)   # block y 540.9..580.6
 
 # WAGO 221 standing on the floor in front of the divider: (name, width); 221-413 18.7 x 18.6 x 8.3, 221-414 width assumed 24.9
 WAGOS = [("L", 18.7), ("N", 18.7), ("PE", 24.9)]
@@ -124,6 +129,36 @@ def _pilots(m, pts):
         m = m - cyl_z(x, y, Z_TOP - 12.0, Z_TOP + 1, BOSS_PILOT, 16)
     return m
 
+# ============================================================ vents (fan behind the RS-15-5 blows -x through both boxes onto the LRS)
+VENT_W, VENT_PITCH = 2.5, 5.0             # vertical strip slots in both x walls of both boxes
+VENT_Z0 = FLOOR_Z + T + 2.0               # 2.0 above the floor top
+VENT_ZT = Z_TOP - 4.0                     # below the lid lip (z 56..58)
+VENT_EDGE = 1.5                           # web to every cut-out, boss pad and boundary wall
+
+def vent_slots(red):
+    """[(x wall, y centre, z0, z1)] of the strip slots; below the terminal wire cut-outs only up to wire_z - 2"""
+    if red:
+        y_lo, y_hi = RW[1] + VENT_EDGE, Y_RED - R_BASE - BOSS_R - VENT_EDGE
+        cuts = {X0: ((RW[1], LRS["y_red"]), LRS["wire_z"]), X1: ((RW[1], RS["y_red"] - 1.8), RS["wire_z"])}
+    else:
+        y_lo, y_hi = Y_DC + R_BASE + BOSS_R + VENT_EDGE, YW[0] - VENT_EDGE
+        cuts = {X0: ((LRS["y_dc"] + 2.0, YW[0]), LRS["wire_z"]), X1: ((RS["y_dc"] + 1.6, YW[0]), RS["wire_z"])}
+    out = []
+    n = int((y_hi - y_lo - VENT_W) // VENT_PITCH) + 1
+    off = (y_hi - y_lo - VENT_W - (n - 1) * VENT_PITCH) / 2       # centred in the free band
+    for xw, ((c0, c1), wz) in cuts.items():
+        for k in range(n):
+            y = y_lo + off + VENT_W / 2 + k * VENT_PITCH
+            under = c0 - VENT_EDGE < y + VENT_W / 2 and y - VENT_W / 2 < c1 + VENT_EDGE
+            out.append((xw, y, VENT_Z0, wz - 2.0 if under else VENT_ZT))
+    return out
+
+def _vents(b, red):
+    for xw, y, z0, z1 in vent_slots(red):
+        xa, xb = (xw - 1, xw + T + 1) if xw == X0 else (xw - T - 1, xw + 1)
+        b = b - box(xa, xb, y - VENT_W / 2, y + VENT_W / 2, z0, z1)
+    return b
+
 # ============================================================ red base
 def _wago_pockets():
     """free-standing ribs (0.6 gap to the wall so they flex): front lips at the bottom, ramped snap noses over the top edge"""
@@ -155,7 +190,7 @@ def red_base():
     tie = box(ENTRY[0] + 1.0, ENTRY[1] - 1.0, Y_RED - w - 7.0, Y_RED - w - 1.0, FLOOR_Z + T, 29.0)   # strain relief for the chain cable
     tie = tie - box(ENTRY[0], ENTRY[1], Y_RED - w - 5.5, Y_RED - w - 2.5, 24.0, 26.5)              # zip-tie tunnel along x
     b = b + tie
-    return b
+    return _vents(b, True)
 
 # ============================================================ yellow base (own boundary wall YW)
 def dc_base():
@@ -167,7 +202,7 @@ def dc_base():
     b = b - box(X1 - w - 1, X1 + 1, RS["y_dc"] + 1.6, YW[0], RS["wire_z"], Z_TOP + 1)        # RS DC terminals
     b = b - box(DUCT_WIN[0], DUCT_WIN[1], Y_DC - 1, Y_DC + w + 1, DUCT_WIN[2], DUCT_WIN[3])
     b = _pilots(b, [c[:2] for c in DC_BOSSES] + [wall_boss(False)])
-    return b
+    return _vents(b, False)
 
 # ============================================================ lids (roof + port covers + skirts)
 BOLT = [(-1.0, 6.0), (3.0, 6.0), (0.6, 0.8), (3.2, 0.8), (-1.2, -7.0), (0.0, -1.2), (-2.8, -1.2)]   # engraved mains bolt

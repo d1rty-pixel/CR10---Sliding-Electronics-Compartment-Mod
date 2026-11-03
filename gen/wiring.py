@@ -113,22 +113,14 @@ def tube(path, d, seg=SEG, ends=None):
 # terminal (or the kink approach over the outer WAGO rib) and the end.
 # WAGO entries: L/N k0 -> LRS, k1 -> chain, k2 -> RS; PE k0 -> LRS, k1 -> chain, k2 -> tray lug, k3 -> RS.
 # KINK: polyline corner indices allowed below MIN_R x D (user decision 2026-11-03: over the rib, short kink at the terminal).
-ROUTES = {
-    "230V PE Kette-WAGO": ("PE", [(-99.56, 594.50, 30.83), (-103.96, 559.50, 19.00), (-146.00, 601.50, 54.50), (-84.41, 561.40, 54.00), (-84.41, 561.40, 36.10)]),
-    "230V N Kette-WAGO": ("N", [(-99.56, 594.50, 33.86), (-99.56, 586.24, 33.86), (-97.06, 576.78, 51.07), (-113.70, 561.40, 51.53), (-113.70, 561.40, 36.10)]),
-    "230V L Kette-WAGO": ("L", [(-103.06, 594.50, 33.86), (-103.05, 584.63, 33.86), (-113.09, 578.40, 53.25), (-133.80, 561.40, 46.66), (-133.80, 561.40, 36.10)]),
-    "230V PE WAGO-Tray": ("PE", [(-78.19, 561.40, 36.10), (-78.19, 561.40, 54.00), (-116.28, 586.12, 37.73), (-81.90, 579.83, 19.02), (-77.00, 597.50, 26.60), (-77.00, 615.00, 26.60), (-63.00, 615.00, 26.60)]),
-    "230V PE WAGO-RS": ("PE", [(-71.96, 561.40, 36.10), (-71.96, 561.40, 50.63), (-119.11, 585.86, 53.90), (-67.15, 594.21, 50.00), (-66.40, 560.80, 44.50), (-65.40, 560.80, 33.00), (-63.00, 560.80, 33.00)]),
-    "230V N WAGO-RS": ("N", [(-107.47, 561.40, 36.10), (-107.47, 561.40, 47.51), (-106.07, 590.00, 50.60), (-83.00, 586.47, 38.00), (-66.10, 568.40, 40.80), (-65.20, 568.40, 33.00), (-63.00, 568.40, 33.00)]),
-    "230V L WAGO-RS": ("L", [(-127.57, 561.40, 36.10), (-127.57, 561.40, 49.33), (-107.26, 560.00, 48.86), (-98.54, 568.28, 43.44), (-82.60, 576.00, 33.00), (-63.00, 576.00, 33.00)]),
-    "230V PE WAGO-LRS": ("PE", [(-90.64, 561.40, 36.10), (-90.64, 561.40, 47.63), (-101.09, 579.96, 54.36), (-121.86, 587.08, 54.50), (-145.60, 561.75, 40.60), (-148.60, 561.75, 36.00), (-151.50, 561.75, 36.00)]),
-    "230V N WAGO-LRS": ("N", [(-119.93, 561.40, 36.10), (-119.93, 561.40, 48.93), (-101.21, 585.22, 52.65), (-130.38, 594.81, 45.02), (-137.08, 571.25, 36.00), (-151.50, 571.25, 36.00)]),
-    "230V L WAGO-LRS": ("L", [(-140.03, 561.40, 36.10), (-140.03, 561.40, 45.10), (-122.53, 563.79, 53.21), (-101.73, 597.84, 28.40), (-140.00, 580.75, 36.00), (-151.50, 580.75, 36.00)]),
-}
-KINK = {"230V PE WAGO-RS": (4, 5,), "230V N WAGO-RS": (4, 5,), "230V PE WAGO-LRS": (4, 5,)}
+# 2026-11-03: the 230 V routes were deleted (user): the PSUs moved 5 mm to the tray edges and the hub boxes grew, so the
+# waypoints no longer fit. New routes are not generated for now; the tube/fillet code stays for later.
+ROUTES = {}
+KINK = {}
 
 def routes():
     """[(name, colour key, diameter, polyline, kink corner indices)]"""
+    if not ROUTES: return []
     sx, sy, sz = _sheath_exit()
     R = [("230V Kabel Mantel", "sheath", SHEATH_D, [(sx, sy, sz), (sx, SHEATH_END_Y, sz)], ())]
     for name, (cond, pts) in ROUTES.items():
@@ -156,5 +148,6 @@ def bought_boxes():
     """bought parts the wires must not pierce either (boxes from docs/DESIGN.md / COMPONENTS.md): WAGO bodies, PSU cases"""
     from cable import box
     out = [(f"WAGO {nm}", box(a, b, hub.W_Y0, hub.W_Y0 + hub.W_THK, hub.W_Z0, W_TOP)) for nm, a, b in hub.wago_slots()]
-    out += [("LRS-350 case", box(-364.0, -151.5, 475.0, 590.0, 25.0, 55.9)), ("RS-15-5 case", box(-63.0, 12.0, 530.8, 581.8, 25.0, 53.0))]
+    out += [("LRS-350 case", box(-364.0 + hub.LRS_DX, -151.5 + hub.LRS_DX, 475.0, 590.0, 25.0, 55.9)),
+            ("RS-15-5 case", box(-63.0 + hub.RS_DX, 12.0 + hub.RS_DX, 530.8, 581.8, 25.0, 53.0))]
     return out
