@@ -43,8 +43,8 @@ Umgebung einrichten: `python3 -m venv venv && ./venv/bin/pip install -r gen/requ
 In IngeTrazo (MCP `run_python`, AI-Bridge muss laufen):
 
 ```python
-exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/ingetrazo_import.py", encoding="utf-8").read())
-exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/vendor_import.py", encoding="utf-8").read())
+exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/ingetrazo_import.py", encoding="utf-8").read())
+exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/vendor_import.py", encoding="utf-8").read())
 ```
 
 Das erste Skript ersetzt die Gruppen der Layer `Druckteile (gen)`, `Schlepp (gen)`, `Tray Druckteile (gen)`; das zweite ersetzt `Electronics (vendor)` (Platzhalter bleiben, nur unsichtbar). Stückliste neu erzeugen mit `gen/bom_document.py` auf demselben Weg.

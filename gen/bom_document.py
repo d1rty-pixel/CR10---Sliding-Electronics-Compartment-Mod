@@ -1,10 +1,10 @@
 # Run inside IngeTrazo via the MCP tool `run_python`:
-#   exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/bom_document.py", encoding="utf-8").read())
+#   exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/bom_document.py", encoding="utf-8").read())
 # Reads the profile groups (named "<2020|2040> L=<mm> #n") from the open document and the printed parts from build/parts.json,
 # writes docs/BOM.md. The profile data comes from the model, never typed by hand.
 import re, json, datetime, collections
 
-ROOT = "/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod"
+ROOT = "G:/Things/CR10---Sliding-Electronics-Compartment-Mod"
 ASSEMBLIES = [("Stock Frame", "Original-CR10-Rahmen, bleibt unverändert, nichts zu kaufen"),
               ("Mod Frame Base", "fester Unterbau"),
               ("Mod Frame Drawer", "Auszug")]

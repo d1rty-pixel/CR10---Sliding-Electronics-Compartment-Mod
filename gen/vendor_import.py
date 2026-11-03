@@ -1,5 +1,5 @@
 # Run inside IngeTrazo via the MCP tool `run_python`:
-#   exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/vendor_import.py", encoding="utf-8").read())
+#   exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/vendor_import.py", encoding="utf-8").read())
 # Replaces the hand-made electronics placeholders (layer "Electronics (neu)") with vendor models from build/vendor/*.json
 # (made by gen/step_to_mesh.py). Placeholders are hidden, never deleted. Vendor groups are replaced on every run.
 # Placement: rotate the source model, centre it in X/Y on the placeholder's box, put `z_ref` (source mm, after rotation) on its bottom;
@@ -7,7 +7,7 @@
 import json
 from core.layers import Layer
 
-VENDOR_DIR = "/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/build/vendor/"
+VENDOR_DIR = "G:/Things/CR10---Sliding-Electronics-Compartment-Mod/build/vendor/"
 VENDOR_LAYER = "Electronics (vendor)"
 PLACEHOLDER_LAYER = "Electronics (Platzhalter)"
 # rot maps source axes to world axes: world = (s[i0]*sign0, s[i1]*sign1, s[i2]*sign2)

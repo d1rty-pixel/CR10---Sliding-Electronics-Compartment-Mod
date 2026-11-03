@@ -1,7 +1,7 @@
 """offline router: finds free waypoints for the 230 V wires (penalty = intersection volume + bend radius deficit)."""
 import sys, json, math
 import numpy as np
-sys.path.insert(0, "/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen")
+sys.path.insert(0, "G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen")
 from manifold3d import Manifold
 import tray, cable_thin as thin, power_hub as hub
 from cable import box
