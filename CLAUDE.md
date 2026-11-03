@@ -3,7 +3,7 @@
 Persönliches 3D-Druck-/CAD-Projekt, Git-Repo `github.com/d1rty-pixel/CR10---Sliding-Electronics-Compartment-Mod` (Commit-Identität lokal `d1rty-pixel <equinox@lichtspiele.org>`, SSH-Key `id_ed25519_github_d1rty-pixel` per `core.sshCommand`; nie die IONOS-Identität). Sprache aller Dokumente: Deutsch, schlichtes Markdown, sachlich und knapp. Keine Fakten erfinden: jede Zahl stammt aus Code, Datenblatt oder Messung; bei Widerspruch gewinnt der Code vor der Prosa. Annahmen als solche kennzeichnen.
 
 ## Sessionstart
-`CLAUDE.md`, `docs/PLAN.md` und `.claude/HANDOFF.md` lesen, danach nur die für die Aufgabe nötigen Dateien. Commits und Push nur auf ausdrückliche Anweisung, keine STL-Exporte ungefragt. Das Dokument liegt in `model/cr10-umbau.igz`; `build/vendor/` und das PDF sind nicht im Repo.
+`CLAUDE.md`, `docs/PLAN.md` und `.claude/HANDOFF.md` lesen, danach nur die für die Aufgabe nötigen Dateien. Commits und Push nur auf ausdrückliche Anweisung, keine STL-Exporte ungefragt. Das Dokument liegt in `model/CR10-Sliding-Electronics-Compartment-Mod.igz`; `build/vendor/` und das PDF sind nicht im Repo.
 
 ## Dokumentenkarte
 

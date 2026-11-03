@@ -19,7 +19,7 @@ Ein parametrischer Python-Generator (`manifold3d`) ist die einzige Quelle der Ge
 | `gen/step_to_mesh.py` | Konverter STEP -> `build/vendor/*.json` (eigenes venv mit `cadquery-ocp`) |
 | `gen/bom_document.py` | IngeTrazo-Skript: erzeugt `docs/BOM.md` aus Dokument und `build/parts.json` (veraltet, siehe PLAN) |
 | `gen/data/` | `side_cover_mount.json` (Originalclip), `chain_link_user.json` (Nutzerglied der breiten Kette) |
-| `model/cr10-umbau.igz` | IngeTrazo-Dokument: Rahmen, Kaufteile (Profile, Schienen, Netzteile, Platinen, WAGO), Handbau-Teile und importierte Druckteile |
+| `model/CR10-Sliding-Electronics-Compartment-Mod.igz` | IngeTrazo-Dokument: Rahmen, Kaufteile (Profile, Schienen, Netzteile, Platinen, WAGO), Handbau-Teile und importierte Druckteile |
 | `build/parts.json` | Druckteile in Einbaulage (für IngeTrazo), erzeugt, nicht im Repo |
 | `build/stl/` | STLs in Drucklage, erzeugt, nicht im Repo |
 | `build/vendor/` | Hersteller-Meshes als JSON (LRS-350, RS-15, Octopus, Pi 4, IEC-GS-1-100); nicht im Repo (Lizenz der Hersteller-Modelle ungeprüft), lokal mit `gen/step_to_mesh.py` aus den STEP-Dateien erzeugen (Quellen: `docs/COMPONENTS.md`) |
