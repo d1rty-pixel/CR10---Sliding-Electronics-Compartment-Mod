@@ -63,10 +63,10 @@ Auszug
 
 | Teil | Stück |
 |---|---:|
-| Bezel Ring | 2 |
+| Rear Panel Switch | 1 |
+| Rear Panel Connector | 1 |
+| IEC Housing (rot) | 1 |
 | Front Panel Hex | 2 |
-| Switch Plug | 1 |
-| Connector Plug | 1 |
 | Side Panel Hex | 4 |
 
 `Side Panel Fan60` existiert nur als STL und ist noch nicht platziert.

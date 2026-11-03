@@ -1,6 +1,6 @@
 # Creality CR10 – Sliding Electronics Compartment Mod
 
-Umbau eines Creality CR10 auf ein ausziehbares Elektronikfach (Tray/Auszug) mit Pi 4, BTT Octopus, Mean-Well-Netzteilen, zwei Kabelschleppketten (breit: CAN/24 V/5 V/Daten, dünn: 230 V) und Zellenhöhe 80 mm (Z 25–105). Der Rahmen besteht aus Alu-Profilen und gekauften Vollauszug-Schubladenschienen (nur im IngeTrazo-Dokument). Gedruckt werden Blenden, Plugs, Seitenpaneele, Schleppketten, Kabelkanäle, Power-Hub und DIN-Halter.
+Umbau eines Creality CR10 auf ein ausziehbares Elektronikfach (Tray/Auszug) mit Pi 4, BTT Octopus, Mean-Well-Netzteilen, zwei Kabelschleppketten (breit: CAN/24 V/5 V/Daten, dünn: 230 V) und Zellenhöhe 80 mm (Z 25–105). Der Rahmen besteht aus Alu-Profilen und gekauften Vollauszug-Schubladenschienen (nur im IngeTrazo-Dokument). Gedruckt werden Rück-, Front- und Seitenpaneele, das IEC-Gehäuse, Schleppketten, Kabelkanäle, Power-Hub und DIN-Halter.
 
 Ein parametrischer Python-Generator (`manifold3d`) ist die einzige Quelle der Geometrie der Druckteile. Er schreibt `build/parts.json` (Einbaulage, für IngeTrazo) und STLs in Drucklage. Kaufteile (Profile, Schienen, Netzteile, Pi, Octopus, WAGO, IEC-Stecker) liegen nur im Dokument.
 
@@ -8,7 +8,7 @@ Ein parametrischer Python-Generator (`manifold3d`) ist die einzige Quelle der Ge
 
 | Pfad | Inhalt |
 |---|---|
-| `gen/cr10mod.py` | Generator-Hauptmodul: Rahmenkonstanten, Blenden/Plugs/Paneele, Teileliste `parts()`, Checks (`build --check`), STL-/JSON-Ausgabe |
+| `gen/cr10mod.py` | Generator-Hauptmodul: Rahmenkonstanten, Paneele/IEC-Gehäuse, Teileliste `parts()`, Checks (`build --check`), STL-/JSON-Ausgabe |
 | `gen/cable.py` | breite Schleppkette (Parametersatz, Bahn, feste/bewegliche Endhalter) |
 | `gen/chain_link.py` | gemeinsames parametrisches Kettenglied + Klammer + Halter-Schnittstellen (Gabel, Zunge) für beide Ketten |
 | `gen/cable_base.py` | kleine Geometrie-Helfer (box, Zylinder, Prismen) |

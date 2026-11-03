@@ -36,10 +36,7 @@ SIDE_X0 = {"a": 55.0, "b": 295.0}   # panel start x, both panels 200 long
 SIDE_LEN = 200.0
 
 # ============================================================ printed parts
-FIT = 0.2                     # clearance per side between ring window and plug
-RING_T = 3.0
-PLUG_W, PLUG_H = 150.0, 45.0
-PLUG_SHEET, PLUG_FRAME = 2.0, 4.0     # outer sheet / inner frame with pocket
+FIT = 0.2                     # clearance per side (IEC cut-out)
 PANEL_W, PANEL_H, PANEL_T = SIDE_LEN - 0.5, CELL_H - 0.5, 3.0
 FRONT_PANEL_W = CELL_W - 0.5           # front hex panel, same rim/grid as the side panels
 PANEL_RIM = 5.0                       # frame around the hex field (as on the original panels)
@@ -127,35 +124,95 @@ def with_mounts(part, kind, t_part=None):
     return part
 
 # ---- local-frame parts ------------------------------------------------------------
-def bezel_ring():
-    cs = rrect(CELL_W, CELL_H, 1.0) - rrect(PLUG_W + 2 * FIT, PLUG_H + 2 * FIT, 0.5)
-    return with_mounts(plate(cs, RING_T), "bezel", RING_T)
+def lbox(u0, u1, v0, v1, h0, h1):
+    return Manifold.cube([u1 - u0, v1 - v0, h1 - h0]).translate([u0, v0, h0])
 
-def plug(holes, pocket):
-    sheet = rrect(PLUG_W, PLUG_H, 0.5)
-    for hcs in holes: sheet = sheet - hcs
-    return plate(sheet, PLUG_SHEET) + plate(rrect(PLUG_W, PLUG_H, 0.5) - pocket, PLUG_FRAME, PLUG_SHEET)
+def cyl_h(u, v, h0, h1, d, seg=SEG):
+    return Manifold.cylinder(h1 - h0, d / 2, d / 2, seg).translate([u, v, h0])
 
-def switch_plug():
-    # snap-in IEC-GS-1-100 lying (long side along u); local u = -(offset towards +y), see place_rear.
-    # Its hooks need a 1.0 mm wall, so the sheet is thinned to IEC_WALL inside the recess.
-    out = rrect(PLUG_W, PLUG_H, 0.5)
-    cut = at(rrect(IEC_CUT[0] + 2 * FIT, IEC_CUT[1] + 2 * FIT, IEC_CUT[2]), IEC_U, 0.0)
-    rec = at(rrect(*IEC_RECESS, 3.0), IEC_U, 0.0)
-    return (plate(out - cut, IEC_WALL) + plate(out - rec, PLUG_SHEET - IEC_WALL, IEC_WALL)
-            + plate(out - rec, PLUG_FRAME, PLUG_SHEET))
+def hex_exclude(uc, vc, hu, hv):
+    """drop every hex whose bounding box touches the rectangle uc +- hu, vc +- hv (no hex is cut, so no new slivers)"""
+    ex, ey = HEX_AF / 2 / math.cos(math.radians(30)), HEX_AF / 2
+    return lambda x, y: abs(x - uc) < hu + ex and abs(y - vc) < hv + ey
 
-def connector_plug():
+# ---- rear panels (T-026): bezel ring + plug merged into one hex panel per cell, mounts as before (+-40) ----
+# Switch side: solid pad around the IEC (1.0 wall at the hooks), 4 countersunk M3 for the separate red IEC Housing.
+REAR_PAD = (40.0, 22.0)               # half sizes of the solid pad around the IEC (covers housing + ears)
+HS_IN = (55.0, 36.0)                  # housing inside (u x v): IEC_RECESS 53 x 34 + 1 per side
+HS_WALL = 2.5
+HS_BACK_X = 484.0                     # outer face of the housing back wall; retracted fan holders end at x 480.2
+HS_EAR = (8.0, 9.0, 9.0)              # ear: out of the wall (u), width (v), height (h)
+HS_SCREW_V = 12.0                     # screws at u = IEC_U +- (wall + ear/2), v = +-12
+INSERT = (4.0, 7.0)                   # heat-set insert M3 x 5.7: hole d, depth (assumption)
+CSK = (3.4, 6.6)                      # M3 countersunk: shank hole / head d (90 deg)
+SHEATH_HOLE, SHEATH_V = 8.0, 8.0      # 230 V sheath 7.3 (wiring.SHEATH_D) through the back wall
+TIE_SLOT, TIE_DU = (2.0, 4.5), 7.5    # cable tie slots beside the sheath hole (strain relief)
+PE_HOLE, PE_Y, PE_X = 4.5, 570.0, 519.0   # PE lead through the bottom wall, straight down to the frame eye (x 507..531, y 564..576)
+# Connector side: solid band 2 (keystones like the old 2 mm sheet) with a 3 mm rim, GX16 + 4 keystones as before
+CON_BAND = (-66.3, 63.0, 14.0)        # u0, u1, half height v
+CON_RIM = 2.0
+
+def _hs_geom():
+    ou, ov = HS_IN[0] / 2 + HS_WALL, HS_IN[1] / 2 + HS_WALL
+    ub = ou + HS_EAR[0] / 2
+    screws = [(IEC_U + su * ub, sv * HS_SCREW_V) for su in (-1, 1) for sv in (-1, 1)]
+    return ou, ov, screws
+
+def switch_panel():
+    ou, ov, screws = _hs_geom()
+    pad = at(rrect(2 * REAR_PAD[0], 2 * REAR_PAD[1], 2.0), IEC_U, 0.0)
+    cut = plate(at(rrect(IEC_CUT[0] + 2 * FIT, IEC_CUT[1] + 2 * FIT, IEC_CUT[2]), IEC_U, 0.0), PANEL_T + 2, -1.0)
+    cut = cut + plate(at(rrect(*IEC_RECESS, 3.0), IEC_U, 0.0), PANEL_T, IEC_WALL)
+    for u, v in screws:
+        r0, r1 = CSK[0] / 2, CSK[1] / 2
+        prof = [(0, -1.0), (r1, -1.0), (r1, 0.0), (r0, r1 - r0), (r0, PANEL_T + 1), (0, PANEL_T + 1)]
+        cut = cut + Manifold.revolve(CrossSection([np.array(prof)]), 24).rotate([0, 0, 7.5]).translate([u, v, 0.0])   # shank + 90 deg countersink in one solid; half-segment turn avoids a sliver
+    return hex_panel(FRONT_PANEL_W, "bezel", shift=FRONT_HEX_SHIFT, exclude=hex_exclude(IEC_U, 0.0, *REAR_PAD),
+                     solid=plate(pad, PANEL_T), cut=cut)
+
+def connector_panel():
+    u0, u1, hv = CON_BAND
+    band = at(rrect(u1 - u0, 2 * hv, 2.0), (u0 + u1) / 2, 0.0)
+    inner = at(CrossSection.square((u1 - u0 - 2 * CON_RIM, 2 * hv - 2 * CON_RIM), True), (u0 + u1) / 2, 0.0)
+    solid = plate(band, GRID_T) + plate(band - inner, PANEL_T)
     holes = [at(circle(GX16), 50.0, 0.0)] + [at(CrossSection.square(KEY, True), u, 0.0) for u in (17.0, -7.0, -31.0, -55.0)]
-    return plug(holes, rrect(132.0, 39.0, 3.5))
+    cut = plate(CrossSection.compose(holes), PANEL_T + 2, -1.0)
+    return hex_panel(FRONT_PANEL_W, "bezel", shift=FRONT_HEX_SHIFT, exclude=hex_exclude((u0 + u1) / 2, 0.0, (u1 - u0) / 2, hv),
+                     solid=solid, cut=cut)
 
-def hex_panel(w, kind, fan=False, shift=None):
-    """cover panel: PANEL_RIM frame around a full hex field (one code for side and front panels)"""
+def iec_housing():
+    """red touch guard behind the IEC: open towards the panel, ears with inserts (screws from outside through the panel).
+    Print frame = panel frame (u, v, h); STL is printed standing on the back wall, ears carried by 45 deg gussets."""
+    ou, ov, screws = _hs_geom()
+    h0, hb = PANEL_T, REAR_X_OUT - HS_BACK_X
+    iu, iv = HS_IN[0] / 2, HS_IN[1] / 2
+    m = lbox(IEC_U - ou, IEC_U + ou, -ov, ov, h0, hb)
+    for u, v in screws:
+        s = 1 if u > IEC_U else -1
+        w0, w1 = IEC_U + s * ou, IEC_U + s * (ou + HS_EAR[0])
+        ear = lbox(min(w0, w1), max(w0, w1), v - HS_EAR[1] / 2, v + HS_EAR[1] / 2, h0, h0 + HS_EAR[2])
+        strip = lbox(min(w0, w0 - s * 0.5), max(w0, w0 - s * 0.5), v - HS_EAR[1] / 2, v + HS_EAR[1] / 2, h0, h0 + HS_EAR[2] + HS_EAR[0])
+        m = m + (ear + strip).hull()
+    m = m - lbox(IEC_U - iu, IEC_U + iu, -iv, iv, h0 - 1, hb - HS_WALL)
+    for u, v in screws: m = m - cyl_h(u, v, h0 - 1, h0 + INSERT[1], INSERT[0], 16)
+    m = m - cyl_h(IEC_U, SHEATH_V, hb - HS_WALL - 1, hb + 1, SHEATH_HOLE, 32)
+    for du in (-TIE_DU, TIE_DU):
+        u = IEC_U + du
+        m = m - lbox(u - TIE_SLOT[0] / 2, u + TIE_SLOT[0] / 2, SHEATH_V - TIE_SLOT[1] / 2, SHEATH_V + TIE_SLOT[1] / 2, hb - HS_WALL - 1, hb + 1)
+    pu, ph = CELL_YC["right"] - PE_Y, REAR_X_OUT - PE_X
+    pe = Manifold.cylinder(HS_WALL + 2, PE_HOLE / 2, PE_HOLE / 2, 16).rotate([90, 0, 0]).translate([pu, -iv + 1, ph])
+    return m - pe
+
+def hex_panel(w, kind, fan=False, shift=None, exclude=None, solid=None, cut=None):
+    """cover panel: PANEL_RIM frame around a hex field (one code for side, front and rear panels);
+    exclude drops hexes, solid is added and cut removed afterwards (rear panels)"""
     ww, wh = w - 2 * PANEL_RIM, PANEL_H - 2 * PANEL_RIM
-    ex = (lambda x, y: math.hypot(x, y) < 48.0) if fan else None
+    ex = (lambda x, y: math.hypot(x, y) < 48.0) if fan else exclude
     frame = plate(rrect(w, PANEL_H, 1.0) - CrossSection.square((ww - 1.0, wh - 1.0), True), PANEL_T)   # 0.5 mm overlap with the grid
     grid = plate(CrossSection.square((ww, wh), True) - honeycomb(ww, wh, ex, shift=shift), GRID_T)
     p = frame + grid
+    if solid is not None: p = p + solid
+    if cut is not None: p = p - cut
     if fan:
         cutter = plate(circle(FAN60["hole"], 48), PANEL_T + 2, -1.0)
         for sx in (-1, 1):
@@ -187,13 +244,13 @@ CHAIN_COL = (0.2, 0.5, 0.85)
 TRAY_LAYER = "Tray Druckteile (gen)"   # colour = filament: red 230 V, yellow 24/5 V, green data/bus, dark grey DIN holders
 
 def parts():
-    ring, sw, cn, fp = bezel_ring(), switch_plug(), connector_plug(), front_panel()
+    sw, cn, hs, fp = switch_panel(), connector_panel(), iec_housing(), front_panel()
     sp, spf = side_panel(False), side_panel(True)
-    local = dict([("Bezel Ring", ring), ("Switch Plug", sw), ("Connector Plug", cn), ("Front Panel Hex", fp),
-                  ("Side Panel Hex", sp), ("Side Panel Fan60", spf)])
-    inst = [("Bezel Rear Left", place_rear(ring, CELL_YC["left"])), ("Bezel Rear Right", place_rear(ring, CELL_YC["right"])),
-            ("Front Panel Left", place_front(fp, CELL_YC["left"])), ("Front Panel Right", place_front(fp, CELL_YC["right"])),
-            ("Switch Plug", place_rear(sw, CELL_YC["right"])), ("Connector Plug", place_rear(cn, CELL_YC["left"]))]
+    local = dict([("Rear Panel Switch", sw), ("Rear Panel Connector", cn), ("IEC Housing", hs.mirror([0, 0, 1])),
+                  ("Front Panel Hex", fp), ("Side Panel Hex", sp), ("Side Panel Fan60", spf)])
+    inst = [("Rear Panel Switch", place_rear(sw, CELL_YC["right"])), ("Rear Panel Connector", place_rear(cn, CELL_YC["left"])),
+            ("IEC Housing", place_rear(hs, CELL_YC["right"])),
+            ("Front Panel Left", place_front(fp, CELL_YC["left"])), ("Front Panel Right", place_front(fp, CELL_YC["right"]))]
     for k, x0 in SIDE_X0.items():
         inst.append((f"Side Panel Near {k}", place_side_near(sp, x0 + SIDE_LEN / 2)))
         inst.append((f"Side Panel Far {k}", place_side_far(sp, x0 + SIDE_LEN / 2)))
@@ -239,11 +296,20 @@ def run_checks():
             vol = (ms[i] ^ ms[j]).volume()
             if vol > 1e-3: bad += 1; rep(f"{inst[i][0]} vs {inst[j][0]}: no collision ({vol:.2f} mm3)", False)
     rep("no collisions between assembled parts", bad == 0)
-    b = place_rear(connector_plug(), CELL_YC["left"]).bounding_box()
-    rep(f"connector plug inside cell y {b[1]:.1f}..{b[4]:.1f} (278..438)", b[1] > 278 and b[4] < 438)
+    for n, (c0, c1) in (("Rear Panel Connector", (278, 438)), ("Rear Panel Switch", (478, 638))):
+        b = dict(inst)[n].bounding_box()
+        rep(f"{n} inside cell y {b[1]:.1f}..{b[4]:.1f} ({c0}..{c1})", b[1] >= c0 - 1e-6 and b[4] <= c1 + 1e-6)
+    # IEC housing: IEC body (doc mesh: tabs end x 507.2; body 46.3 x 27.5, hooks +-15.3) free, retracted fan holders >= 3 mm away
+    hs = dict(inst)["IEC Housing"]; hb = hs.bounding_box()
+    yi = CELL_YC["right"] - IEC_U
+    body = cable.box(507.2, REAR_X_OUT, yi - 23.15, yi + 23.15, ZC - 15.3, ZC + 15.3)
+    rep(f"IEC Housing: IEC body incl. tabs (x 507.2..534.7) inside, no contact", (hs ^ body).volume() < 1e-6)
+    fx = max(dict(inst)[f"Fan Holder {k + 1}"].bounding_box()[3] for k in range(len(tray.FAN_YC))) + cable.TRAVEL
+    rep(f"IEC Housing back x {hb[0]:.1f} vs retracted fan holders x {fx:.1f}: gap {hb[0] - fx:.1f} (>= 3)", hb[0] - fx >= 3.0)
+    rep(f"IEC Housing below the acrylic plate: z {hb[2]:.1f}..{hb[5]:.1f} (> 26 PE eye, < 102)", hb[2] > 26 and hb[5] < 102)
     # every mount tab must sit exactly on the cell edge (rail face) and over the rail centre line
     for name, m in inst:
-        if not name.startswith(("Bezel", "Side", "Front Panel")): continue
+        if not name.startswith(("Rear Panel", "Side", "Front Panel")): continue
         bb = m.bounding_box()
         rep(f"{name}: tabs reach the rail faces z {bb[2]:.2f} / {bb[5]:.2f} (25 / 105)", abs(bb[2] - Z0) < 1e-6 and abs(bb[5] - Z1) < 1e-6)
     for n in ("Chain Bracket Fixed",):
@@ -325,6 +391,7 @@ if __name__ == "__main__":
     tcol = {n: c for n, c, _, _ in tray.parts()}
     def style(n):
         if n in tcol: return TRAY_LAYER, tcol[n]
+        if n == "IEC Housing": return LAYER, tray.COL_MAINS     # 230 V touch guard: red like the mains parts
         return (CHAIN_LAYER, CHAIN_COL) if ischain(n) else (LAYER, COL)
     data = [{"name": n, "layer": style(n)[0], "color": list(style(n)[1]), "faces": planar_faces(m)} for n, m in inst]
     data += [{"name": n, "layer": wiring.LAYER, "color": list(c), "faces": planar_faces(m)} for n, c, m, _ in wiring.wires()]

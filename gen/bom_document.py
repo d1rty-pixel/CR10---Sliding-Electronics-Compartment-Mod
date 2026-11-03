@@ -29,8 +29,8 @@ def totals(c):
 
 by = {n: profiles(next(g for g in groups if g.name == n)) for n, _ in ASSEMBLIES}
 mod = by["Mod Frame Base"] + by["Mod Frame Drawer"]
-KIND = [("Bezel", "Bezel Ring"), ("Switch Plug", "Switch Plug"), ("Connector Plug", "Connector Plug"),
-        ("Front Panel", "Front Panel Hex"), ("Side Panel", "Side Panel Hex")]
+KIND = [("Rear Panel Switch", "Rear Panel Switch"), ("Rear Panel Connector", "Rear Panel Connector"),
+        ("IEC Housing", "IEC Housing (rot)"), ("Front Panel", "Front Panel Hex"), ("Side Panel", "Side Panel Hex")]
 printed = collections.Counter()
 for d in json.load(open(ROOT + "/build/parts.json")):
     if d["layer"] == "Druckteile (gen)": printed[next(k for p, k in KIND if d["name"].startswith(p))] += 1

@@ -15,7 +15,7 @@ Stand 2026-11-03. Von Hand gepflegt. Profile und Druckteile stehen in `docs/BOM.
 | Klemme PE | WAGO 221-414 | **(offen)** | Nutzerentscheidung; Stückzahl noch nicht gezählt |
 | Netzleitung Kette | Lapp ÖLFLEX FD 855 P 3G1,5 | Länge **(offen)** | Biegeradien ungeprüft (T-004) |
 | Rundstecker Druckkopf | GX16-4 (Einbau Ø16,2) | 1 Paar | PDF |
-| Keystone-Module | RJ45, USB, USB, Blind | 4 | `connector_plug()` |
+| Keystone-Module | RJ45, USB, USB, Blind | 4 | `connector_panel()` |
 | Ringöse PE Rahmen | M5 | 1 | `docs/DESIGN.md`, PE; Tray-Öse Größe **(offen)** |
 
 ## Lüfter
@@ -51,6 +51,8 @@ Weitere Lüfter: `Side Panel Fan60` (Lochbild 50 × 50, Ø3,4) ist nirgends plat
 | Auszugschienen | M5 + Nutenstein | **(offen)** | je 1 Loch mittig in Outer und Inner |
 | Kanal dünne Kette | M3 | 5 | `cable_thin.CH_SCREWS` |
 | Pi auf Halter | M2,5 | 4 | Lochbild 58 × 49 |
+| IEC Housing an Rear Panel Switch | M3 × 8 Senkkopf (ISO 10642) + Gewindeeinsatz M3 × 5,7 | je 4 | `iec_housing()`; Länge und Einsatztyp **(Annahme)** |
+| Zugentlastung 230-V-Mantel am IEC Housing | Kabelbinder ≤ 4,5 breit | 1 | `TIE_SLOT` |
 | Übrige (Kettenhalter, Hub-Deckel, Kanäle, Octopus) | M3 | **(offen)** | noch nicht gezählt |
 
 Die Nutgröße des Querholms ist „Nut 6“. In `docs/COMPONENTS.md` stehen M3-Nutensteine, Schienen und Lüfterhalter verwenden aber M5. Vor der Bestellung die passenden Nutensteine prüfen **(offen)**.

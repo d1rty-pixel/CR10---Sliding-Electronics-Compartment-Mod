@@ -43,8 +43,9 @@ Die AC/DC-Grenze beider Netzteile liegt auf Y 557 (Doppelwand der beiden Hub-Box
 | Flansch | 50 × 30,5 |
 | Ausschnitt | 47 × 27,8, R2 (Generator: +2·FIT) |
 | Befestigung | Snap-in für 1,0 mm Wand, keine Schrauben laut Datenblatt |
-| Tiefe | 19,5 + Flachsteckhülsen (QC) 4,8 |
-| Lage | liegend, Flanschrückseite auf Switch-Plug-Außenfläche X 534,7, Mitte Y 553,4 / Z 65, Wippe bei +Y |
+| Tiefe | 19,5 + Flachsteckhülsen (QC) 4,8; im Dokument-Mesh enden die Flachstecker bei X 507,2 |
+| Flachstecker im STEP | 3: Y 534,6 / Z 65, Y 544,7 / Z 72, Y 557,2 / Z 72,5; Belegung **(ungeprüft)**, Nutzer: „3 Pins, oder paar mehr“ (T-003) |
+| Lage | liegend, Flanschrückseite auf der Außenfläche von `Rear Panel Switch` X 534,7, Mitte Y 553,4 / Z 65, Wippe bei +Y |
 | Farben im Import | Körper schwarz, Kontakte zinnfarben (STEP hat nur eine Farbe) |
 
 Quelle: Datenblatt PDF S. 1 / Digikey. Rastkraft auf gedrucktem Rand ungetestet.
