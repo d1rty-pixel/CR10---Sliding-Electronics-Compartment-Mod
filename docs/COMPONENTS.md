@@ -70,7 +70,7 @@ Leitereinführungen für die Litzen in `wiring.py`: Mitte Y 561,4 (Hälfte −Y 
 
 ## Raspberry Pi 4 Model B
 
-- Platine X −300..−215 (seit 2026-11-03 vorn auf R2; vorher −125..−40), Y 374..430 (Lochmitte 402 über R2), Z 31 (Unterkante); Ports +X, USB-C −Y, GPIO +Y. Löcher 58 × 49 (M2,5). 5-V-Versorgung über GPIO.
+- Platine X −335..−250 (seit 2026-11-03 vorn auf R2 und um 180° gedreht; vorher −300..−215 mit Ports +X, davor −125..−40), Y 374..430 (Lochmitte 402 über R2), Z 31 (Unterkante); Ports −X, USB-C +Y, GPIO −Y. Löcher 58 × 49 (M2,5). 5-V-Versorgung über GPIO.
 - STEP-Quelle ohne bekannte Lizenz (siehe Tabelle); Alternative PixelBot-STEP hat nur 166 Flächen. Maße der Anschlusslagen nicht gegen Datenblatt geprüft **(ungeprüft)**.
 
 ## Kabel (Lapp ÖLFLEX FD 855 P 3G1,5)
@@ -105,7 +105,7 @@ STEP-Dateien liegen nicht im Projekt (nur im Scratchpad geladen); für Neukonver
 |---|---|---|---|---|
 | LRS-350-24 | https://www.meanwell.com/upload/pdf/LRS-350/LRS-350-3D.zip (offiziell) | `build/vendor/lrs350.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((0,-1),(1,-1),(2,1))` = 180° um Z (Klemmen +X); mittig in X/Y auf Platzhalter `PSU LRS-200-24`, Unterkante auf Platzhalter-Unterkante (`z_ref=None`) |
 | RS-15-5 | https://www.meanwell.com/upload/pdf/RS-15/RS-15-3D.zip (offiziell) | `build/vendor/rs15.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((0,1),(1,1),(2,1))` unverändert (Klemmen −X); mittig auf Platzhalter `PSU LRS-15-5`, Unterkante bündig |
-| Raspberry Pi 4 Model B | https://code.c-base.org (wercc/monorail-pcb) `Libraries/Raspberry-Pi-4-library-for-kicad-master/Raspberry Pi 4 Model B.STEP`; Lizenz unbekannt | `build/vendor/pi4.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((0,1),(2,-1),(1,1))` Y-up → Z-up (Ports +X, GPIO +Y); `z_ref=-0.8` (PCB y −0,8..0,8) auf Platzhalter `Raspberry Pi 4` |
+| Raspberry Pi 4 Model B | https://code.c-base.org (wercc/monorail-pcb) `Libraries/Raspberry-Pi-4-library-for-kicad-master/Raspberry Pi 4 Model B.STEP`; Lizenz unbekannt | `build/vendor/pi4.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((0,-1),(2,1),(1,1))` Y-up → Z-up (Ports −X, GPIO −Y); `z_ref=-0.8` (PCB y −0,8..0,8) auf Platzhalter `Raspberry Pi 4` |
 | BTT Octopus V1.0 (für V1.1) | github bigtreetech/BIGTREETECH-OCTOPUS-V1.0 `3D/BIGTREETECH Octopus V1.0.stp` | `build/vendor/octopus.json` | `--defl 1 --ang 1.5 --min-solid 2` | `rot=((0,-1),(1,-1),(2,1))` = 180° (Schraubklemmen +X, Motorstecker −Y); `z_ref=-1.6` auf Platzhalter `BTT Octopus V1.1` |
 | IEC-GS-1-100 | https://app.adam-tech.com/products/download/model/203611/iec-gs-1-100-model.step (Datenblatt `.../data_sheet/203611/iec-gs-1-100-data-sheet.pdf`) | `build/vendor/iec_gs_1_100.json` | nicht dokumentiert **(ungeprüft)** | `rot=((2,1),(1,-1),(0,1))`, `at=(537.7, 553.4, 65.0)` (Quellursprung = Flansch-Vorderseite, +z aus der Platte; Flanschrückseite auf x 534,7), kein Platzhalter; Farbe per `paint` (Kontakte zinnfarben z < −21, Körper schwarz) |
 

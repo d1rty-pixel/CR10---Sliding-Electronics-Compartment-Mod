@@ -37,7 +37,7 @@ Weitere Lüfter: `Side Panel Fan60` (Lochbild 50 × 50, Ø3,4) ist nirgends plat
 | Teil | Typ | Stück | Quelle / Status |
 |---|---|---:|---|
 | Auszugschienen | Vollauszug, dreiteilig, 450 mm | 2 | Modell; je Seite 1 |
-| Hutschienen | EN 50022 35 × 7,5 | 3 | R1a, R1b je 370 mm, R2 (X −305..−40, 265 mm) |
+| Hutschienen | EN 50022 35 × 7,5 | 3 | R1a, R1b je 370 mm, R2 (X −320..−40, 280 mm) |
 | Aluprofile | 20 × 20 / 20 × 40, Nut 6 | siehe `docs/BOM.md` | erzeugt |
 | Alu-Eckverbinder, Panelclips | Original | – | nicht modelliert |
 

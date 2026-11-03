@@ -14,7 +14,7 @@ PLACEHOLDER_LAYER = "Electronics (Platzhalter)"
 MODELS = [
     dict(name="PSU Mean Well LRS-350-24", json="lrs350.json", ph="PSU LRS-200-24", rot=((0, -1), (1, -1), (2, 1)), z_ref=None),   # terminals -X in source, +X wanted
     dict(name="PSU Mean Well RS-15-5", json="rs15.json", ph="PSU LRS-15-5", rot=((0, 1), (1, 1), (2, 1)), z_ref=None),
-    dict(name="Raspberry Pi 4 Model B", json="pi4.json", ph="Raspberry Pi 4", rot=((0, 1), (2, -1), (1, 1)), z_ref=-0.8),       # source is Y-up, PCB y -0.8..0.8
+    dict(name="Raspberry Pi 4 Model B", json="pi4.json", ph="Raspberry Pi 4", rot=((0, -1), (2, 1), (1, 1)), z_ref=-0.8),       # source is Y-up, PCB y -0.8..0.8; turned 180 deg: ports -X
     dict(name="BTT Octopus (V1.0 STEP)", json="octopus.json", ph="BTT Octopus V1.1", rot=((0, -1), (1, -1), (2, 1)), z_ref=-1.6),   # screw terminals -X in source, +X wanted
     # Adam Tech STEP: origin = flange front centre, +z out of the panel, long side y, rocker at -y, one colour only.
     # Flange back (z -3) on the switch plug's outer face x 534.7, centre on the switch (y 558 - 4.6, z 65); long side along y.
@@ -34,6 +34,9 @@ def _box(g):
 
 ONLY = globals().get("VENDOR_ONLY")   # optional list of json names, for testing one model
 _layer(VENDOR_LAYER); _layer(PLACEHOLDER_LAYER)
+import os
+_missing = [m["json"] for m in MODELS if (not ONLY or m["json"] in ONLY) and not os.path.exists(VENDOR_DIR + m["json"])]
+if _missing: raise FileNotFoundError("missing in build/vendor (vendor groups kept): " + ", ".join(_missing))
 _names = [m["name"] for m in MODELS if not ONLY or m["json"] in ONLY]
 for g in [g for g in groups if g.layer == VENDOR_LAYER and str(g.name) in _names]: groups.remove(g)
 made = []

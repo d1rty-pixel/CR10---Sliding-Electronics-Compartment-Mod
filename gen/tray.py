@@ -175,19 +175,22 @@ def octopus_holder(xh):
         m = m + (cyl_z(xh, y, 19.0, 31.0, 7.0, 24) - cyl_z(xh, y, 23.0, 32.0, 2.8, 16))
     return m - release_cut(xh, RAIL_R2, 21.0)
 
-# logic rail R2 (x -305..-40): Pi 4 at the front, Octopus at the rear end close to the 4 fans (stepper drivers in the
+# logic rail R2 (x -320..-40): Pi 4 at the front, Octopus at the rear end close to the 4 fans (stepper drivers in the
 # strongest airflow; swapped 2026-11-03, before: Octopus x -300..-140, Pi x -125..-40)
+# Pi turned 180 deg (2026-11-03, user): USB/LAN -x towards the front, GPIO -y, USB-C +y; about 41 mm left for the plugs
+# in front of the ports (-337.5) up to the drawer frame (-378.8), 50 mm to the Octopus.
 PI_YC = RAIL_R2                       # Pi 4 centred over the logic rail (hole pattern centre)
-PI_X0 = -300.0                        # Pi board -x edge (board 85 long, holes 3.5 in, 58 apart)
+PI_X0 = -335.0                        # Pi board -x edge = port side (board 85 long, holes 3.5 from the +x edge, 58 apart)
+PI_HOLDER_X0 = PI_X0 + 85.0 - 65.0    # holder 65 long under the hole end of the board (+x)
 OCTO_X0 = -200.0                      # Octopus board -x edge (board 160 long, hole columns 5 in, 150 apart)
 OCTO_HOLDER_X = (OCTO_X0 + 5.0, OCTO_X0 + 155.0)
 
 def pi_holder():
     """plate under the Pi 4 (holes 58 x 49, M2.5), board bottom z 31; release slots inside the clips, clear of the standoffs"""
-    x0, x1, yc = PI_X0, PI_X0 + 65.0, PI_YC
+    x0, x1, yc = PI_HOLDER_X0, PI_HOLDER_X0 + 65.0, PI_YC
     m = clip(x0, x0 + 14.0, RAIL_R2) + clip(x1 - 14.0, x1, RAIL_R2) + box(x0, x1, yc - 28.0, yc + 28.0, CLIP_TOP - 1.0, 19.0)
     m = m - box(x0 + 14.0, x1 - 14.0, yc - 18.0, yc + 18.0, CLIP_TOP - 1, 20.0)          # window, saves material
-    for x in (PI_X0 + 3.5, PI_X0 + 61.5):
+    for x in (x0 + 3.5, x0 + 61.5):
         for y in (yc - 24.5, yc + 24.5):
             m = m + (cyl_z(x, y, 18.9, 31.0, 6.0, 24) - cyl_z(x, y, 22.0, 32.0, 2.2, 16))
     for xc in (x0 + 10.0, x1 - 10.0): m = m - release_cut(xc, RAIL_R2, 20.0)

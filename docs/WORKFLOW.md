@@ -5,6 +5,7 @@
 - Claude Code läuft unter WSL (Projekt `/mnt/g/Things/CR10---Sliding-Electronics-Compartment-Mod`), IngeTrazo unter Windows (`C:\Program Files\IngeTrazo`). MCP-Server `ingetrazo` = `/mnt/c/Program Files/IngeTrazo/ingetrazo-mcp.exe` (lokaler Scope), die AI-Bridge (127.0.0.1:4763) muss in IngeTrazo laufen. Skripte, die IngeTrazo per `exec` liest, verwenden Windows-Pfade (`G:/Things/...`).
 - Generator: `./venv/bin/python -I gen/cr10mod.py build --check`. Geometrie immer im Generator ändern, nicht in IngeTrazo. Commits nur auf Anweisung, keine Exporte ungefragt.
 - Import in IngeTrazo: `ingetrazo_import.py` und `vendor_import.py` per `exec` (genaue Zeilen im `README.md`). Hersteller-Konverter `gen/step_to_mesh.py` nur im separaten venv mit `cadquery-ocp`.
+- `vendor_import.py` braucht `build/vendor/*.json` (lokal derzeit nicht vorhanden); fehlt eine Datei, bricht es seit 2026-11-03 ab, bevor es Gruppen entfernt. Den `exec` nicht in try/except packen, sonst wird ein Fehlschritt nicht zurückgerollt. Ohne JSON lässt sich ein Herstellermodell im Dokument direkt drehen/verschieben (so beim Pi in T-030).
 - `docs/BOM.md` entsteht per `exec` von `gen/bom_document.py` in `run_python` (liest Profilnamen aus dem Dokument und `build/parts.json`).
 
 ## IngeTrazo-Fallstricke
