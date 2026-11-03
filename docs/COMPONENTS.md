@@ -57,6 +57,7 @@ Quelle: Datenblatt PDF S. 1 / Digikey. Rastkraft auf gedrucktem Rand ungetestet.
 | 221-414 | PE (4 Leiter, Nutzerentscheidung) | Breite 24,9 | **(Annahme)** |
 
 Im Dokument stehende WAGO-Modelle plus Hebelstreifen (ersetzen die frühere 221-415).
+Leitereinführungen für die Litzen in `wiring.py`: Mitte Y 561,4 (Hälfte −Y der Oberseite, Hebel +Y) und gleichmäßig über die Breite verteilt **(Annahme, nicht gemessen)**.
 
 ## BTT Octopus (Mainboard)
 
@@ -74,6 +75,8 @@ Im Dokument stehende WAGO-Modelle plus Hebelstreifen (ersetzen die frühere 221-
 | Eigenschaft | Wert | Status |
 |---|---|---|
 | Außendurchmesser | 7,3 | aus früherer Notiz |
+| Ader-Außendurchmesser (1,5 mm²) | 3,0 | **Annahme** (Modell `wiring.py`, Biegeradius ≥ 4 × D = 12) |
+| Mantelfarbe | grau | **Annahme** (nur Darstellung) |
 | Biegeradius fest R_fest | 22 | Lapp-Datenblatt **ungeprüft** |
 | Biegeradius dynamisch R_dyn | 36,5 | Lapp-Datenblatt **ungeprüft** |
 | Kette breit R 29 / dünn R 28,35 | beide < R_dyn | PLAN T-004 |

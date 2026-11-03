@@ -10,7 +10,7 @@ Legende: ID `T-nnn` fortlaufend, nie wiederverwendet. Tabellen: **In Arbeit** (a
 
 | ID | Aufgabe | Details / Akzeptanz | Abhängigkeit / Entscheidung |
 |---|---|---|---|
-| T-001 | Kabelrouten als modellierte Litzen (`gen/wiring.py`) | Neues Modul, Rohre entlang geglätteter Pfade (Parallel-Transport, 12 Segmente, Kappen, Manifold), Layer `Kabel (gen)`, nicht als STL, nicht im Kollisionstest der Druckteile, aber eigener Check Litzen vs Druckteile (Wände/Deckel nicht durchstoßen). Routen und Farben siehe HANDOFF. Biegeradien >= 4 × D. Akzeptanz: `build --check` ok, Import ok, Sichtprüfung, keine Durchstoßung | Octopus-Klemmenlage ungeprüft (T-003), Abnahme durch Nutzer |
+| T-001 | Kabelrouten als modellierte Litzen (`gen/wiring.py`) | Neues Modul, Rohre entlang geglätteter Pfade (Parallel-Transport, 12 Segmente, Kappen, Manifold), Layer `Kabel (gen)`, nicht als STL, nicht im Kollisionstest der Druckteile, aber eigener Check Litzen vs Druckteile (Wände/Deckel nicht durchstoßen). Routen und Farben siehe HANDOFF. Biegeradien >= 4 × D. Akzeptanz: `build --check` ok, Import ok, Sichtprüfung, keine Durchstoßung. **Stand 2026-11-03:** 230 V fertig (Mantel + 10 Adern, Checks grün, Import ok; Knick an LRS FG, RS FG, RS N nach Nutzerentscheidung; `PE_SLOT` nach X −80..−74 verschoben). Offen: DC-Routen | Octopus-Klemmenlage ungeprüft (T-003), Abnahme durch Nutzer (Schleifen einiger Adern, T-021) |
 
 ## Offen
 
@@ -27,6 +27,8 @@ Legende: ID `T-nnn` fortlaufend, nie wiederverwendet. Tabellen: **In Arbeit** (a
 | T-010 | Probedrucke und Tests | Breite Kette: Klammer-Rastkräfte, Zapfen, Brücke/Überhänge; dünne Kette: Schnappgelenk, Klammer (3,2–3,5 breit, Haken 0,6), Überhänge Anschlagecken, Austritt Z 29..39; Durchhang freies Obertrum (breit ca. 217 mm, evtl. Rampe am Tray-Querprofil X 31–51); Hub-/Kanaldeckel (Rastwulst), DIN-Clips mit Federschieber (Print-in-Place: Spalte 0,4/0,5 lösen sich?, Federweg 1,5, Dehnung der Stege 0,6, Rastkraft, Lösen per Schraubendreher, Passung EN 50022; Hub-Boxen werden stehend gedruckt, Wiegen liegend), IEC-Snap-in auf 1,0-mm-Rand | Druckteile vorhanden |
 | T-011 | BOM aktualisieren | `gen/bom_document.py` kennt Ketten, Kanäle, Tray-Teile, Elektronik nicht; erweitern, `docs/BOM.md` neu erzeugen (Schrauben/Nutensteine nicht im Modell) | – |
 | T-012 | Skizzenlayer `Kabelweg (Skizze)` löschen | ausgeblendet, veraltet, keine Geometriequelle | nach T-001 |
+| T-020 | Tray-PE-Öse im Dokument an die Litze anpassen | Litze endet bei X −63, Y 615, Z 26,6 (Hülse des Kabelschuhs), Öse bisher X −74..−50; Kaufteil im Dokument verschieben/drehen | – |
+| T-021 | 230-V-Routen glätten, Router ins Repo | Stützpunkte stammen aus einer Offline-Strafkostensuche (Scratch-Skript, nicht im Repo); mehrere Adern machen große Schleifen (u. a. PE Kette, PE Tray, PE RS, L LRS), weil R ≥ 12 im Hub eng ist. Router als `gen/tools/` übernehmen und Routen von Hand/mit Längengewicht nachziehen | Abnahme T-001 |
 
 ## Blockiert / Entscheidung Nutzer
 

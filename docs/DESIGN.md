@@ -123,7 +123,7 @@ Beide Netzteile haben die AC/DC-Klemmengrenze auf **Y 557** (`Y_DIV`). Zwei getr
 | WAGO-Taschen (`wago_slots()`) | stehend an der roten Wand, Y 558,9..567,2, Z 17,5..36,1, Einführung oben, Hebel +Y; L X −143,15..−124,45; N −123,05..−104,35; PE −93,75..−68,85 (Lücke `SEAM_GAP` 8 für den Wand-Dom); freie Rippen (1,2) mit Fußlippen und Rastnasen |
 | WAGO-Breiten (`WAGOS`) | L/N 221-413: 18,7 (Tiefe 18,6, Dicke 8,3); PE 221-414: 24,9 (angenommen) |
 | Eingang 230 V Kette (`ENTRY`) | +Y-Wand X −109..−94 ab Z 27, Kabelbinder-Zugentlastung innen |
-| PE-Schlitz (`PE_SLOT`) | X −86..−78 (Z 22) zur Tray-Öse |
+| PE-Schlitz (`PE_SLOT`) | X −80..−74 (Z 22) zur Tray-Öse; 2026-11-03 von X −86..−78 verschoben, weil dort nur 2,8 mm bis zum beweglichen Kettenbügel (`Thin Bracket Moving` bis X −80,8, ab Y 605) frei waren (Ader Ø 3) |
 | DC-Fenster (`DUCT_WIN`) | −Y-Wand X −140..−72, Z 17,5..25 (ab Hub-Bodenoberkante), auf die Fingerschlitze des DC-Kanals (Z 16..25) |
 | Deckel | 1,6, Port-Hauben über beide Klemmblöcke (LRS bis X −168, RS bis X −48), Schürzen auf die Gehäuse, je Deckel eigene Grenzschürze auf `RW` bzw. `YW` bis Z 49 (LRS) / 44,2 (RS); Blitz graviert |
 | Befestigung | je Deckel 3 M3 mit vollen Bohrungen, alle Dome im eigenen Teil: 2 Eck-Dome (r 4, konzentrisch zum Eck-Radius `R_BASE` 6, voll mit den Außenwänden verbunden) + 1 Wand-Dom (`wall_boss`, r 3,5, X −99,05; rot Y 560,7 in der Lücke N/PE, gelb Y 553,3); keine Bodenschrauben |
@@ -131,6 +131,18 @@ Beide Netzteile haben die AC/DC-Klemmengrenze auf **Y 557** (`Y_DIV`). Zwei getr
 | Klemmblock RS (Code) | Y 540,9..580,6, `block_x` −52, Oberkante Block 43,7 / Gehäuse 53,0; `wire_z` 29 = Oberkante der abgesenkten Hub-Wand (Leitereintritt Z ca. 33) |
 
 Pin-Positionen für die Verdrahtung: `docs/COMPONENTS.md`.
+
+## Verdrahtung 230 V (`wiring.py`)
+
+Modellierte Litzen auf Layer `Kabel (gen)`, nicht als STL, nicht im Kollisionstest der Druckteile, aber eigener Check: Litze gegen alle Druckteile, WAGO-Körper und Netzteilgehäuse (Boxen), Litzen untereinander, Biegeradius ≥ 4 × D.
+
+- Geometrie: Polylinie mit Kreisbogen-Ecken (Radius exakt bekannt, bis 15), Rohr mit 12 Segmenten, Ringe per Parallel-Transport, flache Kappen.
+- Stützpunkte: offline per Strafkosten-Suche gefunden (Schnittvolumen, Radiusdefizit, Länge) und fest im Code; der Generator rechnet nicht selbst.
+- Mantel Ø 7,3 (grau, **Annahme**) vom Kettenbügel (Y 605) bis hinter die Zugentlastung (Y 594,5); Adern Ø 3,0 (**Annahme**), L braun, N blau, PE grün-gelb.
+- WAGO-Eintritt senkrecht von oben bei Y 561,4 (**Annahme**: Löcher auf der −Y-Hälfte, Hebel +Y), gleichmäßig über die WAGO-Breite. Belegung: L/N k0 LRS, k1 Kette, k2 RS; PE k0 LRS, k1 Kette, k2 Tray-Öse, k3 RS.
+- Klemmen waagrecht: LRS bis X −151,5 auf Z 36, RS bis X −63 auf Z 33 (Eintrittshöhen „ca.“, **ungeprüft**).
+- Knick (Nutzerentscheidung 2026-11-03): LRS FG, RS FG und RS N laufen über die äußere WAGO-Rippe (bis Z 37,9; zur Wand nur 2,45 frei) und fallen kurz vor der Klemme ab; dort ist R < 4 × D zugelassen, der Check meldet den Radius als Info.
+- PE zur Tray-Öse: durch `PE_SLOT` (X −77, Z 26,6), auf der 2020 nach +X, Litzenende X −63, Y 615 (Kabelschuh-Hülse dort; Öse im Dokument ggf. nachziehen).
 
 ## PE-Erdung
 
