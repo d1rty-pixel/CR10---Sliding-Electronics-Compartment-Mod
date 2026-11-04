@@ -58,7 +58,7 @@ Lokales Druckkoordinatensystem: u, v quer, h von der Außenfläche nach innen; S
 
 **Cover Mount** (gemeinsame Komponente `cover_mount()`): exakte Kopie des Originalteils `Side Cover - Mount` (131 Eckpunkte, 963 mm³, Lasche 19,7 × 13 × 5, Senkung Ø7 × 1, Loch Ø4), Mesh und vier Lagen in `gen/data/side_cover_mount.json`. Rückwände und Frontpaneele übernehmen die Lagen der früheren Bezel-Ringe (±40), Seitenpaneele schieben sie 20 mm nach außen (±60, `MT_SIDE_SHIFT`). Wurzel 0,5 mm im Teil (`MT_OVERLAP`, damit es verschmilzt), `MT_ROOT_FIX` −0,3. Laschen liegen immer auf Z 25 bzw. 105 (Check). Die Originalclips sind Panelhalter (Kaufteil).
 
-Nicht gedruckt (Kaufteile): Profile, Schienen, Hutschienen, Alu-Eckverbinder (Druckguss), Original-Panelclips.
+Nicht gedruckt (Kaufteile): Profile, Schienen, Hutschienen (Anzeigemodell aus `gen/rail_model.py`, Profil und Annahmen in `docs/COMPONENTS.md`), Alu-Eckverbinder (Druckguss), Original-Panelclips.
 
 ## Tray-Layout entlang x (hohe-Y-Seite, Tray innen X −379..31)
 
@@ -165,5 +165,5 @@ Die modellierten 230-V-Litzen wurden am 2026-11-03 gelöscht (Nutzer): Netzteile
 - `build --check` prüft: jedes Teil manifold und ein Körper, keine Eckpunkte < 0,1 mm Abstand (IngeTrazo verschmilzt sie), keine Kollision zwischen allen zusammengebauten Teilen (exaktes Boolean-Volumen), Lagen/Fensterchecks. Gegen das Dokument nur per Bbox/Koordinatenscan.
 - Berührende Körper bleiben bei manifold3d getrennt: 0,05 überlappen. Exakte Bögen (`_rounded()`) statt `offset()`-Rundung und Kreisen an Wänden; Grundkörper als ein Block minus Hohlraum; Deckelaussparungen in 2D; Extrusion aus einem 2D-Schnitt statt Vereinigung koplanarer Flächen (Splitter-Vertices).
 - Nutzerkomponenten (`Chain Link (new)`, 2 Instanzen im Dokument) bleiben unberührt; der Import überspringt Namen mit „(new)“.
-- Der Kettenanschlag sperrt nur Biegen nach außen (Hochbiegen), nicht das Durchhängen; Durchhang des freien Obertrums (breit ca. 217 mm) offen.
+- Der Kettenanschlag sperrt nur Biegen nach außen (Hochbiegen), nicht das Durchhängen; Durchhang des freien Obertrums (breit ca. 217 mm) nicht auf voller Länge getestet; 3 gedruckte Glieder hängen nicht durch, Nutzer verzichtet auf den Test (2026-11-04).
 - Hersteller-Modelle sind Referenzgeometrie; Kollisionen zwischen ihnen und Druckteilen wurden vom Nutzer bewusst ignoriert (STAND 14).
