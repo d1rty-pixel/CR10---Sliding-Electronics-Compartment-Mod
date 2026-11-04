@@ -82,7 +82,7 @@ Leitereinführungen für die Litzen in `wiring.py`: Mitte Y 561,4 (Hälfte −Y 
 | Mantelfarbe | grau | **Annahme** (nur Darstellung) |
 | Biegeradius fest R_fest | 22 | Lapp-Datenblatt **ungeprüft** |
 | Biegeradius dynamisch R_dyn | 36,5 | Lapp-Datenblatt **ungeprüft** |
-| Kette breit R 24,75 / dünn R 28,35 | beide < R_dyn, > R_fest | PLAN T-004 |
+| Kette breit R 24,75 / dünn R 27,0 (seit T-005, vorher 28,35) | beide < R_dyn, > R_fest | PLAN T-004 |
 
 Faustregel (nicht geprüft): Cat6/USB dynamisch ca. 8–10 × D = 36..60 mm, nur schleppkettentaugliche Kabel. Kabelliste breite Kette, **Durchmesser geschätzt (Annahme)**: GX16-4 (CAN + 24 V zum Druckkopf) ca. 6; RJ45 Cat6 ca. 5,5; 2 × USB je ca. 4,5; 24/5-V-Versorgung ca. 5; Sensoren ca. 4; Summe 29,5 plus ca. 10 % Luft = ca. 32,5 gegen Innenbreite 27,4 (einlagig zu breit; Innenhöhe 12,5, zweilagig nur ≤ 5 je Lage). Option: Slim-Cat6 ca. 3,8, ein USB weglassen (PLAN T-015).
 

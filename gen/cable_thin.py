@@ -13,8 +13,10 @@ from chain_link import Link
 CHAIN_Y = 615.0                      # slot centre of the 2020 on the tray; outer rail of the far slide starts at y 627
 ZT = cable.CH_ZT                     # underside of the acrylic plate
 R = 7.5                              # plate radius = half outer height (15)
-ZU, ZL = 91.4, 34.7                  # pivot height upper / lower run -> arc radius 28.35: with full-height stop corners the joints
-                                     # stick out about 2.6 mm in the arc, so the runs sit 3.1 below the plate / 2.2 above the 2020
+ZU, ZL = 89.6, 35.6                  # pivot height upper / lower run -> arc radius 27.0 (T-005/T-006; was 91.4 / 34.7, R 28.35):
+                                     # the full-height stop corner behind the pivot (local x -10.4) rises up to 11.9 above the pivot line
+                                     # when a link tilts into the arc; scanned over the whole travel (1 mm steps): links z 25.3..101.6
+                                     # (the old heights reached 24.5..103.3, i.e. into the 2020 and the acrylic plate)
 PITCH, N_LINKS = 26.0, 12            # 12 links: arc centre x -138 (out) .. 60 (in), always in front of the fixed end
 X_SHIFT = 45.0                       # thin chain 45 mm further forward than the wide one: its cable exit lands on the junction box
 X_MOVING_EXT = cable.X_MOVING_EXT - X_SHIFT

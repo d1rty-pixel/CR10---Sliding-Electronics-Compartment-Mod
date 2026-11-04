@@ -389,6 +389,13 @@ def run_checks():
         front = min(b[0] for b in zs) - (xm - mod.X_MOVING_EXT)
         rep(f"{tag} chain pose moving end x {xm:.0f}: arc front x {front:.1f} in drawer coordinates (>= {DRAWER_FRONT_IN + 3:.0f})",
             front >= DRAWER_FRONT_IN + 3)
+    # the three poses above miss the links that tilt into the arc: scan the whole travel (T-005/T-006)
+    for mod, tag, n, pitch, zu, zl in ((cable, "wide", cable.N_LINKS, cable.CHP, cable.CHAIN_ZU, cable.CHAIN_ZL),
+                                       (thin, "thin", thin.N_LINKS, thin.PITCH, thin.ZU, thin.ZL)):
+        r = cable.travel_scan((mod.link(), mod.lid()), mod.X_MOVING_EXT, n, mod.X_FIXED, pitch, zu, zl)
+        rep(f"{tag} chain, whole travel (1 mm steps): links z {r['zlo'][0]:.2f} (s {r['zlo'][1]:.0f}) .. {r['zhi'][0]:.2f} (s {r['zhi'][1]:.0f}) "
+            f"inside 25..{cable.CH_ZT:.0f}, arc front x {r['front'][0]:.1f} (s {r['front'][1]:.0f}) in drawer coordinates (>= {DRAWER_FRONT_IN + 3:.0f})",
+            r["zlo"][0] >= 25.0 and r["zhi"][0] <= cable.CH_ZT and r["front"][0] >= DRAWER_FRONT_IN + 3)
     # wires: not printed, so outside the part collision test above, but they must not pierce any printed part
     ws = wiring.wires()
     for n, _, m, info in ws:
@@ -436,5 +443,18 @@ if __name__ == "__main__":
     data += [{"name": n, "layer": wiring.LAYER, "color": list(c), "faces": planar_faces(m)} for n, c, m, _ in wiring.wires()]
     with open(os.path.join(outdir, "parts.json"), "w") as f:
         json.dump(data, f)
+    # printed-part list for docs/BOM.md (gen/bom_document.py): one row per STL, number of placed instances, volume
+    def stl_of(n):
+        if n in local: return n
+        for pre, k in (("Front Panel ", "Front Panel Hex"), ("Side Panel ", "Side Panel Hex")):
+            if n.startswith(pre): return k
+        return n.rsplit(" ", 1)[0]                                  # Chain Link 05 -> Chain Link
+    count = {}
+    for n, _ in inst: count[stl_of(n)] = count.get(stl_of(n), 0) + 1
+    assert set(count) <= set(local), set(count) - set(local)
+    bom = [{"name": n, "stl": n.replace(" ", "_") + ".stl", "layer": style(next((i for i, _ in inst if stl_of(i) == n), n))[0],
+            "count": count.get(n, 0), "volume_cm3": round(m.volume() / 1000, 2)} for n, m in local.items()]
+    with open(os.path.join(outdir, "bom_parts.json"), "w") as f:
+        json.dump(bom, f, indent=1)
     if "--check" in sys.argv:
         run_checks()

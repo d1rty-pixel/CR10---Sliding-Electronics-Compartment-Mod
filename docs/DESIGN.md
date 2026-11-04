@@ -7,7 +7,7 @@ Stand 2026-11-04 (HANDOFF STAND 15). Alle Maße in mm, Weltkoordinaten des IngeT
 - **x** entlang der Auszugsrichtung. Der Auszug fährt nach −x heraus. Frontplatte außen x −399 (innen −383), Rahmenrückfläche x 515–535, Außenfläche der Rückplatten x 534,7. Tray-Innenraum x −379..31.
 - **y** quer. Rahmenbreite 258–658 (Außenkanten der Eckpfosten). Zellen Y 278–438 (`left`, Mitte 358) und Y 478–638 (`right`, Mitte 558), je 160 breit, Mittelpfosten Y 438–478. „Hohes Y“ = rechte Seite (Schalter, dünne Kette, Netzteile).
 - **z** oben. Unterkante Füße −25, untere Schiene 5–25, **Zelle 25–105 (80 mm, Mitte ZC 65)**, obere Schiene 105–125. Vor dem Umbau war die Zelle 25–80. Tray-Boden (Oberkante) Z 5.
-- Tray-/Kettenmaße gelten für den voll ausgefahrenen Auszug, sofern nicht anders genannt. Verfahrweg 396 (`TRAVEL`, abgeleitet, nicht bestätigt).
+- Tray-/Kettenmaße gelten für den voll ausgefahrenen Auszug, sofern nicht anders genannt. Verfahrweg 396 (`TRAVEL`, abgeleitet, nicht bestätigt). Laut Fahrsimulation (`gen/travel_sim.py`, T-006) schlägt der Auszugrahmen schon bei 393,5 am Unterbau an (`2020 L=80 #1/#2` auf `2040 L=80 #5/#1`); die Ketten-Checks rechnen weiter mit 396 (2,5 mm mehr eingefahren als möglich, also auf der sicheren Seite).
 
 ## Rahmen, Zellen, Profile
 
@@ -93,7 +93,7 @@ Farbe der Druckteile = Filament (Nutzer 2026-11-03): anthrazit für alle Innente
 
 ## Kabelschleppketten
 
-Zwei Ketten, Obertrum fest an der Acrylplatte (Z 102), Untertrum am Tray, 180-Grad-Bogen vorn (−x). Platz Z 25..102 = 77. Kabel: Lapp ÖLFLEX FD 855 P 3G1,5 (siehe COMPONENTS). Bogenradius der Ketten (breit 24,75, dünn 28,35) liegt unter R_dyn 36,5 des Kabels (Datenblatt ungeprüft, PLAN T-004).
+Zwei Ketten, Obertrum fest an der Acrylplatte (Z 102), Untertrum am Tray, 180-Grad-Bogen vorn (−x). Platz Z 25..102 = 77. Kabel: Lapp ÖLFLEX FD 855 P 3G1,5 (siehe COMPONENTS). Bogenradius der Ketten (breit 24,75, dünn 27,0) liegt unter R_dyn 36,5 des Kabels (Datenblatt ungeprüft, PLAN T-004).
 
 | Parameter | Breit (`cable.py`) | Dünn (`cable_thin.py`) |
 |---|---|---|
@@ -104,21 +104,21 @@ Zwei Ketten, Obertrum fest an der Acrylplatte (Z 102), Untertrum am Tray, 180-Gr
 | Plattendicke / Spalt Inner-Outer | 3,0 / 0,3 | 1,8 / 0,3 |
 | Innenmaß | 27,4 × 12,5 (Balken Z −9..−6,5, Klammersteg ab Z 6) | 10 × 10 |
 | Außenbreite | 40 (\|y\| 20) | 17,8 |
-| Pivothöhe oben / unten | 87,25 / 37,75 (Bogenradius 24,75; gesucht: Glieder Z 25,2..101,8 in allen Lagen, gerade Trume 96,25 / 28,75) | 91,4 / 34,7 (Bogenradius 28,35) |
+| Pivothöhe oben / unten | 87,25 / 37,75 (Bogenradius 24,75; gesucht: Glieder Z 25,2..101,8 in allen Lagen, gerade Trume 96,25 / 28,75) | 89,6 / 35,6 (Bogenradius 27,0; seit T-005/T-006, vorher 91,4 / 34,7: über den ganzen Hub Glieder Z 24,5..103,3, also im 2020 und in der Acrylplatte; jetzt Z 25,31..101,57). Grund: die volle Anschlagecke hinter dem Gelenk (lokal X −10,4) steigt beim Einkippen in den Bogen bis 11,9 über die Gelenklinie |
 | `X_MOVING_EXT` (bewegtes Ende, ausgefahren) | −83,5 | −128,5 (`X_SHIFT` 45) |
 | `X_FIXED` (festes Ende, Hubmitte) | 114,5 | 69,5 |
 | Anschlag (`STOP_H`) | = R (voll, eckig) | = R (voll, eckig) |
 | Gelenk | Zapfen Ø4 hinten, Loch Ø4,4 + Schlitz 3,6 zur Deckelseite; Steg X 14,5..17,5, Balken 2,5 | Steg X 12,5..15,5, Balken Z −7,5..−5,5 |
 | Glied | gemeinsamer Code `chain_link.Link` (Schema von `Chain Link (new)`, `chain_link_user.json`), Parametersatz breit | `chain_link.Link`, Parametersatz dünn |
 | Klammer (`lid()`) | Bogen 2,0 bündig in Kerbe der Innenplatten (X 9,8..14,2), Arme 1,5, Haken 0,8 in Nut Z 1,5..4,0; ganz in der Gliedhülle | Bogen 1,8 bündig in Nut der Innenplatten (Kerbe X 8,3..12,2), ganz in der Gliedhülle |
-| Scharnier-Check | `hinge_sweep`: 0..78° frei (Bogen braucht 73,2), Anschlag bei −1,5° | `hinge_sweep`: 0..60° frei (Bogen braucht 54,6), Anschlag bei −1,5° |
+| Scharnier-Check | `hinge_sweep`: 0..78° frei (Bogen braucht 73,2), Anschlag bei −1,5° | `hinge_sweep`: 0..63° frei (Bogen braucht 57,6), Anschlag bei −1,5° |
 | Druck | Glieder stehend auf dem Balken (Platten senkrecht), Klammer mit dem Bogen auf dem Bett, ohne Support | wie breit |
 
-**X_SHIFT** der dünnen Kette (45 mm nach vorn): ihr Kabelaustritt landet auf dem Power-Hub (Eingang X −109..−94). Bogenfront eingefahren in Tray-Koordinaten −379,0 (Frontplatte −383, nur ca. 4 mm; Check verlangt >= −380 bzw. `DRAWER_FRONT_IN` + 3).
+**X_SHIFT** der dünnen Kette (45 mm nach vorn): ihr Kabelaustritt landet auf dem Power-Hub (Eingang X −109..−94). Bogenfront eingefahren in Tray-Koordinaten −379,8 (seit T-005, vorher −379,0; der kleinere Bogen gibt Kettenlänge frei). Check verlangt >= −380 (`DRAWER_FRONT_IN` −383 + 3) über den ganzen Hub; −383 ist die Innenkante der Montagelaschen des Frontpaneels. In der Spur der dünnen Kette (Y 606,1..623,9, Z 25..102) reicht `Front Panel Right` nur bis X −391,5: echte Reserve 11,7 mm bei Hub 396, ca. 13 mm am Anschlag 393,5. Ergebnis T-005: reicht, `X_SHIFT` bleibt.
 
 **Endhalter** (Layer `Schlepp (gen)`):
 - breit fest: Gabel (`Link.fork`) um Pivot X 114,5 / Z 87,25, Körper ab X +12 (Gegenstück zum Innenplatten-Anschlag), 2 M3 durch die Acrylplatte in Mutterntaschen, Trichter ab Z 83,25, 27 → 16 mm in den (noch nicht gebauten) festen Kanal; für das Kabelbündel zu eng (PLAN T-013). Breit beweglich: Zapfenzunge (`Link.tongue`) auf dem 2040, Körper ab X +9,2 (Gegenstück zur Außen-Anschlagecke), 2 M3 in Hammermuttern (Y 300/320), Kabel in Viertelkurve (Mittellinie R 24 > R_fest 22, Nut 18 breit, Boden Z 31,25 = Balkenoberkante) durch die +y-Fläche in den Datenkanal (X −60..−35), Austritt Z 31,25..46,75.
-- dünn fest: Gabel um Pivot X 69,5 / Z 91,4, 2 M3 von oben bei Y 607 (< 618), Tunnel 10 breit. Dünn beweglich: Zunge + Körper auf dem 2020, 2 M3 in Hammermuttern Y 615, Viertelkreis-Nut R 24 / 9,6 breit nach −y; Kabelaustritt X −108..−96, Z 29..39 (zum Hub-Eingang).
+- dünn fest: Gabel um Pivot X 69,5 / Z 89,6, 2 M3 von oben bei Y 607 (< 618), Tunnel 10 breit. Dünn beweglich: Zunge + Körper auf dem 2020, 2 M3 in Hammermuttern Y 615, Viertelkreis-Nut R 24 / 9,6 breit nach −y; Kabelaustritt X −108..−96, Z 29..39 (zum Hub-Eingang).
 
 ## Fester Kanal der dünnen Kette (`Thin Channel`)
 

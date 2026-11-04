@@ -71,6 +71,22 @@ def chain_pivots(x_m, n=N_LINKS, x_f=X_FIXED, chp=CHP, zu=CHAIN_ZU, zl=CHAIN_ZL)
         else: hi = mid
     return march((lo + hi) / 2), (lo + hi) / 2
 
+def travel_scan(shapes, x_ext, n, x_f, chp, zu, zl, travel=TRAVEL, step=1.0):
+    """whole travel in `step` mm: z range of all links (+ lids) and the arc front in drawer coordinates (x - s).
+    Uses the vertices of the link shapes in their local (x, z) frame, so it is exact for the vertex extremes and fast."""
+    XZ = np.unique(np.round(np.vstack([np.asarray(m.to_mesh().vert_properties)[:, [0, 2]] for m in shapes]), 4), axis=0)
+    r = dict(zlo=(1e9, 0.0), zhi=(-1e9, 0.0), front=(1e9, 0.0))
+    for s in np.arange(0.0, travel + 1e-9, step):
+        P, _ = chain_pivots(x_ext + s, n=n, x_f=x_f, chp=chp, zu=zu, zl=zl)
+        for k in range(n):
+            a, b = P[k], P[k + 1]; d = (b - a) / np.linalg.norm(b - a)
+            z = a[1] + d[1] * XZ[:, 0] + d[0] * XZ[:, 1]
+            x = a[0] + d[0] * XZ[:, 0] - d[1] * XZ[:, 1] - s
+            if z.min() < r["zlo"][0]: r["zlo"] = (float(z.min()), float(s))
+            if z.max() > r["zhi"][0]: r["zhi"] = (float(z.max()), float(s))
+            if x.min() < r["front"][0]: r["front"] = (float(x.min()), float(s))
+    return r
+
 def chain_links(x_m):
     """[(name, kind, world manifold)] for the pose with the moving end at x_m"""
     P, xc = chain_pivots(x_m)

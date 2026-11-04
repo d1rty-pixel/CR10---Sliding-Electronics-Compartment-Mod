@@ -1,7 +1,7 @@
 # Stückliste
 
-Stand 2026-11-03. Erzeugt aus dem IngeTrazo-Dokument mit `gen/bom_document.py` (Profile) und `build/parts.json` (Druckteile).
-Längen sind Modellmaße ohne Sägezugabe. Außer dem Stock Frame sind sie nicht am Teil gegengemessen.
+Stand 2026-11-04. Erzeugt mit `gen/bom_document.py` aus dem IngeTrazo-Dokument (Profile, Kaufteile) und `build/bom_parts.json` (Druckteile, aus `gen/cr10mod.py build`).
+Längen sind Modellmaße ohne Sägezugabe. Außer dem Stock Frame sind sie nicht am Teil gegengemessen. Schrauben, Nutensteine, Kabel und Kleinteile stehen in `docs/HARDWARE.md`.
 
 ## Stock Frame
 
@@ -54,19 +54,90 @@ Auszug
 | 2020 | 9 | 3104 |
 | 2040 | 9 | 1050 |
 
-## Weitere Kaufteile (aus dem Modell, ohne Schrauben und Nutensteine)
+## Kaufteile im Modell
 
-- Auszugschienen, dreiteilig, Vollauszug, 450 mm: 2 Stück (je Seite eine), Befestigung mit M5 und Nutensteinen, je ein Loch mittig in Außen- und Innenschiene
-- Original-Füße (`Stock Foot`): 4 Stück, vom Stock Frame abschrauben und am Mod-Rahmen wieder anschrauben
+Gezählt nach Gruppennamen im Dokument (sichtbare Gruppen; ausgeblendete Platzhalter zählen nicht).
 
-## Druckteile (`Druckteile (gen)`)
+| Teil | Stück | Hinweis |
+|---|---:|---|
+| Netzteil 24 V Mean Well LRS-350-24 | 1 |  |
+| Netzteil 5 V Mean Well RS-15-5 | 1 |  |
+| Mainboard BTT Octopus (Modell V1.0, Kauf V1.1) | 1 |  |
+| Raspberry Pi 4 Model B | 1 |  |
+| Netzeinbaustecker IEC-GS-1-100 | 1 |  |
+| Lüfter San Ace 60L 9LG0624P4H001 | 4 |  |
+| WAGO 221-413 (L, N) | 2 |  |
+| WAGO 221-414 (PE) | 1 |  |
+| Hutschiene EN 50022 35 × 7,5 | 3 | Längen 280 mm, 370 mm, 370 mm |
+| Rundsteckverbinder GX16-4 (Einbauteil) | 1 |  |
+| Keystone-Modul RJ45 | 1 |  |
+| Keystone-Modul USB | 2 |  |
+| Keystone-Blindmodul | 1 |  |
+| Ringöse M5 (PE) | 2 |  |
+| Auszugschiene dreiteilig, Vollauszug, 450 mm | 2 |  |
+| Original-Fuß (`Stock Foot`, vom Stock Frame umsetzen) | 4 |  |
 
-| Teil | Stück |
-|---|---:|
-| Rear Panel Switch | 1 |
-| Rear Panel Connector | 1 |
-| IEC Housing (rot) | 1 |
-| Front Panel Hex | 2 |
-| Side Panel Hex | 4 |
+## Druckteile
 
-`Side Panel Fan60` existiert nur als STL und ist noch nicht platziert.
+Volumen = Volumen des Körpers (100 % gefüllt), nicht der Filamentverbrauch des Slicers.
+
+### Blenden und Paneele (`Druckteile (gen)`)
+
+| Teil | STL | Stück | Volumen je Stück (cm³) | Volumen gesamt (cm³) |
+|---|---|---:|---:|---:|
+| Rear Panel Switch | `Rear_Panel_Switch.stl` | 1 | 24,1 | 24,1 |
+| Rear Panel Connector | `Rear_Panel_Connector.stl` | 1 | 25,0 | 25,0 |
+| IEC Housing | `IEC_Housing.stl` | 1 | 31,0 | 31,0 |
+| Front Panel Hex | `Front_Panel_Hex.stl` | 2 | 15,4 | 30,8 |
+| Side Panel Hex | `Side_Panel_Hex.stl` | 4 | 17,9 | 71,5 |
+| Side Panel Fan60 | `Side_Panel_Fan60.stl` | 0 | 22,4 | 0,0 |
+| **Summe** | | 9 | | **182,5** |
+
+### Schleppketten, Halter, fester Kanal (`Schlepp (gen)`)
+
+| Teil | STL | Stück | Volumen je Stück (cm³) | Volumen gesamt (cm³) |
+|---|---|---:|---:|---:|
+| Chain Link | `Chain_Link.stl` | 11 | 6,3 | 69,2 |
+| Chain Lid | `Chain_Lid.stl` | 11 | 0,5 | 5,3 |
+| Chain Bracket Fixed | `Chain_Bracket_Fixed.stl` | 1 | 21,9 | 21,9 |
+| Chain Bracket Moving | `Chain_Bracket_Moving.stl` | 1 | 22,1 | 22,1 |
+| Thin Link | `Thin_Link.stl` | 12 | 2,6 | 31,3 |
+| Thin Lid | `Thin_Lid.stl` | 12 | 0,2 | 2,3 |
+| Thin Bracket Fixed | `Thin_Bracket_Fixed.stl` | 1 | 9,9 | 9,9 |
+| Thin Bracket Moving | `Thin_Bracket_Moving.stl` | 1 | 11,5 | 11,5 |
+| Thin Channel Front | `Thin_Channel_Front.stl` | 1 | 16,7 | 16,7 |
+| Thin Channel Rear | `Thin_Channel_Rear.stl` | 1 | 19,7 | 19,7 |
+| **Summe** | | 52 | | **209,7** |
+
+### Tray: Power-Hub, Kanäle, DIN-Halter, Lüfterhalter (`Tray Druckteile (gen)`)
+
+| Teil | STL | Stück | Volumen je Stück (cm³) | Volumen gesamt (cm³) |
+|---|---|---:|---:|---:|
+| Mains Hub Base | `Mains_Hub_Base.stl` | 1 | 51,3 | 51,3 |
+| Mains Hub Lid | `Mains_Hub_Lid.stl` | 1 | 17,0 | 17,0 |
+| DC Hub Base | `DC_Hub_Base.stl` | 1 | 53,3 | 53,3 |
+| DC Hub Lid | `DC_Hub_Lid.stl` | 1 | 19,7 | 19,7 |
+| DC Duct | `DC_Duct.stl` | 1 | 25,0 | 25,0 |
+| DC Duct Lid | `DC_Duct_Lid.stl` | 1 | 11,1 | 11,1 |
+| Data Duct | `Data_Duct.stl` | 1 | 27,3 | 27,3 |
+| Data Duct Lid | `Data_Duct_Lid.stl` | 1 | 11,4 | 11,4 |
+| Fan DC Duct | `Fan_DC_Duct.stl` | 1 | 28,9 | 28,9 |
+| Fan DC Duct Lid | `Fan_DC_Duct_Lid.stl` | 1 | 10,0 | 10,0 |
+| Fan Data Duct | `Fan_Data_Duct.stl` | 1 | 29,8 | 29,8 |
+| Fan Data Duct Lid | `Fan_Data_Duct_Lid.stl` | 1 | 9,5 | 9,5 |
+| DIN PSU24 Cradle 1 | `DIN_PSU24_Cradle_1.stl` | 1 | 25,6 | 25,6 |
+| DIN PSU24 Cradle 2 | `DIN_PSU24_Cradle_2.stl` | 1 | 25,6 | 25,6 |
+| DIN PSU5 Cradle 1 | `DIN_PSU5_Cradle_1.stl` | 1 | 9,1 | 9,1 |
+| DIN PSU5 Cradle 2 | `DIN_PSU5_Cradle_2.stl` | 1 | 9,1 | 9,1 |
+| DIN Octopus Holder 1 | `DIN_Octopus_Holder_1.stl` | 1 | 4,8 | 4,8 |
+| DIN Octopus Holder 2 | `DIN_Octopus_Holder_2.stl` | 1 | 4,8 | 4,8 |
+| DIN Pi Holder | `DIN_Pi_Holder.stl` | 1 | 11,6 | 11,6 |
+| Fan Holder 1 | `Fan_Holder_1.stl` | 1 | 15,5 | 15,5 |
+| Fan Holder 2 | `Fan_Holder_2.stl` | 1 | 15,5 | 15,5 |
+| Fan Holder 3 | `Fan_Holder_3.stl` | 1 | 15,5 | 15,5 |
+| Fan Holder 4 | `Fan_Holder_4.stl` | 1 | 15,5 | 15,5 |
+| **Summe** | | 23 | | **446,9** |
+
+Alle platzierten Druckteile zusammen: **839,2 cm³**.
+
+Nicht platziert (nur STL, nicht in der Summe): `Side Panel Fan60`.

@@ -1,6 +1,6 @@
 # Hardware-Stückliste (Kaufteile)
 
-Stand 2026-11-04. Von Hand gepflegt. Profile und Druckteile stehen in `docs/BOM.md`, das `gen/bom_document.py` erzeugt. Daten und Pinlagen stehen in `docs/COMPONENTS.md`. Mengen kommen aus dem Modell oder dem Generator-Code. **(offen)** heißt: noch nicht festgelegt, nicht geprüft oder nicht gezählt.
+Stand 2026-11-04. Von Hand gepflegt. Profile, im Modell gezählte Kaufteile und Druckteile stehen in `docs/BOM.md`, das `gen/bom_document.py` erzeugt. Daten und Pinlagen stehen in `docs/COMPONENTS.md`. Mengen kommen aus dem Modell oder dem Generator-Code. **(offen)** heißt: noch nicht festgelegt, nicht geprüft oder nicht gezählt.
 
 ## Elektronik und Netz
 
@@ -11,8 +11,8 @@ Stand 2026-11-04. Von Hand gepflegt. Profile und Druckteile stehen in `docs/BOM.
 | Mainboard | BTT Octopus V1.1 | 1 | PDF |
 | Einplatinenrechner | Raspberry Pi 4 Model B | 1 | PDF |
 | Netzeinbaustecker mit Schalter und Sicherung | Adam Tech IEC-GS-1-100 (Snap-in, 1,0 mm Wand) | 1 | Datenblatt; Sicherungswert **(offen)** |
-| Klemmen L/N | WAGO 221-413 | **(offen)** | Typ laut `docs/COMPONENTS.md`; Stückzahl aus dem Modell noch nicht gezählt |
-| Klemme PE | WAGO 221-414 | **(offen)** | Nutzerentscheidung; Stückzahl noch nicht gezählt |
+| Klemmen L/N | WAGO 221-413 | 2 | Modell (`docs/BOM.md`, Kaufteile) |
+| Klemme PE | WAGO 221-414 | 1 | Nutzerentscheidung; Modell |
 | Netzleitung Kette | Lapp ÖLFLEX FD 855 P 3G1,5 | Länge **(offen)** | Biegeradien ungeprüft (T-004) |
 | Rundstecker Druckkopf | GX16-4 (Einbau Ø16,2) | 1 Paar | PDF |
 | Keystone-Module | RJ45, USB, USB, Blind | 4 | `connector_panel()` |
