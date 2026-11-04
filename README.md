@@ -1,6 +1,6 @@
 # Creality CR10 – Sliding Electronics Compartment Mod
 
-Umbau eines Creality CR10 auf ein ausziehbares Elektronikfach (Tray/Auszug) mit Pi 4, BTT Octopus, Mean-Well-Netzteilen, zwei Kabelschleppketten (breit: CAN/24 V/5 V/Daten, dünn: 230 V) und Zellenhöhe 80 mm (Z 25–105). Der Rahmen besteht aus Alu-Profilen und gekauften Vollauszug-Schubladenschienen (nur im IngeTrazo-Dokument). Gedruckt werden Rück-, Front- und Seitenpaneele, das IEC-Gehäuse, Schleppketten, Kabelkanäle, Power-Hub und DIN-Halter.
+Umbau eines Creality CR10 auf ein ausziehbares Elektronikfach (Tray/Auszug) mit Pi 4, BTT Octopus, Mean-Well-Netzteilen, zwei Kabelschleppketten (breit: CAN/24 V/5 V/Daten, dünn: 230 V) und Zellenhöhe 80 mm (Z 25–105). Der Rahmen besteht aus Alu-Profilen und gekauften Vollauszug-Schubladenschienen (nur im IngeTrazo-Dokument). Gedruckt werden Rück-, Front- und Seitenpaneele, das IEC-Gehäuse, Schleppketten, Kabelkanäle, die 230-V-Boxen (WAGO, LRS, RS) und DIN-Halter.
 
 Ein parametrischer Python-Generator (`manifold3d`) ist die einzige Quelle der Geometrie der Druckteile. Er schreibt `build/parts.json` (Einbaulage, für IngeTrazo) und STLs in Drucklage. Kaufteile (Profile, Schienen, Netzteile, Pi, Octopus, WAGO, IEC-Stecker) liegen nur im Dokument.
 
@@ -13,8 +13,8 @@ Ein parametrischer Python-Generator (`manifold3d`) ist die einzige Quelle der Ge
 | `gen/chain_link.py` | gemeinsames parametrisches Kettenglied + Klammer + Halter-Schnittstellen (Gabel, Zunge) für beide Ketten |
 | `gen/cable_base.py` | kleine Geometrie-Helfer (box, Zylinder, Prismen) |
 | `gen/cable_thin.py` | dünne 230-V-Kette (Parametersatz, Halter) und fester L-Kanal unter der Acrylplatte |
-| `gen/tray.py` | Tray-Teile: DC- und Datenkanal, Lüfterkanäle (gelb/grün) mit Deckeln, DIN-Wiegen und -Halter (Netzteile, Octopus, Pi), Lüfterhalter |
-| `gen/power_hub.py` | Power-Hub zwischen den Netzteilen: rote 230-V-Box und DC-Box mit Deckeln (L-förmige Trennwand um das gedrehte RS-15-5), WAGO-Taschen |
+| `gen/tray.py` | Tray-Teile: DC-, Daten- und AC-Kanal, Lüfterkanäle mit Deckeln, Clips der 230-V-Boxen, DIN-Wiegen und -Halter (Netzteile, Octopus, Pi), Lüfterhalter |
+| `gen/power_hub.py` | 230-V-Boxen: WAGO-Box an der 2020 (WAGOs liegend, durch den Deckel messbar), LRS- und RS-Box vor den Netzteilklemmen (AC + DC, niedrige Trennwand, Rutschen in den DC-Kanal), Maße des AC-Kanals |
 | `gen/cadio.py` | Mesh-Export (Polygonflächen für IngeTrazo, STL) |
 | `gen/ingetrazo_import.py` | IngeTrazo-Skript: importiert `build/parts.json`, blendet Handbau-Vorgänger aus |
 | `gen/vendor_import.py` | IngeTrazo-Skript: platziert Hersteller-Modelle aus `build/vendor/` (Layer `Electronics (vendor)`) |

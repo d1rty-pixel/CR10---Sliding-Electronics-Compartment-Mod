@@ -28,18 +28,19 @@ def _sheath_exit():
     return (x, thin.LANE_Y[0], thin.ZL - 5.5 + SHEATH_D / 2)        # lying on the groove floor
 SHEATH_END_Y = 594.5            # sheath ends behind the strain relief (tie y 595.4..601.4)
 
-W_ENTRY_Y = hub.W_Y0 + 2.5      # entry holes on the -y half of the WAGO top, levers +y (assumption)
-W_TOP = hub.W_Z0 + hub.W_LEN
+# WAGOs lie flat since 2026-11-04 (levers up, entries +y at the front face): entry centre on the front face (assumption)
+W_ENTRY_Y = hub.W_Y0 + hub.W_LEN
+W_TOP = hub.W_ZT
 
 def wago_entry(name, k):
     n = 4 if name == "PE" else 3
     _, x0, x1 = [s for s in hub.wago_slots() if s[0] == name][0]
-    return (x0 + (x1 - x0) * (k + 0.5) / n, W_ENTRY_Y, W_TOP)
+    return (x0 + (x1 - x0) * (k + 0.5) / n, W_ENTRY_Y, (hub.W_Z0 + hub.W_ZT) / 2)
 
 LRS_END_X, LRS_Z = -152.0, 36.0          # inside the terminal block face x -151.5; entry z ca. 36
-RS_END_X, RS_Z = -62.6, 33.0             # RS block from x -63; entry z ca. 33
+RS_END_X, RS_Z = hub.RS_BLOCK[0] - 0.5, 33.0   # RS block face (terminals -x since 2026-11-04); entry z ca. 33
 LRS_Y = {"L": 580.75, "N": 571.25, "PE": 561.75}
-RS_Y = {"L": 576.0, "N": 568.4, "PE": 560.8}
+RS_Y = {"L": hub.RS_PINS["L"], "N": hub.RS_PINS["N"], "PE": hub.RS_PINS["FG"]}
 PE_LUG = (-65.0, 615.0, 26.6)            # start of the ring-lug barrel on the tray 2020 (top z 25)
 
 # ============================================================ geometry
@@ -147,7 +148,7 @@ def is_chain_core(name):
 def bought_boxes():
     """bought parts the wires must not pierce either (boxes from docs/DESIGN.md / COMPONENTS.md): WAGO bodies, PSU cases"""
     from cable import box
-    out = [(f"WAGO {nm}", box(a, b, hub.W_Y0, hub.W_Y0 + hub.W_THK, hub.W_Z0, W_TOP)) for nm, a, b in hub.wago_slots()]
+    out = [(f"WAGO {nm}", box(a, b, hub.W_Y0, hub.W_Y0 + hub.W_LEN, hub.W_Z0, hub.W_ZT)) for nm, a, b in hub.wago_slots()]
     out += [("LRS-350 case", box(-364.0 + hub.LRS_DX, -151.5 + hub.LRS_DX, 475.0, 590.0, 25.0, 55.9)),
             ("RS-15-5 case", box(*hub.RS_BODY)), ("RS-15-5 terminal block", box(*hub.RS_BLOCK))]
     return out

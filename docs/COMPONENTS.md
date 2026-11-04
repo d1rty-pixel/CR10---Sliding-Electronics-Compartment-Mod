@@ -7,6 +7,7 @@ Stand 2026-11-04. Kaufteile liegen nur im IngeTrazo-Dokument (nicht im Generator
 - Gehäuse 215 × 115 × 30 (wie LRS-200). Das PDF nennt LRS-350-24 oder LRS-250-24; offizielles STEP ist LRS-350. Im Dokument Platzhalter `PSU LRS-200-24` (Layer `Electronics (Platzhalter)`, unsichtbar) und Vendor-Modell `PSU Mean Well LRS-350-24`.
 - Pinbelegung (9 Pins, Raster 9,5, Pin 9 auf der Lüfterseite): 1 AC/L, 2 AC/N, 3 FG, 4–6 −V, 7–9 +V.
 - Lage Welt (LRS X −373,75..−158,75 seit 2026-11-03, vorher −364..−149; Klemmen +X): Klemmblock X −175,85..−161,25, Y 498,5..585,5; Schrauben oben Z 48; Leitereintritt Z ca. 36.
+- Kabelschuhe **(Annahme)**: isolierte Gabelkabelschuhe 0,5–1,5 mm² für M3,5 (Schraubengröße nicht geprüft), 18 mm ab Schraubenmitte; Schraubenmitte = Blockmitte X −168,55.
 
 | Pin | Funktion | Welt-Y |
 |---|---|---|
@@ -24,17 +25,18 @@ Stand 2026-11-04. Kaufteile liegen nur im IngeTrazo-Dokument (nicht im Generator
 
 - Das PDF nennt RS-15-5 (nicht LRS-15). Vendor-Modell `PSU Mean Well RS-15-5`, Platzhalter `PSU LRS-15-5`.
 - Pinbelegung (5 Pins, Raster 7,62, +V auf der ADJ/LED-Seite): 1 AC/L, 2 AC/N, 3 FG, 4 −V, 5 +V.
-- Lage Welt seit 2026-11-04 (T-033): um 90° im Uhrzeigersinn gedreht, Klemmen +Y. Gehäuse X −42,05..9,05, Y 475,5..538,16, Z 25..53; Klemmblock X −31,96..7,7, Y 538,16..550,06, Z 30,59..43,75 (oben 43,7). Abgeleitet aus der vorherigen Lage (Klemmen −X; Gehäuse X −36,6..26,06, Y 530,75..581,85; Block X −48,5..−36,6, Y 540,84..580,5) per x' = y − 572,8, y' = 501,56 − x (`power_hub.rs_xy`); im Dokument wurden Vendor-Modell und Platzhalter mit derselben Abbildung gedreht.
+- Lage Welt seit 2026-11-04 (T-037, Nutzer: gegenüber T-033 um 90° gegen den Uhrzeigersinn gedreht): Klemmen −X wie im STEP, also die Ausrichtung vor T-033, verschoben um (−17,01 / −55,25) (`power_hub.rs_xy`). Gehäuse X −53,61..9,05, Y 475,5..526,6, Z 25..53; Klemmblock X −65,51..−53,61, Y 485,59..525,25, Z 30,59..43,75. Im Dokument Vendor-Modell und Platzhalter per X = 484,55 − y, Y = x + 517,55 aus der T-033-Lage gedreht.
+- Kabelschuhe **(Annahme)**: isolierte Gabelkabelschuhe 0,5–1,5 mm² für M3 (Schraubengröße RS-15 nicht geprüft), 18 mm ab Schraubenmitte; Schraubenmitte = Blockmitte X −59,56.
 
-| Pin | Funktion | Welt-X (gedreht) | Welt-Y vorher |
+| Pin | Funktion | Welt-Y | Welt-Y vor T-033 |
 |---|---|---|---|
-| 1 | AC/L | 3,2 | 576,0 |
-| 2 | AC/N | −4,4 | 568,4 |
-| 3 | FG (PE) | −12,0 | 560,8 |
-| 4 | −V | −19,7 | 553,1 |
-| 5 | +V | −27,3 | 545,5 |
+| 1 | AC/L | 520,75 | 576,0 |
+| 2 | AC/N | 513,15 | 568,4 |
+| 3 | FG (PE) | 505,55 | 560,8 |
+| 4 | −V | 497,85 | 553,1 |
+| 5 | +V | 490,25 | 545,5 |
 
-AC/DC-Grenze: LRS-350 auf Y 557, RS-15-5 auf X −15,85 (L-förmige Doppelwand der beiden Hub-Boxen, `docs/DESIGN.md`).
+AC/DC-Grenze: LRS-350 auf Y 557, RS-15-5 auf Y 501,7 (niedrige Trennwände in der LRS- und der RS-Box, `docs/DESIGN.md`).
 
 ## Adam Tech IEC-GS-1-100 (Netzeinbaustecker mit Schalter und Sicherung)
 
@@ -57,8 +59,8 @@ Quelle: Datenblatt PDF S. 1 / Digikey. Rastkraft auf gedrucktem Rand ungetestet.
 | 221-413 | L, N (3 Leiter) | 18,7 × 18,6 × 8,3 (Breite × Länge × Dicke) | aus Datenblatt übernommen |
 | 221-414 | PE (4 Leiter, Nutzerentscheidung) | Breite 24,9 | **(Annahme)** |
 
-Im Dokument stehende WAGO-Modelle plus Hebelstreifen (ersetzen die frühere 221-415).
-Leitereinführungen für die Litzen in `wiring.py`: Mitte Y 561,4 (Hälfte −Y der Oberseite, Hebel +Y) und gleichmäßig über die Breite verteilt **(Annahme, nicht gemessen)**.
+Im Dokument WAGO-Modelle plus Hebelstreifen (ersetzen die frühere 221-415), seit 2026-11-04 liegend in der WAGO-Box: Hebel oben, Leitereinführung +Y, Y 551,1..569,7 (hinteres Ende 6 mm außerhalb der Box), Z 51,8..60,1, Oberseite 0,5 über dem Deckel (Lagen in `docs/DESIGN.md`).
+Leitereinführungen für die Litzen in `wiring.py`: Stirnseite +Y (Y 569,7), Mitte der Dicke, gleichmäßig über die Breite verteilt **(Annahme, nicht gemessen)**. Lage der Prüföffnung (Messspitze) nicht geprüft **(Annahme: von oben bzw. von der Einführungsseite erreichbar)**.
 
 ## BTT Octopus (Mainboard)
 
@@ -104,9 +106,9 @@ STEP-Dateien liegen nicht im Projekt (nur im Scratchpad geladen); für Neukonver
 | Modell | Quelle (URL) | JSON | Konverter-Parameter | Platzierung in `vendor_import.py` (`rot`, Bezug) |
 |---|---|---|---|---|
 | LRS-350-24 | https://www.meanwell.com/upload/pdf/LRS-350/LRS-350-3D.zip (offiziell) | `build/vendor/lrs350.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((0,-1),(1,-1),(2,1))` = 180° um Z (Klemmen +X); mittig in X/Y auf Platzhalter `PSU LRS-200-24`, Unterkante auf Platzhalter-Unterkante (`z_ref=None`) |
-| RS-15-5 | https://www.meanwell.com/upload/pdf/RS-15/RS-15-3D.zip (offiziell) | `build/vendor/rs15.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((1,1),(0,-1),(2,1))` = 90° im Uhrzeigersinn (Klemmen −X in der Quelle, +Y gewünscht; seit T-033, vorher unverändert); mittig auf Platzhalter `PSU LRS-15-5` (mitgedreht), Unterkante bündig. Ungetestet, weil `build/vendor/` lokal fehlt |
+| RS-15-5 | https://www.meanwell.com/upload/pdf/RS-15/RS-15-3D.zip (offiziell) | `build/vendor/rs15.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((0,1),(1,1),(2,1))` = unverändert (Klemmen −X wie in der Quelle; seit T-037 wieder wie vor T-033); mittig auf Platzhalter `PSU LRS-15-5` (mitgedreht), Unterkante bündig. Ungetestet, weil `build/vendor/` lokal fehlt |
 | Raspberry Pi 4 Model B | https://code.c-base.org (wercc/monorail-pcb) `Libraries/Raspberry-Pi-4-library-for-kicad-master/Raspberry Pi 4 Model B.STEP`; Lizenz unbekannt | `build/vendor/pi4.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((0,-1),(2,1),(1,1))` Y-up → Z-up (Ports −X, GPIO −Y); `z_ref=-0.8` (PCB y −0,8..0,8) auf Platzhalter `Raspberry Pi 4` |
 | BTT Octopus V1.0 (für V1.1) | github bigtreetech/BIGTREETECH-OCTOPUS-V1.0 `3D/BIGTREETECH Octopus V1.0.stp` | `build/vendor/octopus.json` | `--defl 1 --ang 1.5 --min-solid 2` | `rot=((0,-1),(1,-1),(2,1))` = 180° (Schraubklemmen +X, Motorstecker −Y); `z_ref=-1.6` auf Platzhalter `BTT Octopus V1.1` |
 | IEC-GS-1-100 | https://app.adam-tech.com/products/download/model/203611/iec-gs-1-100-model.step (Datenblatt `.../data_sheet/203611/iec-gs-1-100-data-sheet.pdf`) | `build/vendor/iec_gs_1_100.json` | nicht dokumentiert **(ungeprüft)** | `rot=((2,1),(1,-1),(0,1))`, `at=(537.7, 553.4, 65.0)` (Quellursprung = Flansch-Vorderseite, +z aus der Platte; Flanschrückseite auf x 534,7), kein Platzhalter; Farbe per `paint` (Kontakte zinnfarben z < −21, Körper schwarz) |
 
-Alle Modelle: Platzhalter auf Layer `Electronics (Platzhalter)` (unsichtbar, nicht gelöscht), Vendor-Gruppen werden bei jedem Lauf von `vendor_import.py` ersetzt. Der Konverter schreibt Millimeter, Farben aus dem STEP, planare Flächen als Polygone mit Löchern, den Rest als Dreiecke. gmsh wurde verworfen (zu langsam). Platzhaltergrößen: LRS X −364..−149; RS (gedreht) X −42,0..9,0, Y 481,53..544,03.
+Alle Modelle: Platzhalter auf Layer `Electronics (Platzhalter)` (unsichtbar, nicht gelöscht), Vendor-Gruppen werden bei jedem Lauf von `vendor_import.py` ersetzt. Der Konverter schreibt Millimeter, Farben aus dem STEP, planare Flächen als Polygone mit Löchern, den Rest als Dreiecke. gmsh wurde verworfen (zu langsam). Platzhaltergrößen: LRS X −364..−149; RS X −59,48..3,02, Y 475,55..526,55 (seit T-037).

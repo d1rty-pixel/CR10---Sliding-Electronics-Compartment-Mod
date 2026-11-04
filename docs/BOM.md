@@ -113,12 +113,16 @@ Volumen = Volumen des Körpers (100 % gefüllt), nicht der Filamentverbrauch des
 
 | Teil | STL | Stück | Volumen je Stück (cm³) | Volumen gesamt (cm³) |
 |---|---|---:|---:|---:|
-| Mains Hub Base | `Mains_Hub_Base.stl` | 1 | 51,3 | 51,3 |
-| Mains Hub Lid | `Mains_Hub_Lid.stl` | 1 | 17,0 | 17,0 |
-| DC Hub Base | `DC_Hub_Base.stl` | 1 | 53,3 | 53,3 |
-| DC Hub Lid | `DC_Hub_Lid.stl` | 1 | 19,7 | 19,7 |
-| DC Duct | `DC_Duct.stl` | 1 | 25,0 | 25,0 |
-| DC Duct Lid | `DC_Duct_Lid.stl` | 1 | 11,1 | 11,1 |
+| WAGO Box | `WAGO_Box.stl` | 1 | 44,8 | 44,8 |
+| WAGO Box Lid | `WAGO_Box_Lid.stl` | 1 | 7,2 | 7,2 |
+| LRS Box | `LRS_Box.stl` | 1 | 36,2 | 36,2 |
+| LRS Box Lid | `LRS_Box_Lid.stl` | 1 | 10,5 | 10,5 |
+| RS Box | `RS_Box.stl` | 1 | 27,9 | 27,9 |
+| RS Box Lid | `RS_Box_Lid.stl` | 1 | 5,2 | 5,2 |
+| AC Duct | `AC_Duct.stl` | 1 | 9,4 | 9,4 |
+| AC Duct Lid | `AC_Duct_Lid.stl` | 1 | 2,7 | 2,7 |
+| DC Duct | `DC_Duct.stl` | 1 | 25,6 | 25,6 |
+| DC Duct Lid | `DC_Duct_Lid.stl` | 1 | 11,3 | 11,3 |
 | Data Duct | `Data_Duct.stl` | 1 | 27,3 | 27,3 |
 | Data Duct Lid | `Data_Duct_Lid.stl` | 1 | 11,4 | 11,4 |
 | Fan DC Duct | `Fan_DC_Duct.stl` | 1 | 28,9 | 28,9 |
@@ -127,8 +131,8 @@ Volumen = Volumen des Körpers (100 % gefüllt), nicht der Filamentverbrauch des
 | Fan Data Duct Lid | `Fan_Data_Duct_Lid.stl` | 1 | 9,5 | 9,5 |
 | DIN PSU24 Cradle 1 | `DIN_PSU24_Cradle_1.stl` | 1 | 25,6 | 25,6 |
 | DIN PSU24 Cradle 2 | `DIN_PSU24_Cradle_2.stl` | 1 | 25,6 | 25,6 |
-| DIN PSU5 Cradle 1 | `DIN_PSU5_Cradle_1.stl` | 1 | 9,1 | 9,1 |
-| DIN PSU5 Cradle 2 | `DIN_PSU5_Cradle_2.stl` | 1 | 9,1 | 9,1 |
+| DIN PSU5 Cradle 1 | `DIN_PSU5_Cradle_1.stl` | 1 | 8,8 | 8,8 |
+| DIN PSU5 Cradle 2 | `DIN_PSU5_Cradle_2.stl` | 1 | 8,8 | 8,8 |
 | DIN Octopus Holder 1 | `DIN_Octopus_Holder_1.stl` | 1 | 4,8 | 4,8 |
 | DIN Octopus Holder 2 | `DIN_Octopus_Holder_2.stl` | 1 | 4,8 | 4,8 |
 | DIN Pi Holder | `DIN_Pi_Holder.stl` | 1 | 11,6 | 11,6 |
@@ -136,8 +140,8 @@ Volumen = Volumen des Körpers (100 % gefüllt), nicht der Filamentverbrauch des
 | Fan Holder 2 | `Fan_Holder_2.stl` | 1 | 15,5 | 15,5 |
 | Fan Holder 3 | `Fan_Holder_3.stl` | 1 | 15,5 | 15,5 |
 | Fan Holder 4 | `Fan_Holder_4.stl` | 1 | 15,5 | 15,5 |
-| **Summe** | | 23 | | **446,9** |
+| **Summe** | | 27 | | **449,6** |
 
-Alle platzierten Druckteile zusammen: **839,2 cm³**.
+Alle platzierten Druckteile zusammen: **841,8 cm³**.
 
 Nicht platziert (nur STL, nicht in der Summe): `Side Panel Fan60`.

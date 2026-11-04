@@ -2,7 +2,9 @@
 
 Keine Aufgabe in Arbeit (Stand 2026-11-04).
 
-Nächste Aufgabe aus `docs/PLAN.md` („Offen“). Probedrucke (T-010) ruhen vorerst (Nutzer 2026-11-04), evtl. später je Bauabschnitt. T-035 (vordere Füße gegen die Schienen) braucht eine Nutzerentscheidung, T-036 (Schienendicke, Hub) eine Messung. Die DC-Kabelläufe (T-022) sind vertagt. Das RS-15-5 ist seit T-033 gedreht; `vendor_import.py` mit der neuen RS-`rot` ist ungetestet (`build/vendor/` fehlt), beim nächsten Vendor-Import Lage prüfen (Soll X −42,05..9,05, Y 475,5..550,06). Nach Änderungen an Tray, Ketten oder Kaufteilen die Fahrsimulation neu laufen lassen (`gen/doc_export.py` in IngeTrazo, dann `gen/travel_sim.py`; Ablauf in `docs/WORKFLOW.md`). `todo.md` (untracked) ist abgearbeitet.
+Zuletzt erledigt: T-037 (Power-Hub als WAGO-, LRS- und RS-Box plus AC-Kanal, RS-15-5 Klemmen −X, WAGOs liegend durch den Deckel; Details `docs/DESIGN.md`, „Power-Hub“). Annahmen dort, die der Nutzer am echten Teil prüfen sollte: Länge der Gabelkabelschuhe (18 ab Schraubenmitte), Lage der Prüföffnung der WAGO 221 (Messen durch die Deckelöffnungen).
+
+Nächste Aufgabe aus `docs/PLAN.md` („Offen“). Probedrucke (T-010) ruhen vorerst (Nutzer 2026-11-04), evtl. später je Bauabschnitt. T-035 (vordere Füße gegen die Schienen) braucht eine Nutzerentscheidung, T-036 (Schienendicke, Hub) eine Messung. Die DC-Kabelläufe (T-022) sind vertagt. `vendor_import.py` mit der RS-`rot` (seit T-037 wieder unverändert) ist ungetestet (`build/vendor/` fehlt); beim nächsten Vendor-Import Lage prüfen (Soll inkl. Klemmblock X −65,51..9,05, Y 475,5..526,6). Nach Änderungen an Tray, Ketten oder Kaufteilen die Fahrsimulation neu laufen lassen (`gen/doc_export.py` in IngeTrazo, dann `gen/travel_sim.py`; Ablauf in `docs/WORKFLOW.md`). `todo.md` (untracked) ist abgearbeitet.
 
 ## Nicht ändern
 - Keine Exporte; keine Commits/Push ohne Anweisung.

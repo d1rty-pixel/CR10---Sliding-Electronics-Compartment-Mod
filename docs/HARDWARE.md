@@ -13,6 +13,7 @@ Stand 2026-11-04. Von Hand gepflegt. Profile, im Modell gezählte Kaufteile und 
 | Netzeinbaustecker mit Schalter und Sicherung | Adam Tech IEC-GS-1-100 (Snap-in, 1,0 mm Wand) | 1 | Datenblatt; Sicherungswert **(offen)** |
 | Klemmen L/N | WAGO 221-413 | 2 | Modell (`docs/BOM.md`, Kaufteile) |
 | Klemme PE | WAGO 221-414 | 1 | Nutzerentscheidung; Modell |
+| Gabelkabelschuhe isoliert 0,5–1,5 mm² | M3,5 (LRS-350) / M3 (RS-15-5) | 9 / 5 | Pins: LRS L, N, FG + 3 × −V, 3 × +V; RS alle 5. Länge 18 ab Schraubenmitte und Schraubengrößen **(Annahme)**, `power_hub.LUG_L` |
 | Netzleitung Kette | Lapp ÖLFLEX FD 855 P 3G1,5 | Länge **(offen)** | Biegeradien ungeprüft (T-004) |
 | Rundstecker Druckkopf | GX16-4 (Einbau Ø16,2) | 1 Paar | PDF |
 | Keystone-Module | RJ45, USB, USB, Blind | 4 | `connector_panel()` |
@@ -53,6 +54,7 @@ Weitere Lüfter: `Side Panel Fan60` (Lochbild 50 × 50, Ø3,4) ist nirgends plat
 | Lüfterkanäle gelb/grün (Boden) | M3, Länge offen (Wannenplatte `Gruppieren#15`, Material unbekannt, T-009) | 8 | `tray.fan_dc_duct()` / `fan_data_duct()` |
 | IEC Housing an Rear Panel Switch | M3 × 8 Senkkopf (ISO 10642) + Gewindeeinsatz M3 × 5,7 | je 4 | `iec_housing()`; Länge und Einsatztyp **(Annahme)** |
 | Zugentlastung 230-V-Mantel am IEC Housing | Kabelbinder ≤ 4,5 breit | 1 | `TIE_SLOT` |
-| Übrige (Kettenhalter, Hub-Deckel, Kanäle, Octopus) | M3 | **(offen)** | noch nicht gezählt |
+| Deckel der 230-V-Boxen (WAGO, LRS, RS) | M3, Länge offen, in Vorbohrung Ø2,8 der Dome | 3 + 4 + 3 = 10 | `power_hub.BOSSES`, `WALL_BOSSES` |
+| Übrige (Kettenhalter, Kanäle, Octopus) | M3 | **(offen)** | noch nicht gezählt |
 
 Die Nutgröße des Querholms ist „Nut 6“. In `docs/COMPONENTS.md` stehen M3-Nutensteine, Schienen und Lüfterhalter verwenden aber M5. Vor der Bestellung die passenden Nutensteine prüfen **(offen)**.

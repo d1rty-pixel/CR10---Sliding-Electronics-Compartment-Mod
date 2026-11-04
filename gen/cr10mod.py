@@ -346,26 +346,40 @@ def run_checks():
         rep(f"{n}: x {bb[0]:.1f}..{bb[3]:.1f} (< 31.2), y {bb[1]:.1f}..{bb[4]:.1f} (330.4..604.8), z top {bb[5]:.1f} (wall {tray.FD_ZT:.0f} / lid +1.6), "
             f"rails {rails:.2f} / fan screw heads {hd:.2f} mm3",
             bb[3] < 31.2 and bb[1] >= 330.4 and bb[4] < 604.8 and abs(bb[5] - tray.FD_ZT - (1.6 if n.endswith("Lid") else 0.0)) < 1e-6 and rails < 1e-6 and hd < 1e-6)
-    # turned RS-15-5 (body, terminal block) and WAGOs (bought, document) vs every printed part; red box and fan power lane apart
+    # RS-15-5 (body, terminal block) and WAGOs (bought, document) vs every printed part; WAGO box and fan power lane apart
     for bn, bm in wiring.bought_boxes():
         if bn.startswith("LRS"): continue           # crude bbox incl. the terminal block: the lid skirts sit on it by design
         hit = [n for n, m in inst if (bm ^ m).volume() > 1e-6]
         rep(f"{bn}: no printed part inside{'' if not hit else ': ' + ', '.join(hit)}", not hit)
-    rb = dict(inst)["Mains Hub Base"].bounding_box()
-    rep(f"Mains Hub Base x end {rb[3]:.2f} < fan power lane x {tray.FD_Y_X[0]:.2f}; RS body x end {hub.RS_BODY[1]:.2f} < {tray.FD_Y_X[0]:.2f}",
-        rb[3] < tray.FD_Y_X[0] and hub.RS_BODY[1] < tray.FD_Y_X[0])
-    rep(f"hub divider x {hub.XD:.2f} between RS FG x {hub.RS_PINS['FG']:.2f} and -V x {hub.RS_PINS['-V']:.2f}; cut-out from z {hub.BLK_Z} under the block (z {hub.RS_BLOCK[4]})",
-        hub.RS_PINS["-V"] < hub.XD < hub.RS_PINS["FG"] and hub.BLK_Z < hub.RS_BLOCK[4])
-    rep(f"rail A latch end y {tray.RAIL_A + tray.LATCH_END:.1f} < hub pocket floor y {hub.Y_P:.2f}", tray.RAIL_A + tray.LATCH_END < hub.Y_P)
+    wb = dict(inst)["WAGO Box"].bounding_box()
+    rep(f"WAGO Box x end {wb[3]:.2f} < fan power lane x {tray.FD_Y_X[0]:.2f}; RS body x end {hub.RS_BODY[1]:.2f} < {tray.FD_Y_X[0]:.2f}",
+        wb[3] < tray.FD_Y_X[0] and hub.RS_BODY[1] < tray.FD_Y_X[0])
+    # fork lugs (assumed length) plus a bend R >= 4 x D in front of the terminals; dividers start behind the lugs, between the pins
+    lf = (hub.X1L - hub.T - hub.LRS_LUG_END, hub.RS_LUG_END - hub.X0R - hub.T)
+    rep(f"lug space behind the sleeve: LRS {lf[0]:.1f}, RS {lf[1]:.1f} (>= {hub.LUG_FREE:.1f} for a 90 deg bend R {hub.BEND_R:.0f})",
+        min(lf) >= hub.LUG_FREE)
+    yd = hub.rs_div_y()
+    rep(f"dividers: LRS y {hub.Y_DIV:.2f} between -V 552.25 and FG 561.75, RS y {yd:.2f} between -V {hub.RS_PINS['-V']:.2f} and FG {hub.RS_PINS['FG']:.2f}; "
+        f"both start behind the lug ends (LRS x {hub.LRS_LUG_END:.2f}, RS x {hub.RS_LUG_END:.2f})",
+        552.25 < hub.Y_DIV < 561.75 and hub.RS_PINS["-V"] < yd < hub.RS_PINS["FG"])
+    rep(f"RS block cut-out from z {hub.BLK_Z} under the block (z {hub.RS_BLOCK[4]}); AC duct leg y {hub.AC_Y[0]:.2f}..{hub.AC_Y[1]:.2f} "
+        f"over the RS AC pins ({hub.RS_PINS['FG']:.2f}..{hub.RS_PINS['L']:.2f}) and above the RS divider ({yd + 0.8:.2f})",
+        hub.BLK_Z < hub.RS_BLOCK[4] and hub.AC_Y[0] + hub.T - 3.25 < hub.RS_PINS["FG"] and hub.RS_PINS["L"] < hub.AC_Y[1] - hub.T and hub.AC_Y[0] + hub.T > yd + 0.8)
+    lt = dict(inst)["WAGO Box Lid"].bounding_box()[5]
+    rep(f"WAGO tops z {hub.W_ZT:.2f} over the WAGO lid top {lt:.2f}", hub.W_ZT > lt)
+    acb = dict(inst)["AC Duct"].bounding_box()
+    rep(f"AC duct x {acb[0]:.2f}..{acb[3]:.2f}: {hub.AC_X[0] - hub.X1L:.1f} to the LRS box, clip release slot y {tray.RAIL_A + tray.RELEASE[0]:.1f}..{tray.RAIL_A + tray.RELEASE[1]:.1f} "
+        f"inside the vertical leg (y {hub.AC_Y[1] + tray.DUCT_T:.1f}..{hub.RW[0] - hub.AC_GAP - tray.DUCT_T:.1f})",
+        hub.AC_X[0] - hub.X1L >= 1.0 and hub.AC_Y[1] + tray.DUCT_T < tray.RAIL_A + tray.RELEASE[0] and tray.RAIL_A + tray.RELEASE[1] < hub.RW[0] - hub.AC_GAP - tray.DUCT_T)
     cy = tray.DATA["yc"] + tray.DUCT_W / 2 + tray.FD_BEND_RI          # straight part of the power lane starts at the arc centre
     ly = tray._lead_y()
     rep(f"cross-over slots y {', '.join(f'{y:.1f}' for y in ly)} inside the straight power lane walls (y {cy:.1f}..{tray.FD_Y_END:.1f})",
         all(cy <= y - tray.FD_SLOT_W / 2 and y + tray.FD_SLOT_W / 2 <= tray.FD_Y_END - tray.DUCT_T for y in ly))
     tops = {n: dict(inst)[n].bounding_box()[5] for n in ("DC Duct Lid", "Data Duct Lid", "Fan DC Duct Lid", "Fan Data Duct Lid")}
-    rep(f"DC hub window top z {hub.DUCT_WIN[3]:.1f} = duct wall top {tray.FLOOR_Z + tray.DUCT_H:.1f} - 1", abs(hub.DUCT_WIN[3] - (tray.FLOOR_Z + tray.DUCT_H - 1.0)) < 1e-6)
+    rep(f"spout window top z {hub.DUCT_WIN_Z[1]:.1f} = duct wall top {tray.FLOOR_Z + tray.DUCT_H:.1f} - 1", abs(hub.DUCT_WIN_Z[1] - (tray.FLOOR_Z + tray.DUCT_H - 1.0)) < 1e-6)
     rep("all duct lids at the same height: " + ", ".join(f"{k} {v:.1f}" for k, v in tops.items()), max(tops.values()) - min(tops.values()) < 1e-6)
     sp = hub.spout_section(); hz = min(z for _, z in sp if _ < hub.DUCT_Y1 - hub.DUCT_WALL)
-    rep(f"DC hub spout: hook reaches {hub.NOTCH_Z - hz:.1f} below the notched duct wall (>= 3), skirt down to z {hub.SPOUT_Z0:.1f}",
+    rep(f"box spouts: hook reaches {hub.NOTCH_Z - hz:.1f} below the notched duct wall (>= 3), skirt down to z {hub.SPOUT_Z0:.1f}",
         hub.NOTCH_Z - hz >= 3.0)
     for mod, tag, pitch, zu, zl in ((thin, "thin", thin.PITCH, thin.ZU, thin.ZL), (cable, "wide", cable.CHP, cable.CHAIN_ZU, cable.CHAIN_ZL)):
         arc = math.degrees(2 * math.asin(pitch / (zu - zl)))
