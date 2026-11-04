@@ -1,6 +1,6 @@
 # Kaufteile und 3D-Modelle
 
-Stand 2026-11-03. Kaufteile liegen nur im IngeTrazo-Dokument (nicht im Generator). Die Bestellliste steht in `docs/HARDWARE.md`. Quelle der Komponentenauswahl: `CR10 Standalone Mod - Documentation.pdf` (alte Version: DIN EN 50022 2 × 300–350, Sunon 60er Lüfter, IEC-GS-1-100, Keystones, LRS-250/350-24 bzw. RS-15-5, Voron-DIN-Halter). Werte mit **(ungeprüft)** oder **(Annahme)** sind nicht aus Datenblatt oder Messung belegt.
+Stand 2026-11-04. Kaufteile liegen nur im IngeTrazo-Dokument (nicht im Generator). Die Bestellliste steht in `docs/HARDWARE.md`. Quelle der Komponentenauswahl: `CR10 Standalone Mod - Documentation.pdf` (alte Version: DIN EN 50022 2 × 300–350, Sunon 60er Lüfter, IEC-GS-1-100, Keystones, LRS-250/350-24 bzw. RS-15-5, Voron-DIN-Halter). Werte mit **(ungeprüft)** oder **(Annahme)** sind nicht aus Datenblatt oder Messung belegt.
 
 ## Mean Well LRS-350-24 (24 V, Hauptnetzteil)
 
@@ -24,17 +24,17 @@ Stand 2026-11-03. Kaufteile liegen nur im IngeTrazo-Dokument (nicht im Generator
 
 - Das PDF nennt RS-15-5 (nicht LRS-15). Vendor-Modell `PSU Mean Well RS-15-5`, Platzhalter `PSU LRS-15-5`.
 - Pinbelegung (5 Pins, Raster 7,62, +V auf der ADJ/LED-Seite): 1 AC/L, 2 AC/N, 3 FG, 4 −V, 5 +V.
-- Lage Welt (X −48,5..26,06 seit 2026-11-03, vorher −63..11,56; Y 530,8..581,8, Klemmen −X, um Y +23,8 verschoben, nicht gedreht): Schrauben bei X ca. −45,5, oben Z 43,7; Eintritt Z ca. 33.
+- Lage Welt seit 2026-11-04 (T-033): um 90° im Uhrzeigersinn gedreht, Klemmen +Y. Gehäuse X −42,05..9,05, Y 475,5..538,16, Z 25..53; Klemmblock X −31,96..7,7, Y 538,16..550,06, Z 30,59..43,75 (oben 43,7). Abgeleitet aus der vorherigen Lage (Klemmen −X; Gehäuse X −36,6..26,06, Y 530,75..581,85; Block X −48,5..−36,6, Y 540,84..580,5) per x' = y − 572,8, y' = 501,56 − x (`power_hub.rs_xy`); im Dokument wurden Vendor-Modell und Platzhalter mit derselben Abbildung gedreht.
 
-| Pin | Funktion | Welt-Y |
-|---|---|---|
-| 1 | AC/L | 576,0 |
-| 2 | AC/N | 568,4 |
-| 3 | FG (PE) | 560,8 |
-| 4 | −V | 553,1 |
-| 5 | +V | 545,5 |
+| Pin | Funktion | Welt-X (gedreht) | Welt-Y vorher |
+|---|---|---|---|
+| 1 | AC/L | 3,2 | 576,0 |
+| 2 | AC/N | −4,4 | 568,4 |
+| 3 | FG (PE) | −12,0 | 560,8 |
+| 4 | −V | −19,7 | 553,1 |
+| 5 | +V | −27,3 | 545,5 |
 
-Die AC/DC-Grenze beider Netzteile liegt auf Y 557 (Doppelwand der beiden Hub-Boxen).
+AC/DC-Grenze: LRS-350 auf Y 557, RS-15-5 auf X −15,85 (L-förmige Doppelwand der beiden Hub-Boxen, `docs/DESIGN.md`).
 
 ## Adam Tech IEC-GS-1-100 (Netzeinbaustecker mit Schalter und Sicherung)
 
@@ -104,9 +104,9 @@ STEP-Dateien liegen nicht im Projekt (nur im Scratchpad geladen); für Neukonver
 | Modell | Quelle (URL) | JSON | Konverter-Parameter | Platzierung in `vendor_import.py` (`rot`, Bezug) |
 |---|---|---|---|---|
 | LRS-350-24 | https://www.meanwell.com/upload/pdf/LRS-350/LRS-350-3D.zip (offiziell) | `build/vendor/lrs350.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((0,-1),(1,-1),(2,1))` = 180° um Z (Klemmen +X); mittig in X/Y auf Platzhalter `PSU LRS-200-24`, Unterkante auf Platzhalter-Unterkante (`z_ref=None`) |
-| RS-15-5 | https://www.meanwell.com/upload/pdf/RS-15/RS-15-3D.zip (offiziell) | `build/vendor/rs15.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((0,1),(1,1),(2,1))` unverändert (Klemmen −X); mittig auf Platzhalter `PSU LRS-15-5`, Unterkante bündig |
+| RS-15-5 | https://www.meanwell.com/upload/pdf/RS-15/RS-15-3D.zip (offiziell) | `build/vendor/rs15.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((1,1),(0,-1),(2,1))` = 90° im Uhrzeigersinn (Klemmen −X in der Quelle, +Y gewünscht; seit T-033, vorher unverändert); mittig auf Platzhalter `PSU LRS-15-5` (mitgedreht), Unterkante bündig. Ungetestet, weil `build/vendor/` lokal fehlt |
 | Raspberry Pi 4 Model B | https://code.c-base.org (wercc/monorail-pcb) `Libraries/Raspberry-Pi-4-library-for-kicad-master/Raspberry Pi 4 Model B.STEP`; Lizenz unbekannt | `build/vendor/pi4.json` | `--defl 0.5 --ang 1.0 --min-solid 1.5` | `rot=((0,-1),(2,1),(1,1))` Y-up → Z-up (Ports −X, GPIO −Y); `z_ref=-0.8` (PCB y −0,8..0,8) auf Platzhalter `Raspberry Pi 4` |
 | BTT Octopus V1.0 (für V1.1) | github bigtreetech/BIGTREETECH-OCTOPUS-V1.0 `3D/BIGTREETECH Octopus V1.0.stp` | `build/vendor/octopus.json` | `--defl 1 --ang 1.5 --min-solid 2` | `rot=((0,-1),(1,-1),(2,1))` = 180° (Schraubklemmen +X, Motorstecker −Y); `z_ref=-1.6` auf Platzhalter `BTT Octopus V1.1` |
 | IEC-GS-1-100 | https://app.adam-tech.com/products/download/model/203611/iec-gs-1-100-model.step (Datenblatt `.../data_sheet/203611/iec-gs-1-100-data-sheet.pdf`) | `build/vendor/iec_gs_1_100.json` | nicht dokumentiert **(ungeprüft)** | `rot=((2,1),(1,-1),(0,1))`, `at=(537.7, 553.4, 65.0)` (Quellursprung = Flansch-Vorderseite, +z aus der Platte; Flanschrückseite auf x 534,7), kein Platzhalter; Farbe per `paint` (Kontakte zinnfarben z < −21, Körper schwarz) |
 
-Alle Modelle: Platzhalter auf Layer `Electronics (Platzhalter)` (unsichtbar, nicht gelöscht), Vendor-Gruppen werden bei jedem Lauf von `vendor_import.py` ersetzt. Der Konverter schreibt Millimeter, Farben aus dem STEP, planare Flächen als Polygone mit Löchern, den Rest als Dreiecke. gmsh wurde verworfen (zu langsam). Platzhaltergrößen: LRS X −364..−149; RS Y 530,8..581,8.
+Alle Modelle: Platzhalter auf Layer `Electronics (Platzhalter)` (unsichtbar, nicht gelöscht), Vendor-Gruppen werden bei jedem Lauf von `vendor_import.py` ersetzt. Der Konverter schreibt Millimeter, Farben aus dem STEP, planare Flächen als Polygone mit Löchern, den Rest als Dreiecke. gmsh wurde verworfen (zu langsam). Platzhaltergrößen: LRS X −364..−149; RS (gedreht) X −42,0..9,0, Y 481,53..544,03.

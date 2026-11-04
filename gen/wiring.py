@@ -149,5 +149,5 @@ def bought_boxes():
     from cable import box
     out = [(f"WAGO {nm}", box(a, b, hub.W_Y0, hub.W_Y0 + hub.W_THK, hub.W_Z0, W_TOP)) for nm, a, b in hub.wago_slots()]
     out += [("LRS-350 case", box(-364.0 + hub.LRS_DX, -151.5 + hub.LRS_DX, 475.0, 590.0, 25.0, 55.9)),
-            ("RS-15-5 case", box(-63.0 + hub.RS_DX, 12.0 + hub.RS_DX, 530.8, 581.8, 25.0, 53.0))]
+            ("RS-15-5 case", box(*hub.RS_BODY)), ("RS-15-5 terminal block", box(*hub.RS_BLOCK))]
     return out

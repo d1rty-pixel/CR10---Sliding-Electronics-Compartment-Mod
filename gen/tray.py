@@ -4,8 +4,8 @@ Separation: mains only inside the red hub box (power_hub.py: WAGO 221-413 for L 
 low voltage DC in the DC hub box and the DC duct, data and bus lines in the data duct along the wide chain (all anthracite). Purchased parts
 (PSUs, Pi, Octopus, WAGO, rails, lugs) are models in the document (layers "Electronics (neu)" / "Electronics (vendor)").
 
-Layout along x on the high-y side (tray inside x -378.8..31.2): LRS-350 x -373.75..-158.75 (terminals +x), hub x -158.25..-49,
-RS-15-5 x -48.5..26.06 (terminals -x, y 530.8..581.8), about 5 mm to the drawer frame / rear cross member (hub.LRS_DX / RS_DX).
+Layout along x on the high-y side (tray inside x -378.8..31.2): LRS-350 x -373.75..-158.75 (terminals +x), hub x -158.25..10,
+RS-15-5 turned (user 2026-11-04: body x -42.05..9.05, y 475.5..538.16, terminals +y into the hub, hub.RS_BODY), fan ducts x 10.2..31.
 Four 60 x 60 x 25 fans (24 V PWM) on the rear cross member (2020 L=334 #1) blow -x into the tray, through the vented hub boxes.
 """
 import math
@@ -125,26 +125,26 @@ def dc_lid():
 
 # ============================================================ fan ducts: +24 V / GND and PWM / tacho to the 4 fans
 # Two lanes along y in front of the rear cross member (x 31.2), side by side: PWM/tacho lane against the member, power lane in front.
-# Both end before the RS-15-5 (y 530.8) with an open end, so they have the full duct height (DUCT_H, user 2026-11-03).
-# The fans are turned so their leads leave at the bottom of the outlet flange (fan_model.py): fans 1-3 enter the lane through a
-# rounded notch in its +x wall at the fan centre y, fan 4 (behind the RS-15-5) runs -y in the 5 mm gap between RS and member and
-# enters through the open end. Red / black cross into the power lane through aligned slots in the two inner walls.
+# Since the RS-15-5 is turned (2026-11-04) both run up to the 2020 of the tray (y 604.8) and end closed (FD_Y_END).
+# The fans are turned so their leads leave at the bottom of the outlet flange (fan_model.py): every fan enters the PWM lane through a
+# rounded notch in its +x wall at the fan centre y. Red / black cross into the power lane through aligned slots in the two inner walls.
 # Power lane: T from the open rear end of the DC duct (tongue into it), PWM lane: 90 deg bend (R 13) from the data duct.
 # The M4 heads of the lower fan screws (x >= 27.2, z 26.5..33.5) sit in notches of the +x wall and the lid.
-# x limits: rails R1a/R1b end x 9.0, DIN PSU5 Cradle 2 x 8.0; 2040 of the wide chain to y 330.4.
+# x limits: rails R1a/R1b end x 9.0, red hub box x 10.0, RS-15-5 body x 9.05; 2040 of the wide chain to y 330.4.
 FD_ZT = FLOOR_Z + DUCT_H              # wall top like every duct (lid 1.6 on top)
 FD_LANE_W = 10.3
 FD_Y_X = (10.2, 10.2 + FD_LANE_W)     # power lane 10.2..20.5
 FD_G_X = (FD_Y_X[1] + 0.2, 31.0)      # PWM lane 20.7..31.0 (member face 31.2)
-FD_Y_END = 528.0                      # open end, 2.8 before the RS-15-5 (y 530.8)
+FD_Y_END = 604.0                      # closed end, 0.8 before the 2020 of the tray (y 604.8), like the red hub box
 FD_BEND_RI = 12.0                     # inner fillet of the PWM bend; the power lane ends in an arc concentric to it (gap = lane gap)
 FD_JOINT = 0.2                        # gap to the old duct end faces / walls
 FD_NOTCH_W, FD_NOTCH_ZB = 6.0, 20.0   # lead notch in the +x wall, round bottom (leads leave the fan at z ~25)
 FD_SLOT_W = 5.0                       # cross-over slots between the lanes (depth SLOT_D)
+FD_SCREW_Y = (400.0, 515.0, 585.0)    # M3 floor screws along both lanes (between the lead entries / head notches)
 FD_HEAD = dict(x=27.0, dy=4.5, z=26.0)   # notch for the M4 heads of the lower fan screws (head d 7, k 4 assumed: x 27.2..31.2)
 
 def _lead_y():
-    """y of the lead entries: fan centre (leads leave at the bottom); fan 4 enters through the open end"""
+    """y of the lead entries: fan centre (leads leave at the bottom)"""
     return tuple(yc for yc in FAN_YC if yc < FD_Y_END - FD_NOTCH_W)
 
 def _head_y():
@@ -245,30 +245,27 @@ def _fd_green_plan():
     xa, xb = FD_G_X; x0 = DATA["x"][1] + FD_JOINT; y0, y1 = 330.5, DATA["yc"] + DUCT_W / 2
     return [(x0, y0), (xb, y0), (xb, FD_Y_END), (xa, FD_Y_END), (xa, y1), (x0, y1)], [0, 13, 0, 0, 12, 0]
 
-def _end_mouth(xs):
-    return (xs[0] + DUCT_T, xs[1] - DUCT_T, FD_Y_END - 3.0, FD_Y_END + 1.2)
-
 def fan_dc_duct():
     pts, rr = _fd_yellow_plan(); x0 = pts[0][0]; yc = DC["yc"]; t = DUCT_T
     yi0, yi1 = yc - DUCT_W / 2 + t, yc + DUCT_W / 2 - t
     xw = (FD_Y_X[1] - t, FD_Y_X[1])
-    d = _fan_duct(pts, rr, [(x0 - 1.2, x0 + 3.0, yi0, yi1), _end_mouth(FD_Y_X)], [(xw, y) for y in _lead_y()], [],
+    d = _fan_duct(pts, rr, [(x0 - 1.2, x0 + 3.0, yi0, yi1)], [(xw, y) for y in _lead_y()], [],
                   [(x, yi0 - t, yi1 + t) for x in (-38.0, -28.0, -18.0, -8.0)],
-                  [(-20.0, yc), (sum(FD_Y_X) / 2, 400.0), (sum(FD_Y_X) / 2, 515.0)])
+                  [(-20.0, yc)] + [(sum(FD_Y_X) / 2, y) for y in FD_SCREW_Y])
     return d + _tongue(DC["x"][1] + FD_JOINT, yi0, yi1)
 
 def fan_data_duct():
     pts, rr = _fd_green_plan(); x0 = pts[0][0]; t = DUCT_T
     yi0, yi1 = pts[0][1] + t, pts[-1][1] - t
-    d = _fan_duct(pts, rr, [(x0 - 1.2, x0 + 3.0, yi0, yi1), _end_mouth(FD_G_X)],
+    d = _fan_duct(pts, rr, [(x0 - 1.2, x0 + 3.0, yi0, yi1)],
                   [((FD_G_X[0], FD_G_X[0] + t), y) for y in _lead_y()], [((FD_G_X[1] - t, FD_G_X[1]), y) for y in _lead_y()],
                   [(x, yi0 - t, yi1 + t) for x in (-28.0, -18.0, -8.0)],
-                  [(-15.0, DATA["yc"]), (sum(FD_G_X) / 2, 400.0), (sum(FD_G_X) / 2, 515.0)])
+                  [(-15.0, DATA["yc"])] + [(sum(FD_G_X) / 2, y) for y in FD_SCREW_Y])
     return d + _tongue(DATA["x"][1] + FD_JOINT, DATA["yc"] - DUCT_W / 2 + t, DATA["yc"] + DUCT_W / 2 - t)
 
 def _lid_cuts(pts, xs):
     x0 = pts[0][0]
-    return [(x0 - 1, x0 + 3.5, pts[0][1] + 1.0, pts[-1][1] - 1.0), (xs[0] + 1.0, xs[1] - 1.0, FD_Y_END - 3.5, FD_Y_END + 1)]
+    return [(x0 - 1, x0 + 3.5, pts[0][1] + 1.0, pts[-1][1] - 1.0)]
 
 def fan_dc_lid():
     pts, rr = _fd_yellow_plan()
@@ -312,31 +309,35 @@ def release_cut(xc, yc, z1, half=2.5):
     """screwdriver slot through everything above the slider notch (stops above the slider top z 12.3)"""
     return box(xc - half, xc + half, yc + RELEASE[0], yc + RELEASE[1], RAIL_TOP + 0.1, z1)
 
-# rail centre lines: power A (DC hub) / B (mains hub, fixed by the box: hook and latch inside y 557.1..604), 50 apart
-# (A latch end 553.7, B hook 557.3); LRS-350 centre 532.5 and RS-15-5 centre 556.3 lie between them. Logic R2 = Octopus centre.
-RAIL_A, RAIL_B, RAIL_R2 = 527.0, 577.0, 402.0
+# rail centre lines: power A (DC hub, LRS, RS-15-5) / B (mains hub, fixed by the box: hook and latch inside y 557.1..604).
+# A moved from 527 to 510 (2026-11-04): its latch end (536.7) stays under the turned RS body (to 538.16), clear of the hub pocket
+# floor (from 538.36). LRS-350 centre 532.5 lies between A and B. Logic R2 = Octopus centre.
+RAIL_A, RAIL_B, RAIL_R2 = 510.0, 577.0, 402.0
 POWER_RAILS = (RAIL_A, RAIL_B)
 
-def psu_cradle(xc, y0=473.0, y1=592.0, top=25.0, lip=8.0, w=20.0):
-    """saddle on both power rails: platform under the PSU, side lips, two slots for a strap / zip tie; one extruded section"""
+def psu_cradle(xc, y0=473.0, y1=592.0, top=25.0, lip=8.0, w=20.0, rails=POWER_RAILS, lip1=True):
+    """saddle on the power rails: platform under the PSU, side lips, two slots for a strap / zip tie; one extruded section"""
     x0, x1 = xc - w / 2, xc + w / 2
-    cs = _sq(y0, y1, top - 4.0, top) + _sq(y0, y0 + 2.0, top, top + lip) + _sq(y1 - 2.0, y1, top, top + lip)
-    for rail in POWER_RAILS:
+    cs = _sq(y0, y1, top - 4.0, top) + _sq(y0, y0 + 2.0, top, top + lip)
+    if lip1: cs = cs + _sq(y1 - 2.0, y1, top, top + lip)
+    for rail in rails:
         cs = cs + _clip_cs(rail) + _sq(rail - 19.7, rail + 19.7, CLIP_TOP - 1.0, top - 4.0)
     m = _yz_prism(cs, x0, x1)
     for y in (y0 + 6.0, y1 - 6.0):
         m = m - box(x0 + 3.0, x1 - 3.0, y - 1.5, y + 1.5, top - 5.0, top + 1)
-    for rail in POWER_RAILS:
+    for rail in rails:
         m = m - release_cut(xc, rail, top + 1)
     return m
 
-PSU5_CRADLE_X = (-44.0 + hub.RS_DX, 2.0)   # two narrow saddles under the RS-15-5 body (x -37.5..26.06); the second stays on the
-                                          # power rails (end x 9): x -4..8
-PSU5_CRADLE_W = 12.0
+PSU5_CRADLE_X = (-34.0, -4.0)         # two saddles under the turned RS-15-5 body (x -42.05..9.05): x -41..-27 and -11..3
+                                      # (the R 6 fillet of the Fan DC Duct reaches x 4.2..10.2, y 473..479)
+PSU5_CRADLE_W = 14.0
 
 def psu5_cradle(xc):
-    """narrow saddle for the RS-15-5 (y 530.8..581.8) on both power rails"""
-    return psu_cradle(xc, 528.8, 583.8, 25.0, 6.0, PSU5_CRADLE_W)
+    """saddle for the turned RS-15-5 (body y 475.5..538.16) on rail A only; lip at -y, at +y the pocket wall of the hub
+    (0.2 to the case) holds it"""
+    b = hub.RS_BODY
+    return psu_cradle(xc, b[2] - 2.0, b[3], b[4], 6.0, PSU5_CRADLE_W, rails=(RAIL_A,), lip1=False)
 
 # boards low (user 2026-11-03): bottom z 22.5 instead of 31, so the duct finger slots (z 21..30) sit at board level.
 # Parts below the PCB (document vendor models): Octopus 3.1 (pins), Pi 2.1 -> holder top z 18 leaves 1.4 / 2.4.
@@ -382,7 +383,7 @@ def pi_holder():
 # retracted (stroke 396) fan + holder + nuts end at x 460.4.
 # Limits: chain lanes y 290..330 (wide, upper run z 80.7+) and y 603..627 (thin bracket z 83.9+); thin channel
 # (fixed, z 86.5..102, x 114..424, y 573.4..628.5) passes over the moving fan 4 -> fan and holder top z 85 (1.5 clear).
-# RS-15-5 ends x 26.06 (z 25..53): screw heads on the outlet flange of fan 4 leave about 2 mm.
+# The turned RS-15-5 ends x 9.05, the red hub box x 10: the fan screw heads (x >= 27.2) sit over the fan ducts.
 # Holder: plate on the intake side (x 56.2..61.2, z 7..85) with a spacer block behind the member (x 51.2..56.2, z 7..25; it
 # also carries the 5 mm of fan behind the member), 2 x M5 + T-nut in the rear slot. Fan: 4 x M4 x 35 from the outlet side
 # through both flanges and the plate, nut + washer on the back of the plate. Section constant along y (62 wide, fan 60):
@@ -427,15 +428,18 @@ def fan_holder(yc):
         m = m - _yz_prism(CrossSection.circle(5.5 / 2, 24).translate((yc + dy, PROFILE_REAR_Z)), x0 - 1, x1 + 1)   # M5 rear slot
     return m
 
-HUB_CLIP_X = ((hub.X0 + 6.0, hub.X0 + 20.0), (hub.X1 - 20.0, hub.X1 - 6.0))   # inside the R 6 corner arcs (latch end y 603.7)
-HUB_RELEASE_X = (hub.X0 + 17.0, hub.X1 - 17.0)           # release slots on the inner side of the clips, clear of the corner bosses
+def hub_clip_x(red):
+    """two clips inside the R 6 corner arcs (latch end y 603.7 / 536.7) and the release slots on their inner side"""
+    a, b = hub.box_x(red)
+    return ((a + 6.0, a + 20.0), (b - 20.0, b - 6.0)), (a + 17.0, b - 17.0)
 
 def hub_base(red):
     """each hub box on its own rail (mains: B, DC: A) with two full clips, release slots through the floor"""
     rail = RAIL_B if red else RAIL_A
     m = hub.red_base() if red else hub.dc_base()
-    for x0, x1 in HUB_CLIP_X: m = m + clip(x0, x1, rail)
-    for xc in HUB_RELEASE_X: m = m - release_cut(xc, rail, hub.FLOOR_Z + hub.T + 1)
+    clips, rel = hub_clip_x(red)
+    for x0, x1 in clips: m = m + clip(x0, x1, rail)
+    for xc in rel: m = m - release_cut(xc, rail, hub.FLOOR_Z + hub.T + 1)
     return m
 
 def parts():

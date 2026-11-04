@@ -334,18 +334,29 @@ def run_checks():
         top = (dict(inst)[f"Fan Holder {k + 1}"] ^ cable.box(0, 1000, 0, 1000, 77.9, 200)).bounding_box()
         xr = max(fb[1], top[3], tray.FH_X1 + tray.FH_NUT) + cable.TRAVEL
         rep(f"Fan {k + 1} retracted: fan, holder top and nuts end x {xr:.1f} (< motor x 472)", xr < 472.0)
-    # fan ducts vs bought parts in the document (bbox scan 2026-11-03): rear cross member front x 31.2, rails R1a/R1b end x 9.0,
-    # RS-15-5 (x -48.5..26.06, y 530.8..581.8, z 25..53), 2040 of the wide chain to y 330.4; M4 heads of the lower fan screws
+    # fan ducts vs bought parts in the document (bbox scan 2026-11-04): rear cross member front x 31.2, rails end x 9.0, 2020 of the
+    # tray from y 604.8, turned RS-15-5 (hub.RS_BODY / RS_BLOCK), 2040 of the wide chain to y 330.4; M4 heads of the lower fan screws
     # (d 7, k 4 assumed: x 27.2..31.2, z 26.5..33.5 around y = fan centre +-25)
     heads = [cable.box(27.2, 31.2, y - 3.5, y + 3.5, 26.5, 33.5) for yc in tray.FAN_YC for y in (yc - 25.0, yc + 25.0)]
+    rails_box = cable.box(-361.5, 9.0, tray.RAIL_A - 17.5, tray.RAIL_B + 17.5, 5.0, 12.5)
     for n in ("Fan DC Duct", "Fan Data Duct", "Fan DC Duct Lid", "Fan Data Duct Lid"):
         m = dict(inst)[n]; bb = m.bounding_box()
-        rs = (m ^ cable.box(-48.5, 26.06, 530.8, 581.8, 25.0, 53.0)).volume()
-        rails = (m ^ cable.box(-361.5, 9.0, 509.5, 594.5, 5.0, 12.5)).volume()
+        rails = (m ^ rails_box).volume()
         hd = sum((m ^ h).volume() for h in heads)
-        rep(f"{n}: x {bb[0]:.1f}..{bb[3]:.1f} (< 31.2), y {bb[1]:.1f}..{bb[4]:.1f} (330.4..530.8), z top {bb[5]:.1f} (wall {tray.FD_ZT:.0f} / lid +1.6), "
-            f"RS {rs:.2f} / rails {rails:.2f} / fan screw heads {hd:.2f} mm3",
-            bb[3] < 31.2 and bb[1] >= 330.4 and bb[4] < 530.8 and abs(bb[5] - tray.FD_ZT - (1.6 if n.endswith("Lid") else 0.0)) < 1e-6 and rs < 1e-6 and rails < 1e-6 and hd < 1e-6)
+        rep(f"{n}: x {bb[0]:.1f}..{bb[3]:.1f} (< 31.2), y {bb[1]:.1f}..{bb[4]:.1f} (330.4..604.8), z top {bb[5]:.1f} (wall {tray.FD_ZT:.0f} / lid +1.6), "
+            f"rails {rails:.2f} / fan screw heads {hd:.2f} mm3",
+            bb[3] < 31.2 and bb[1] >= 330.4 and bb[4] < 604.8 and abs(bb[5] - tray.FD_ZT - (1.6 if n.endswith("Lid") else 0.0)) < 1e-6 and rails < 1e-6 and hd < 1e-6)
+    # turned RS-15-5 (body, terminal block) and WAGOs (bought, document) vs every printed part; red box and fan power lane apart
+    for bn, bm in wiring.bought_boxes():
+        if bn.startswith("LRS"): continue           # crude bbox incl. the terminal block: the lid skirts sit on it by design
+        hit = [n for n, m in inst if (bm ^ m).volume() > 1e-6]
+        rep(f"{bn}: no printed part inside{'' if not hit else ': ' + ', '.join(hit)}", not hit)
+    rb = dict(inst)["Mains Hub Base"].bounding_box()
+    rep(f"Mains Hub Base x end {rb[3]:.2f} < fan power lane x {tray.FD_Y_X[0]:.2f}; RS body x end {hub.RS_BODY[1]:.2f} < {tray.FD_Y_X[0]:.2f}",
+        rb[3] < tray.FD_Y_X[0] and hub.RS_BODY[1] < tray.FD_Y_X[0])
+    rep(f"hub divider x {hub.XD:.2f} between RS FG x {hub.RS_PINS['FG']:.2f} and -V x {hub.RS_PINS['-V']:.2f}; cut-out from z {hub.BLK_Z} under the block (z {hub.RS_BLOCK[4]})",
+        hub.RS_PINS["-V"] < hub.XD < hub.RS_PINS["FG"] and hub.BLK_Z < hub.RS_BLOCK[4])
+    rep(f"rail A latch end y {tray.RAIL_A + tray.LATCH_END:.1f} < hub pocket floor y {hub.Y_P:.2f}", tray.RAIL_A + tray.LATCH_END < hub.Y_P)
     cy = tray.DATA["yc"] + tray.DUCT_W / 2 + tray.FD_BEND_RI          # straight part of the power lane starts at the arc centre
     ly = tray._lead_y()
     rep(f"cross-over slots y {', '.join(f'{y:.1f}' for y in ly)} inside the straight power lane walls (y {cy:.1f}..{tray.FD_Y_END:.1f})",

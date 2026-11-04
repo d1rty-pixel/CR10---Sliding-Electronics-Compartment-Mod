@@ -13,7 +13,7 @@ PLACEHOLDER_LAYER = "Electronics (Platzhalter)"
 # rot maps source axes to world axes: world = (s[i0]*sign0, s[i1]*sign1, s[i2]*sign2)
 MODELS = [
     dict(name="PSU Mean Well LRS-350-24", json="lrs350.json", ph="PSU LRS-200-24", rot=((0, -1), (1, -1), (2, 1)), z_ref=None),   # terminals -X in source, +X wanted
-    dict(name="PSU Mean Well RS-15-5", json="rs15.json", ph="PSU LRS-15-5", rot=((0, 1), (1, 1), (2, 1)), z_ref=None),
+    dict(name="PSU Mean Well RS-15-5", json="rs15.json", ph="PSU LRS-15-5", rot=((1, 1), (0, -1), (2, 1)), z_ref=None),   # terminals -X in source; turned 90 deg clockwise (2026-11-04): +Y
     dict(name="Raspberry Pi 4 Model B", json="pi4.json", ph="Raspberry Pi 4", rot=((0, -1), (2, 1), (1, 1)), z_ref=-0.8),       # source is Y-up, PCB y -0.8..0.8; turned 180 deg: ports -X
     dict(name="BTT Octopus (V1.0 STEP)", json="octopus.json", ph="BTT Octopus V1.1", rot=((0, -1), (1, -1), (2, 1)), z_ref=-1.6),   # screw terminals -X in source, +X wanted
     # Adam Tech STEP: origin = flange front centre, +z out of the panel, long side y, rocker at -y, one colour only.
