@@ -1,9 +1,9 @@
 # Stückliste
 
-Stand 2026-11-04. Erzeugt mit `gen/bom_document.py` aus dem IngeTrazo-Dokument (Profile, Kaufteile) und `build/bom_parts.json` (Druckteile, aus `gen/cr10mod.py build`).
-Längen sind Modellmaße ohne Sägezugabe. Außer dem Stock Frame sind sie nicht am Teil gegengemessen. Schrauben, Nutensteine, Kabel und Kleinteile stehen in `docs/HARDWARE.md`.
+Stand 2026-11-05. Erzeugt mit `gen/bom_document.py` aus dem IngeTrazo-Dokument (Profile, Kaufteile) und `build/bom_parts.json` (Druckteile, aus `gen/cr10mod.py build`).
+Längen sind Modellmaße ohne Sägezugabe. Außer dem CR10-Rahmen sind sie nicht am Teil gegengemessen. Schrauben, Nutensteine, Kabel und Kleinteile stehen in `docs/HARDWARE.md`.
 
-## Stock Frame
+## CR10 Frame
 
 Original-CR10-Rahmen, bleibt unverändert, nichts zu kaufen
 
@@ -24,9 +24,9 @@ fester Unterbau
 | 2020 | 500 | 2 | 1000 |
 | 2040 | 80 | 7 | 560 |
 
-## Mod Frame Drawer
+## Tray Frame
 
-Auszug
+Auszug (Tray)
 
 | Profil | Länge (mm) | Stück | Summe (mm) |
 |---|---:|---:|---:|
@@ -75,25 +75,24 @@ Gezählt nach Gruppennamen im Dokument (sichtbare Gruppen; ausgeblendete Platzha
 | Keystone-Blindmodul | 1 |  |
 | Ringöse M5 (PE) | 2 |  |
 | Auszugschiene dreiteilig, Vollauszug, 450 mm | 2 |  |
-| Original-Fuß (`Stock Foot`, vom Stock Frame umsetzen) | 4 |  |
+| Original-Fuß (`CR10 Foot`, vom CR10-Rahmen umsetzen) | 4 |  |
 
 ## Druckteile
 
 Volumen = Volumen des Körpers (100 % gefüllt), nicht der Filamentverbrauch des Slicers.
 
-### Blenden und Paneele (`Druckteile (gen)`)
+### Mod Frame: Rück- und Seitenpaneele, IEC-Gehäuse (`Mod Frame Print Parts`)
 
 | Teil | STL | Stück | Volumen je Stück (cm³) | Volumen gesamt (cm³) |
 |---|---|---:|---:|---:|
 | Rear Panel Switch | `Rear_Panel_Switch.stl` | 1 | 24,1 | 24,1 |
 | Rear Panel Connector | `Rear_Panel_Connector.stl` | 1 | 25,0 | 25,0 |
 | IEC Housing | `IEC_Housing.stl` | 1 | 31,0 | 31,0 |
-| Front Panel Hex | `Front_Panel_Hex.stl` | 2 | 15,4 | 30,8 |
 | Side Panel Hex | `Side_Panel_Hex.stl` | 4 | 17,9 | 71,5 |
 | Side Panel Fan60 | `Side_Panel_Fan60.stl` | 0 | 22,4 | 0,0 |
-| **Summe** | | 9 | | **182,5** |
+| **Summe** | | 7 | | **151,7** |
 
-### Schleppketten, Halter, fester Kanal (`Schlepp (gen)`)
+### Schleppketten, Halter, fester Kanal (`Drag Chains`)
 
 | Teil | STL | Stück | Volumen je Stück (cm³) | Volumen gesamt (cm³) |
 |---|---|---:|---:|---:|
@@ -109,10 +108,11 @@ Volumen = Volumen des Körpers (100 % gefüllt), nicht der Filamentverbrauch des
 | Thin Channel Rear | `Thin_Channel_Rear.stl` | 1 | 19,7 | 19,7 |
 | **Summe** | | 52 | | **209,7** |
 
-### Tray: Power-Hub, Kanäle, DIN-Halter, Lüfterhalter (`Tray Druckteile (gen)`)
+### Tray: Frontpaneele, Power-Hub, Kanäle, DIN-Halter, Lüfterhalter (`Tray Print Parts`)
 
 | Teil | STL | Stück | Volumen je Stück (cm³) | Volumen gesamt (cm³) |
 |---|---|---:|---:|---:|
+| Front Panel Hex | `Front_Panel_Hex.stl` | 2 | 15,4 | 30,8 |
 | WAGO Box | `WAGO_Box.stl` | 1 | 44,8 | 44,8 |
 | WAGO Box Lid | `WAGO_Box_Lid.stl` | 1 | 7,2 | 7,2 |
 | LRS Box | `LRS_Box.stl` | 1 | 36,2 | 36,2 |
@@ -140,7 +140,7 @@ Volumen = Volumen des Körpers (100 % gefüllt), nicht der Filamentverbrauch des
 | Fan Holder 2 | `Fan_Holder_2.stl` | 1 | 15,5 | 15,5 |
 | Fan Holder 3 | `Fan_Holder_3.stl` | 1 | 15,5 | 15,5 |
 | Fan Holder 4 | `Fan_Holder_4.stl` | 1 | 15,5 | 15,5 |
-| **Summe** | | 27 | | **449,6** |
+| **Summe** | | 29 | | **480,4** |
 
 Alle platzierten Druckteile zusammen: **841,8 cm³**.
 

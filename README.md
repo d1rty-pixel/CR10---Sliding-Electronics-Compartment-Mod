@@ -16,18 +16,19 @@ Ein parametrischer Python-Generator (`manifold3d`) ist die einzige Quelle der Ge
 | `gen/tray.py` | Tray-Teile: DC-, Daten- und AC-Kanal, Lüfterkanäle mit Deckeln, Clips der 230-V-Boxen, DIN-Wiegen und -Halter (Netzteile, Octopus, Pi), Lüfterhalter |
 | `gen/power_hub.py` | 230-V-Boxen: WAGO-Box an der 2020 (WAGOs liegend, durch den Deckel messbar), LRS- und RS-Box vor den Netzteilklemmen (AC + DC, niedrige Trennwand, Rutschen in den DC-Kanal), Maße des AC-Kanals |
 | `gen/cadio.py` | Mesh-Export (Polygonflächen für IngeTrazo, STL) |
-| `gen/ingetrazo_import.py` | IngeTrazo-Skript: importiert `build/parts.json`, blendet Handbau-Vorgänger aus |
-| `gen/vendor_import.py` | IngeTrazo-Skript: platziert Hersteller-Modelle aus `build/vendor/` (Layer `Electronics (vendor)`) |
+| `gen/ingetrazo_import.py` | IngeTrazo-Skript: importiert `build/parts.json`, erkennt generierte Gruppen an `ext["cr10mod"]` |
+| `gen/vendor_import.py` | IngeTrazo-Skript: platziert Hersteller-Modelle aus `build/vendor/` (Layer `Tray Electrics`, IEC-Stecker `Mod Frame Electrics`) |
 | `gen/fan_model.py` | Anzeigemodell des Lüfters San Ace 9LG0624P4H001 (Katalogmaße) -> `build/fan60.json` |
-| `gen/fan_import.py` | IngeTrazo-Skript: setzt `build/fan60.json` in die Gruppen `Luefter 60x60x25 #1..4` ein |
+| `gen/fan_import.py` | IngeTrazo-Skript: setzt `build/fan60.json` in die Gruppen `Fan 60x60x25 #1..4` ein |
 | `gen/rail_model.py` | Anzeigemodell der Hutschienen (Phoenix Contact NS 35/7,5 PERF, Datenblattmaße) -> `build/rails.json` |
-| `gen/rail_import.py` | IngeTrazo-Skript: setzt `build/rails.json` in die Gruppen `Hutschiene R1a/R1b/R2 ...` ein |
+| `gen/rail_import.py` | IngeTrazo-Skript: setzt `build/rails.json` in die Gruppen `DIN Rail L1/L2/R1 ...` ein |
+| `gen/organize_document.py` | IngeTrazo-Skript (idempotent): benennt Gruppen englisch, nestet lose Teile und legt die Layer fest (T-042) |
 | `gen/step_to_mesh.py` | Konverter STEP -> `build/vendor/*.json` (eigenes venv mit `cadquery-ocp`) |
-| `gen/bom_document.py` | IngeTrazo-Skript: erzeugt `docs/BOM.md` aus Dokument (Profile, Kaufteile) und `build/bom_parts.json` (Druckteile) |
-| `gen/doc_export.py` | IngeTrazo-Skript: exportiert die sichtbaren Gruppen als Welt-Dreiecke nach `build/doc_scene.json` |
+| `gen/bom_document.py` | IngeTrazo-Skript: erzeugt `docs/BOM.md` aus Dokument (Profile, Kaufteile auf allen Layern außer `Archive`) und `build/bom_parts.json` (Druckteile) |
+| `gen/doc_export.py` | IngeTrazo-Skript: exportiert die Gruppen außer `Archive`/`Newton Axes` und ausgeblendeten (mit wirksamem, vom Elternteil geerbtem Layer) als Welt-Dreiecke nach `build/doc_scene.json` |
 | `gen/travel_sim.py` | Fahrsimulation Auszug/Schienen/Ketten gegen das Dokument (liest `build/doc_scene.json`) |
 | `gen/data/` | `side_cover_mount.json` (Originalclip), `chain_link_user.json` (Nutzerglied, Vorlage des Schemas; von keinem Code gelesen) |
-| `model/CR10-Sliding-Electronics-Compartment-Mod.igz` | IngeTrazo-Dokument: Rahmen, Kaufteile (Profile, Schienen, Netzteile, Platinen, WAGO), Handbau-Teile und importierte Druckteile |
+| `model/CR10-Sliding-Electronics-Compartment-Mod.igz` | IngeTrazo-Dokument: Rahmen, Kaufteile (Profile, Schienen, Netzteile, Platinen, WAGO), handgebaute Teile und importierte Druckteile |
 | `build/parts.json` | Druckteile in Einbaulage (für IngeTrazo), erzeugt, nicht im Repo |
 | `build/bom_parts.json` | Druckteil-Liste (STL, Stück, Volumen) für `docs/BOM.md`, erzeugt, nicht im Repo |
 | `build/doc_scene.json` | Export des Dokuments für die Fahrsimulation, erzeugt, nicht im Repo |
@@ -53,18 +54,19 @@ Umgebung einrichten: `python3 -m venv venv && ./venv/bin/pip install -r gen/requ
 In IngeTrazo (MCP `run_python`, AI-Bridge muss laufen):
 
 ```python
-exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/ingetrazo_import.py", encoding="utf-8").read())
-exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/vendor_import.py", encoding="utf-8").read())
-exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/fan_import.py", encoding="utf-8").read())   # vorher: ./venv/bin/python -I gen/fan_model.py
-exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/rail_import.py", encoding="utf-8").read())  # vorher: ./venv/bin/python -I gen/rail_model.py
+exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/ingetrazo_import.py", encoding="utf-8").read())
+exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/vendor_import.py", encoding="utf-8").read())
+exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/fan_import.py", encoding="utf-8").read())   # vorher: ./venv/bin/python -I gen/fan_model.py
+exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/rail_import.py", encoding="utf-8").read())  # vorher: ./venv/bin/python -I gen/rail_model.py
+exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/organize_document.py", encoding="utf-8").read())   # Layer und englische Namen (idempotent)
 ```
 
-Das erste Skript ersetzt die Gruppen der Layer `Druckteile (gen)`, `Schlepp (gen)`, `Tray Druckteile (gen)`; das zweite ersetzt `Electronics (vendor)` (Platzhalter bleiben, nur unsichtbar); das dritte ersetzt die Meshes der vier Lüftergruppen, das vierte die der drei Hutschienen (Name und Layer bleiben). Stückliste neu erzeugen mit `gen/bom_document.py` auf demselben Weg (nach `gen/cr10mod.py build`).
+Das erste Skript ersetzt alle generierten Gruppen (Kennung `ext["cr10mod"]`; Layer `Mod Frame Print Parts`, `Drag Chains`, `Tray Print Parts`); das zweite ersetzt das Mesh der bestehenden Hersteller-Gruppen an Ort und Stelle (Name, Layer, Lage und Newton-Daten bleiben, nichts wird angelegt oder gelöscht); das dritte ersetzt die Meshes der vier Lüftergruppen, das vierte die der drei Hutschienen (Name und Layer bleiben). `gen/organize_document.py` (Layer, englische Namen, idempotent) läuft getrennt davon bei Bedarf. Stückliste neu erzeugen mit `gen/bom_document.py` auf demselben Weg (nach `gen/cr10mod.py build`).
 
 ### Fahrsimulation
 
 ```python
-exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/doc_export.py", encoding="utf-8").read())   # in IngeTrazo
+exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/doc_export.py", encoding="utf-8").read())   # in IngeTrazo
 ```
 
 ```bash

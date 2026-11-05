@@ -38,7 +38,7 @@ Weitere Lüfter: `Side Panel Fan60` (Lochbild 50 × 50, Ø3,4) ist nirgends plat
 | Teil | Typ | Stück | Quelle / Status |
 |---|---|---:|---|
 | Auszugschienen | Vollauszug, dreiteilig, 450 mm | 2 | Modell; je Seite 1 |
-| Hutschienen | EN 50022 35 × 7,5, gelocht (Modell: Phoenix Contact NS 35/ 7,5 PERF, 0801733, beliebiger Hersteller) | 3 | R1a, R1b je 370 mm, R2 (X −320..−40, 280 mm) |
+| Hutschienen | EN 50022 35 × 7,5, gelocht (Modell: Phoenix Contact NS 35/ 7,5 PERF, 0801733, beliebiger Hersteller) | 3 | L1, L2 je 370 mm, R1 (X −320..−40, 280 mm) |
 | Aluprofile | 20 × 20 / 20 × 40, Nut 6 | siehe `docs/BOM.md` | erzeugt |
 | Alu-Eckverbinder, Panelclips | Original | – | nicht modelliert |
 
@@ -51,7 +51,7 @@ Weitere Lüfter: `Side Panel Fan60` (Lochbild 50 × 50, Ø3,4) ist nirgends plat
 | Auszugschienen | M5 + Nutenstein | **(offen)** | je 1 Loch mittig in Outer und Inner |
 | Kanal dünne Kette | M3 | 5 | `cable_thin.CH_SCREWS` |
 | Pi auf Halter | M2,5 | 4 | Lochbild 58 × 49 |
-| Lüfterkanäle gelb/grün (Boden) | M3, Länge offen (Wannenplatte `Gruppieren#15`, Material unbekannt, T-009) | 8 | `tray.fan_dc_duct()` / `fan_data_duct()` |
+| Lüfterkanäle gelb/grün (Boden) | M3, Länge offen (Wannenplatte `Tray Plexiglass Plate`, Material unbekannt, T-009) | 8 | `tray.fan_dc_duct()` / `fan_data_duct()` |
 | IEC Housing an Rear Panel Switch | M3 × 8 Senkkopf (ISO 10642) + Gewindeeinsatz M3 × 5,7 | je 4 | `iec_housing()`; Länge und Einsatztyp **(Annahme)** |
 | Zugentlastung 230-V-Mantel am IEC Housing | Kabelbinder ≤ 4,5 breit | 1 | `TIE_SLOT` |
 | Deckel der 230-V-Boxen (WAGO, LRS, RS) | M3, Länge offen, in Vorbohrung Ø2,8 der Dome | 3 + 4 + 3 = 10 | `power_hub.BOSSES`, `WALL_BOSSES` |
