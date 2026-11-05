@@ -132,6 +132,7 @@ Daten aus `gen/newton_model.py` (-> `build/newton.json`), gesetzt per `gen/newto
 - Alles andere `ignore` (sichtbar, nicht simuliert): Rahmenhüllen würden den Auszug einschließen, Rahmenkontakt gibt es daher nicht. Kettenkörper ohne Kontakt in ihrer Spur, nur die Glieder berühren das Auszugprofil (trägt das Untertrum).
 - Massen sind **Annahmen**: Drawer 2 kg, Tray-Teile 0,1, Schienenglieder 0,3, Kettenglied 0,01, Deckel 0,002.
 - Test 2026-11-05 (Worker headless, Schwerkraft): Hub 0 -> 393,9 -> 0,1 mm; Pivots breit Z 33,9..87,2 (Untertrum liegt ca. 3,9 tiefer auf dem Profil), dünn Z 32,4..92,4.
+  - **Korrektur 2026-11-05:** Z 33,9 ist nicht das Untertrum, sondern das eingebrochene Obertrum. Die Gelenkgrenzen gaben in MuJoCo nach (Standard-`solref`/`solimp`): bei Hub 0 −12..−17° statt −1,5°, beim Fahren über 100°, das Obertrum fiel bis auf die Höhe des Untertrums (Messung headless mit dem Plugin-Worker). Mit harten Grenzen (Plugin-Einstellung Anschlaghärte, Standard 100 %, `ingetrazo-newton` `main` seit 2026-11-05) unter 0,15° Überschreitung; Restdurchhang bei Hub 0 breit 8,9 / dünn 9,9 mm, davon kommt ein Teil vom Spiel −1,5° und von der Biegegrenze 78°/63° (kein gemessener Anschlag). Weiter in PLAN T-045.
 
 ## Fester Kanal der dünnen Kette (`Thin Channel`)
 
