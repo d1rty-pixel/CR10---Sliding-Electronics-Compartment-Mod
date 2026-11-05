@@ -1,11 +1,11 @@
 # Run inside IngeTrazo via the MCP tool `run_python`:
-#   exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/rail_import.py", encoding="utf-8").read())
+#   exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/rail_import.py", encoding="utf-8").read())
 # Puts the display model of build/rails.json (made by gen/rail_model.py) into the groups "DIN Rail L1/L2/R1 ...".
 # The mesh of each group is replaced (name, layer and group stay); a missing or ambiguous group raises (step rolls back).
 import json
 from collections import Counter
 
-RAIL_JSON = "G:/Things/CR10---Sliding-Electronics-Compartment-Mod/build/rails.json"
+RAIL_JSON = "/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/build/rails.json"
 
 def _addo(msh, loop, want, holes=None, col=None):
     f = msh.add_face(loop, holes)

@@ -1,13 +1,13 @@
 # Run inside IngeTrazo via the MCP tool `run_python`:
-#   exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/bom_document.py", encoding="utf-8").read())
+#   exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/bom_document.py", encoding="utf-8").read())
 # Writes docs/BOM.md from
 #   - the profile groups ("<2020|2040> L=<mm> #n") of the assemblies in the open document,
-#   - the bought parts in the open document (visible top-level groups, counted by name; hidden placeholders are skipped),
+#   - the bought parts in the open document (top-level groups, counted by name; layer "Archive" and hidden groups are skipped),
 #   - the printed parts of build/bom_parts.json (written by `gen/cr10mod.py build`: STL, placed count, volume).
 # Every number comes from the model or the generator, never typed by hand. Screws and slot nuts are not in the model.
 import re, json, datetime, collections
 
-ROOT = "G:/Things/CR10---Sliding-Electronics-Compartment-Mod"
+ROOT = "/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod"
 ASSEMBLIES = [("CR10 Frame", "Original-CR10-Rahmen, bleibt unverändert, nichts zu kaufen"),
               ("Mod Frame Base", "fester Unterbau"),
               ("Tray Frame", "Auszug (Tray)")]
@@ -57,8 +57,8 @@ def _hidden(g):
     return g.hidden and not (g.ext or {}).get("newton_view_hidden")
 
 def bought():
-    vis = {str(l.name): bool(l.visible) for l in layers}
-    tops = [str(g.name) for g in groups if not _hidden(g) and vis.get(str(g.layer), True)]
+    # not by layer visibility: layers are hidden only to look at the model
+    tops = [str(g.name) for g in groups if not _hidden(g) and str(g.layer) != "Archive"]
     rows, used = [], set()
     for label, rx, note in BOUGHT:
         hit = [i for i, n in enumerate(tops) if i not in used and re.search(rx, n)]
