@@ -15,7 +15,7 @@ def _export():
     def walk(gs, M, path, top):
         for g in gs:
             name = str(g.name); p = path + [name]; t = top or name
-            if (g.hidden or not lay_vis.get(str(g.layer), True)) and "/".join(p) not in KEEP_HIDDEN: continue
+            if ((g.hidden and not (g.ext or {}).get("newton_view_hidden")) or not lay_vis.get(str(g.layer), True)) and "/".join(p) not in KEEP_HIDDEN: continue
             Mg = M if g.xform is None else (g.xform if M is None else M * g.xform)
             tris = []
             if g.mesh is not None:

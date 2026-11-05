@@ -27,7 +27,7 @@ BOUGHT = [("Netzteil 24 V Mean Well LRS-350-24", r"^PSU Mean Well LRS-350-24$", 
           ("Keystone-Modul USB", r"^Keystone USB \d Koerper$", ""),
           ("Keystone-Blindmodul", r"^Keystone Blind Koerper$", ""),
           ("Ringöse M5 (PE)", r"^PE Ringoese ", ""),
-          ("Auszugschiene dreiteilig, Vollauszug, 450 mm", r"^Auszugschiene( Fern Outer)?$", ""),
+          ("Auszugschiene dreiteilig, Vollauszug, 450 mm", r"^Auszugschiene (Nah|Fern) Outer$", ""),
           ("Original-Fuß (`Stock Foot`, vom Stock Frame umsetzen)", r"^Stock Foot$", "")]
 LAYER_TITLE = [("Druckteile (gen)", "Blenden und Paneele"), ("Schlepp (gen)", "Schleppketten, Halter, fester Kanal"),
                ("Tray Druckteile (gen)", "Tray: Power-Hub, Kanäle, DIN-Halter, Lüfterhalter")]
@@ -52,9 +52,13 @@ def totals(c):
 def fmt(v):
     return f"{v:.1f}".replace(".", ",")
 
+def _hidden(g):
+    # newton_view (gen/newton_import.py) hides parts only for the simulation; they still belong to the BOM
+    return g.hidden and not (g.ext or {}).get("newton_view_hidden")
+
 def bought():
     vis = {str(l.name): bool(l.visible) for l in layers}
-    tops = [str(g.name) for g in groups if not g.hidden and vis.get(str(g.layer), True)]
+    tops = [str(g.name) for g in groups if not _hidden(g) and vis.get(str(g.layer), True)]
     rows, used = [], set()
     for label, rx, note in BOUGHT:
         hit = [i for i, n in enumerate(tops) if i not in used and re.search(rx, n)]

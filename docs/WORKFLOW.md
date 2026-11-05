@@ -9,6 +9,8 @@
 - `docs/BOM.md` entsteht per `exec` von `gen/bom_document.py` in `run_python`: Profile und Kaufteile per Gruppennamen aus dem Dokument, Druckteile aus `build/bom_parts.json` (schreibt `gen/cr10mod.py build`). Vorher den Generator laufen lassen.
 - Fahrsimulation (T-006/T-007): in IngeTrazo `exec` von `gen/doc_export.py` (schreibt `build/doc_scene.json`, ca. 40 MB, sichtbare Gruppen + `KEEP_HIDDEN`), dann `./venv/bin/python -I gen/travel_sim.py`. Bewegt Auszug und Tray um +s, die Mittelschienen um s/2, die Ketten in Generator-Posen; Druckteile nimmt sie exakt aus dem Generator, Kaufteile aus dem Dokument (nicht geschlossene Hersteller-Meshes nur per Box). Nach Änderungen am Dokument neu exportieren.
 
+- Newton (T-040): `./venv/bin/python -I gen/newton_model.py`, dann in IngeTrazo `exec` von `gen/newton_import.py` (idempotent, per Namen). Nach jedem `ingetrazo_import.py` erneut ausführen: neue Gruppen-IDs, Referenzen und Gelenke der generierten Teile sind sonst weg. Vor dem Simulieren `newton_view(True)` (blendet `ignore`-Gruppen aus, `parts=True` auch die Tray-Teile; die Sitzung kopiert und zeichnet sonst alles Sichtbare), danach `newton_view(False)`. Pfad: IngeTrazo läuft inzwischen als Flatpak unter Linux, das Skript nutzt den Linux-Pfad des Repos (die übrigen `exec`-Zeilen noch `G:/...`, PLAN T-041).
+
 ## IngeTrazo-Fallstricke
 
 - Dokument in **Metern**, Z oben. Der Generator rechnet in mm.

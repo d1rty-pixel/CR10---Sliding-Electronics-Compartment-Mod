@@ -71,6 +71,17 @@ exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/doc_export.p
 ./venv/bin/python -I gen/travel_sim.py
 ```
 
+### Bewegung (Newton-Erweiterung)
+
+```bash
+./venv/bin/python -I gen/newton_model.py      # -> build/newton.json
+```
+
+```python
+exec(open("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/newton_import.py", encoding="utf-8").read())   # in IngeTrazo
+newton_view(True)    # Unnötiges ausblenden; newton_view(False) blendet es wieder ein
+```
+
 ### Hersteller-Modelle konvertieren
 
 `gen/step_to_mesh.py IN.step OUT.json [--defl MM] [--ang RAD] [--min-solid MM]` braucht OpenCascade-Bindings (`pip install cadquery-ocp`) in einem **separaten** venv, nicht in `venv/`. Die STEP-Dateien liegen nicht im Projekt, Quellen und Parameter je Modell: `docs/COMPONENTS.md`.

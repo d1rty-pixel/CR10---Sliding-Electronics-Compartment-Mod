@@ -33,8 +33,9 @@ STEP, POSE_STEP, VOL_EPS = 1.0, 6.0, 1e-3
 MOVING_TOPS = ("Mod Frame Drawer", "Front Panel", "Chain Bracket Moving", "Thin Bracket Moving", "PE Ringoese Tray", "WAGO ",
                "Luefter 60x60x25", "Hutschiene", "PSU Mean Well", "Raspberry Pi 4 Model B", "BTT Octopus", "Image")
 MOVING_LAYERS = ("Tray Druckteile (gen)",)
-MIDDLE = ("Auszugschiene/Slide Frame Middle", "Auszugschiene Fern Middle")
-INNER = ("Auszugschiene/Slide Frame Inner", "Auszugschiene Fern Inner")
+MIDDLE = ("Auszugschiene Nah Middle", "Auszugschiene Fern Middle")
+INNER = ("Auszugschiene Nah Inner", "Auszugschiene Fern Inner")
+OUTER = ("Auszugschiene Nah Outer", "Auszugschiene Fern Outer")
 CHAIN_DOC = ("Chain Link ", "Chain Lid ", "Thin Link ", "Thin Lid ")       # replaced by the generator poses
 IGNORE = ("Chain Link (new)",)
 
@@ -158,7 +159,7 @@ def main():
     for a, b, r in c1: print(f"  HIT   {a}  x  {b}: {summary(r)}")
     if not c1: print("  ok    no collision")
     print("\n2. middle slide members against moving and fixed parts (except the members of the same slide, see 4.)")
-    own = set(INNER) | {"Auszugschiene/Slide Frame Outer", "Auszugschiene Fern Outer"}
+    own = set(INNER) | set(OUTER)
     c2 = [(a.name, b.name, r) for a in mid for b in mov + fix if b.name not in own for r in [sweep(a, b)] if r]
     for a, b, r in c2: print(f"  HIT   {a}  x  {b}: {summary(r)}")
     if not c2: print("  ok    no collision")
@@ -172,8 +173,8 @@ def main():
     if not c3: print("  ok    no collision")
     print("\n4. slides: inner members against the drawer, middle against inner/outer (s = 0)")
     byname = {p.name: p for p in parts}
-    for side, inner, outer, mid_n in (("near", INNER[0], "Auszugschiene/Slide Frame Outer", MIDDLE[0]),
-                                      ("far", INNER[1], "Auszugschiene Fern Outer", MIDDLE[1])):
+    for side, inner, outer, mid_n in (("near", INNER[0], OUTER[0], MIDDLE[0]),
+                                      ("far", INNER[1], OUTER[1], MIDDLE[1])):
         pi = byname[inner]
         prof = [p for p in mov if p.name.startswith("Mod Frame Drawer/") and p.lo[0] < pi.hi[0] and pi.lo[0] < p.hi[0]
                 and p.lo[2] < pi.hi[2] and pi.lo[2] < p.hi[2]]
@@ -187,7 +188,7 @@ def main():
             v = (pa.m ^ pb.m).volume() if pa.m and pb.m else float("nan")
             print(f"  info  {side}: {a.split('/')[-1]} x {b.split('/')[-1]} at s = 0: overlap {v:.2f} mm3")
     print("\n5. fixed parts touching the slides (both fixed, info): outer slide members against the feet and the base")
-    for o in ("Auszugschiene/Slide Frame Outer", "Auszugschiene Fern Outer"):
+    for o in OUTER:
         po = byname[o]
         for p in fix:
             if p is po or p.m is None or any(po.lo[k] >= p.hi[k] or p.lo[k] >= po.hi[k] for k in range(3)): continue

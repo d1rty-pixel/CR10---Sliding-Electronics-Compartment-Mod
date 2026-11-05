@@ -29,6 +29,7 @@ Wichtige Profile am Tray (Welt): `2040 L=410 #1` (X −379..31, Y 290–330, Z 5
 Dreiteilige Vollauszug-Schubladenschienen, je 450 lang, je Seite eine. **Nicht im Generator.** Layer `Schienen (gen)` ist nicht generiert, der Import fasst ihn nicht an. Nicht verwechseln mit MGN12 (`Group#65/#68`, Layer `Mechanics`, gehören nicht zum Modell).
 
 - Nah (niedriges Y): Komponente `Auszugschiene` mit Gruppen-Xform (−91,859 / +179,472 / −18,734); Outer x 16,9..466,9, z −6,1..36,1, Rücken bei niedrigem Y am Rahmen. Mitglieder-Xformen Middle x −198, Inner x −396 (Auszug ausgefahren 396, Mitte halber Hub, geschätzt; eingefahren beide 0).
+- Seit 2026-11-05 (T-040) ist die Komponente aufgelöst: drei Top-Level-Gruppen `Auszugschiene Nah Outer/Middle/Inner` (Newton bewegt nur Top-Level-Gruppen; Lage unverändert, Xformen in die Gruppen übernommen).
 - Fern: drei normale Gruppen `Auszugschiene Fern Outer/Middle/Inner`, exakte Spiegelung von Nah (y′ = 915,6 − y, kein z-Versatz). Fern folgt bei Fahrt nur per Hand/Skript (gleiche x-Verschiebung). Ferne Schiene: Outer Y 627–638 (Z bis 36), Inner Y 627–633.
 - Bestätigt (Nutzer): Nah und Fern sitzen richtig, Inner berührt den Auszug, Outer das äußere untere Rahmenprofil; wenige mm Luft zum unteren Profil bewusst; 6-mm-Versatz der alten `#49/#38` gewollt (Montagelöcher mittig).
 - Schraublöcher Ø5,5 (M5, Nutenstein): Outer mittig (x 241,9, z 15, Y 277,8–279,8), Inner mittig (lokal x 333,8 = −154,1 bei Hub 396, z 15); Middle ohne Loch. Alle Kanten 2 Flächen.
@@ -119,6 +120,17 @@ Zwei Ketten, Obertrum fest an der Acrylplatte (Z 102), Untertrum am Tray, 180-Gr
 **Endhalter** (Layer `Schlepp (gen)`):
 - breit fest: Gabel (`Link.fork`) um Pivot X 114,5 / Z 87,25, Körper ab X +12 (Gegenstück zum Innenplatten-Anschlag), 2 M3 durch die Acrylplatte in Mutterntaschen, Trichter ab Z 83,25, 27 → 16 mm in den (noch nicht gebauten) festen Kanal; für das Kabelbündel zu eng (PLAN T-013). Breit beweglich: Zapfenzunge (`Link.tongue`) auf dem 2040, Körper ab X +9,2 (Gegenstück zur Außen-Anschlagecke), 2 M3 in Hammermuttern (Y 300/320), Kabel in Viertelkurve (Mittellinie R 24 > R_fest 22, Nut 18 breit, Boden Z 31,25 = Balkenoberkante) durch die +y-Fläche in den Datenkanal (X −60..−35), Austritt Z 31,25..46,75.
 - dünn fest: Gabel um Pivot X 69,5 / Z 89,6, 2 M3 von oben bei Y 607 (< 618), Tunnel 10 breit. Dünn beweglich: Zunge + Körper auf dem 2020, 2 M3 in Hammermuttern Y 615, Viertelkreis-Nut R 24 / 9,6 breit nach −y; Kabelaustritt X −108..−96, Z 29..39 (zum Hub-Eingang).
+
+## Bewegung (Newton-Erweiterung, T-040)
+
+Daten aus `gen/newton_model.py` (-> `build/newton.json`), gesetzt per `gen/newton_import.py` in IngeTrazo. Kinematischer Baum über Newton-Referenzkörper (kein Umhängen der Dokumentgruppen, weil `ingetrazo_import.py` die generierten Top-Level-Gruppen ersetzt):
+
+- Schienen: `Outer` beider Seiten statisch. `Auszugschiene Nah Middle` = Antrieb (Schiebegelenk +X = Einfahren, Position, 200 N, 0,1 m/s), `Nah Inner`, `Fern Middle`, `Fern Inner` gekoppelt 1:1. Jede Stufe 0..196,75 mm, zusammen 393,5 = Anschlag aus der Fahrsimulation (nicht `TRAVEL` 396). 0 = modellierte Lage (ausgefahren).
+- `Mod Frame Drawer` an `Nah Inner` geschweißt (Kollision `compound` aus den Kindern); alle Tray-Teile (Liste `travel_sim.MOVING_TOPS`/`MOVING_LAYERS` plus `Electronics (Platzhalter)`) an den Drawer geschweißt.
+- Ketten: Glied 01 Scharnier am festen Halter, jedes Glied am vorigen, Achse −Y an den Generator-Pivots; letztes Glied per Scharnierverbindung am beweglichen Halter. Deckel an ihr Glied geschweißt. Grenzen je Gelenk = Biegewinkel zwischen Nachbargliedern −1,5° (Anschlag) .. 78° breit / 63° dünn (Ende des `hinge_sweep`-Bereichs, kein gemessener Anschlag), umgerechnet auf die modellierte Lage (Bogen ausgefahren: breit 5,2/58,3/73,3/42,9°, dünn 16,7/55,8/57,6/45,9°).
+- Alles andere `ignore` (sichtbar, nicht simuliert): Rahmenhüllen würden den Auszug einschließen, Rahmenkontakt gibt es daher nicht. Kettenkörper ohne Kontakt in ihrer Spur, nur die Glieder berühren das Auszugprofil (trägt das Untertrum).
+- Massen sind **Annahmen**: Drawer 2 kg, Tray-Teile 0,1, Schienenglieder 0,3, Kettenglied 0,01, Deckel 0,002.
+- Test 2026-11-05 (Worker headless, Schwerkraft): Hub 0 -> 393,9 -> 0,1 mm; Pivots breit Z 33,9..87,2 (Untertrum liegt ca. 3,9 tiefer auf dem Profil), dünn Z 32,4..92,4.
 
 ## Fester Kanal der dünnen Kette (`Thin Channel`)
 
