@@ -5,8 +5,9 @@ Import in IngeTrazo: exec of gen/newton_import.py (sets bodies, references, join
 
 Chains: one hinge per link at the generator pivots of the extended pose (cable.chain_pivots at X_MOVING_EXT), axis -Y so
 that bending into the arc is positive. Hinge limits are absolute bend angles between neighbouring links, converted to
-the modelled pose (the joint's 0): stop -1.5 deg and the upper end of the free range of hinge_sweep (wide 78, thin 63;
-upper end of the checked range, not a measured mechanical stop).
+the modelled pose (the joint's 0). Backwards: first contact of two neighbouring links in the CAD geometry (Link.bent,
+overlap > 1e-3 mm3). Forwards: the arc's need + FREE_SLACK_DEG, a stand-in for the stiffness of the cables, which the
+model lacks; the links themselves collide only at CAD_FWD_DEG (incl. clamps), which let the arc collapse (T-045, T-046).
 Slides: retracting is +X. Each stage (outer->middle, middle->inner) moves half the travel; the travel ends at the frame
 stop found by gen/travel_sim.py (393.5 < TRAVEL 396, docs/DESIGN.md).
 """
@@ -20,8 +21,10 @@ import cable
 import cable_thin
 import travel_sim
 
-STOP_DEG = -1.5                     # anti-bend stop of both chains (hinge_sweep, docs/DESIGN.md)
-FREE_DEG = {"wide": 78.0, "thin": 63.0}
+# bisected with Link.bent on 2026-11-05; redo when the link geometry changes
+STOP_DEG = {"wide": -0.65, "thin": -0.79}
+CAD_FWD_DEG = {"wide": 96.0, "thin": 97.2}
+FREE_SLACK_DEG = 15.0               # user's pick from the headless sag comparison 2026-11-05
 FRAME_STOP = 393.5                  # drawer frame hits the base before TRAVEL (travel_sim, T-006)
 
 
@@ -31,12 +34,15 @@ def chain(tag, pivots, lane_y, link_prefix, lid_prefix, fixed, moving):
     # bend at pivot k between segment k-1 and segment k; the fixed bracket continues the upper run straight
     bend = [0.0] + [math.degrees((heading[k - 1] - heading[k] + math.pi) % (2 * math.pi) - math.pi)
                     for k in range(1, len(heading))]
+    upper = max(-b for b in bend) + FREE_SLACK_DEG
+    if upper > CAD_FWD_DEG[tag]:
+        raise SystemExit(f"{tag}: forward limit {upper:.1f} beyond the link collision {CAD_FWD_DEG[tag]}")
     links = []
     for k in range(len(P) - 1):
         theta = -bend[k]            # axis -Y: bending downwards into the arc is positive
         links.append(dict(link=f"{link_prefix}{k + 1:02d}", lid=f"{lid_prefix}{k + 1:02d}",
                           pivot=[P[k][0], lane_y, P[k][1]], bend_deg=theta,
-                          lower_deg=STOP_DEG - theta, upper_deg=FREE_DEG[tag] - theta))
+                          lower_deg=STOP_DEG[tag] - theta, upper_deg=upper - theta))
     end = [P[-1][0], lane_y, P[-1][1]]
     return dict(tag=tag, fixed=fixed, moving=moving, axis=[0, -1, 0], links=links, end=end)
 
