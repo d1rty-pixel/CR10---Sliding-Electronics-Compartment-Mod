@@ -19,7 +19,6 @@ TOP = {
     "Group#45": ("CR10 Plexiglass Cover Plate", "CR10"),
     "Mod Frame Base": ("Mod Frame Base", "Mod Frame"),
     "Mod Frame Drawer": ("Tray Frame", "Tray Frame"),
-    "Image": ("Tray Image", "Tray Frame"),
     "Auszugschiene Nah Outer": ("Drawer Rail R Outer", "Drawer Rails"),
     "Auszugschiene Nah Middle": ("Drawer Rail R Middle", "Drawer Rails"),
     "Auszugschiene Nah Inner": ("Drawer Rail R Inner", "Drawer Rails"),
