@@ -6,6 +6,7 @@
 # by their old or new name.
 # Generated parts get their layers from gen/cr10mod.py (re-import with gen/ingetrazo_import.py afterwards).
 from core.layers import Layer
+from core.group import iter_placements
 import runpy
 Z0_MM = runpy.run_path("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/doc_frame.py")["Z0_MM"]   # document = generator + Z0_MM in Z (gen/doc_frame.py)
 
@@ -179,8 +180,14 @@ def _organize():
     for c in by["CR10 Bed"].children:
         if str(c.name) in ("Gruppo#124", "Gruppo#125"):
             c.name = "Bed Corner Mount"
+    # Newton names an axis or connection object after its body only when it creates it ("Axis · <body>")
+    uid_name = {g.uid: str(g.name) for t in groups for g, _ in iter_placements(t)}
+    for g in groups:
+        nt = (g.ext or {}).get("newton") or {}
+        body = nt.get("axis_of") or nt.get("connection_of")
+        if body in uid_name and " · " in str(g.name):
+            g.name = str(g.name).split(" · ", 1)[0] + " · " + uid_name[body]
     # every remaining child layer that is going away falls back to its parent's layer
-    from core.group import iter_placements
     for t in groups:
         for c, _ in iter_placements(t):
             if c is not t and c.layer and c.layer not in KEEP_LAYERS:
