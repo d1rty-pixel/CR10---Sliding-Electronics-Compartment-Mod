@@ -11,7 +11,7 @@ from manifold3d import Manifold, Mesh
 import cable_thin as thin
 import power_hub as hub
 
-LAYER = "Kabel (gen)"
+LAYER = "Tray Electrics"
 SEG = 12
 R_MAX = 15.0
 COL = {"L": (0.45, 0.25, 0.1), "N": (0.1, 0.3, 0.85), "PE": (0.55, 0.78, 0.1), "sheath": (0.6, 0.6, 0.62)}

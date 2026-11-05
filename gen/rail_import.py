@@ -1,6 +1,6 @@
 # Run inside IngeTrazo via the MCP tool `run_python`:
 #   exec(open("G:/Things/CR10---Sliding-Electronics-Compartment-Mod/gen/rail_import.py", encoding="utf-8").read())
-# Puts the display model of build/rails.json (made by gen/rail_model.py) into the groups "Hutschiene R1a/R1b/R2 ...".
+# Puts the display model of build/rails.json (made by gen/rail_model.py) into the groups "DIN Rail L1/L2/R1 ...".
 # The mesh of each group is replaced (name, layer and group stay); a missing or ambiguous group raises (step rolls back).
 import json
 from collections import Counter
@@ -17,7 +17,7 @@ def _addo(msh, loop, want, holes=None, col=None):
 
 _P = lambda c: QVector3D(c[0] / 1000, c[1] / 1000, c[2] / 1000)
 for d in json.load(open(RAIL_JSON)):
-    tgt = [g for g in groups if str(g.name).startswith(f"Hutschiene {d['rail']} ")]
+    tgt = [g for g in groups if str(g.name).startswith(f"DIN Rail {d['rail']} ")]
     if len(tgt) != 1: raise RuntimeError(f"rail {d['rail']}: {len(tgt)} groups found")
     col = tuple(d["color"]) + (1.0,)
     msh = Mesh()

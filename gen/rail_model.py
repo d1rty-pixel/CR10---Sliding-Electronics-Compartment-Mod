@@ -1,7 +1,7 @@
 """Display model of the bought DIN rails (purchased part: lives only in the document).
 
-    ./venv/bin/python -I gen/rail_model.py      -> build/rails.json (rails R1a, R1b, R2 at tray.RAIL_A / RAIL_B / RAIL_R2)
-Import in IngeTrazo: exec of gen/rail_import.py (replaces the meshes of the groups "Hutschiene R1a/R1b/R2 ...").
+    ./venv/bin/python -I gen/rail_model.py      -> build/rails.json (rails L1, L2, R1 at tray.RAIL_A / RAIL_B / RAIL_R2)
+Import in IngeTrazo: exec of gen/rail_import.py (replaces the meshes of the groups "DIN Rail L1/L2/R1 ...").
 
 Model: Phoenix Contact NS 35/ 7,5 PERF 2000MM (item 0801733), steel galvanized, acc. to EN 60715. Datasheet drawing
 (phoenixcontact.com/us/products/0801733, PDF of 2024-05-18, p. 3): width 35, depth 7.5, sheet 1, web 27 outside, slots
@@ -26,7 +26,7 @@ ARC_SEG = 8                               # segments per 90 deg (R 1: chord 0.2 
 STEEL = (0.78, 0.79, 0.80)
 Z0 = tray.RAIL_TOP - H                    # rail bottom on the tray floor (z 5)
 # x ranges as placed in the document (docs/DESIGN.md, rail table; rails_box in cr10mod.py)
-RAILS = (("R1a", -361.5, 9.0, tray.RAIL_A), ("R1b", -361.5, 9.0, tray.RAIL_B), ("R2", -320.0, -40.0, tray.RAIL_R2))
+RAILS = (("L1", -361.5, 9.0, tray.RAIL_A), ("L2", -361.5, 9.0, tray.RAIL_B), ("R1", -320.0, -40.0, tray.RAIL_R2))   # L = power-supply side
 
 def _arc(c, r, a0, a1):
     n = ARC_SEG * max(1, round(abs(a1 - a0) / 90.0))

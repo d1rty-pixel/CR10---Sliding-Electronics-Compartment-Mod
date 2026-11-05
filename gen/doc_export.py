@@ -7,7 +7,7 @@
 import json
 
 SCENE_JSON = "G:/Things/CR10---Sliding-Electronics-Compartment-Mod/build/doc_scene.json"
-KEEP_HIDDEN = ("Mod Frame Drawer/Gruppieren#15",)      # tray floor plate (material unknown), hidden in the document
+KEEP_HIDDEN = ("Tray Frame/Tray Plexiglass Plate",)      # tray floor plate (material unknown), hidden in the document
 
 def _export():
     lay_vis = {str(l.name): bool(l.visible) for l in layers}

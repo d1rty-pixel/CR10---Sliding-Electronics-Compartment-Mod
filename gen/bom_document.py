@@ -8,9 +8,9 @@
 import re, json, datetime, collections
 
 ROOT = "G:/Things/CR10---Sliding-Electronics-Compartment-Mod"
-ASSEMBLIES = [("Stock Frame", "Original-CR10-Rahmen, bleibt unverändert, nichts zu kaufen"),
+ASSEMBLIES = [("CR10 Frame", "Original-CR10-Rahmen, bleibt unverändert, nichts zu kaufen"),
               ("Mod Frame Base", "fester Unterbau"),
-              ("Mod Frame Drawer", "Auszug")]
+              ("Tray Frame", "Auszug (Tray)")]
 PAT = re.compile(r"^(2020|2040) L=(\d+) #\d+$")
 # (row label, name regex of the top-level group, unit note); a group counts once, the first matching row wins
 BOUGHT = [("Netzteil 24 V Mean Well LRS-350-24", r"^PSU Mean Well LRS-350-24$", ""),
@@ -18,19 +18,19 @@ BOUGHT = [("Netzteil 24 V Mean Well LRS-350-24", r"^PSU Mean Well LRS-350-24$", 
           ("Mainboard BTT Octopus (Modell V1.0, Kauf V1.1)", r"^BTT Octopus", ""),
           ("Raspberry Pi 4 Model B", r"^Raspberry Pi 4 Model B$", ""),
           ("Netzeinbaustecker IEC-GS-1-100", r"^IEC-GS-1-100", ""),
-          ("Lüfter San Ace 60L 9LG0624P4H001", r"^Luefter 60x60x25 #\d+ \(", ""),
-          ("WAGO 221-413 (L, N)", r"^WAGO 221-413 [LN] \(", ""),
+          ("Lüfter San Ace 60L 9LG0624P4H001", r"^Fan 60x60x25 #\d+ \(", ""),
+          ("WAGO 221-413 (L, N)", r"^WAGO 221-413 (Line|Neutral) \(", ""),
           ("WAGO 221-414 (PE)", r"^WAGO 221-414 PE \(", ""),
-          ("Hutschiene EN 50022 35 × 7,5", r"^Hutschiene ", "lengths"),
-          ("Rundsteckverbinder GX16-4 (Einbauteil)", r"^GX16 Koerper$", ""),
-          ("Keystone-Modul RJ45", r"^Keystone RJ45 Koerper$", ""),
-          ("Keystone-Modul USB", r"^Keystone USB \d Koerper$", ""),
-          ("Keystone-Blindmodul", r"^Keystone Blind Koerper$", ""),
-          ("Ringöse M5 (PE)", r"^PE Ringoese ", ""),
-          ("Auszugschiene dreiteilig, Vollauszug, 450 mm", r"^Auszugschiene (Nah|Fern) Outer$", ""),
-          ("Original-Fuß (`Stock Foot`, vom Stock Frame umsetzen)", r"^Stock Foot$", "")]
-LAYER_TITLE = [("Druckteile (gen)", "Blenden und Paneele"), ("Schlepp (gen)", "Schleppketten, Halter, fester Kanal"),
-               ("Tray Druckteile (gen)", "Tray: Power-Hub, Kanäle, DIN-Halter, Lüfterhalter")]
+          ("Hutschiene EN 50022 35 × 7,5", r"^DIN Rail ", "lengths"),
+          ("Rundsteckverbinder GX16-4 (Einbauteil)", r"^GX16 Connector$", ""),
+          ("Keystone-Modul RJ45", r"^Keystone RJ45$", ""),
+          ("Keystone-Modul USB", r"^Keystone USB \d$", ""),
+          ("Keystone-Blindmodul", r"^Keystone Blank$", ""),
+          ("Ringöse M5 (PE)", r"^PE Ring Terminal ", ""),
+          ("Auszugschiene dreiteilig, Vollauszug, 450 mm", r"^Drawer Rail [LR] Outer$", ""),
+          ("Original-Fuß (`CR10 Foot`, vom CR10-Rahmen umsetzen)", r"^CR10 Foot ", "")]
+LAYER_TITLE = [("Mod Frame Print Parts", "Mod Frame: Rück- und Seitenpaneele, IEC-Gehäuse"), ("Drag Chains", "Schleppketten, Halter, fester Kanal"),
+               ("Tray Print Parts", "Tray: Frontpaneele, Power-Hub, Kanäle, DIN-Halter, Lüfterhalter")]
 
 def profiles(top):
     c = collections.Counter()
@@ -72,12 +72,12 @@ def bought():
 
 def _write():
     by = {n: profiles(next(g for g in groups if g.name == n)) for n, _ in ASSEMBLIES}
-    mod = by["Mod Frame Base"] + by["Mod Frame Drawer"]
+    mod = by["Mod Frame Base"] + by["Tray Frame"]
     pp = json.load(open(ROOT + "/build/bom_parts.json", encoding="utf-8"))
     out = ["# Stückliste", "",
            f"Stand {datetime.date.today().isoformat()}. Erzeugt mit `gen/bom_document.py` aus dem IngeTrazo-Dokument (Profile, Kaufteile) "
            "und `build/bom_parts.json` (Druckteile, aus `gen/cr10mod.py build`).",
-           "Längen sind Modellmaße ohne Sägezugabe. Außer dem Stock Frame sind sie nicht am Teil gegengemessen. "
+           "Längen sind Modellmaße ohne Sägezugabe. Außer dem CR10-Rahmen sind sie nicht am Teil gegengemessen. "
            "Schrauben, Nutensteine, Kabel und Kleinteile stehen in `docs/HARDWARE.md`.", ""]
     for name, note in ASSEMBLIES:
         out += [f"## {name}", "", note, ""] + table(by[name]) + [""]

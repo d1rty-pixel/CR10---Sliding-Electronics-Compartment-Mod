@@ -34,6 +34,7 @@ DRAWER_FRONT_IN = -383.0      # inner face of the drawer front plates (document)
 CELL_YC = {"left": 358.0, "right": 558.0}
 SIDE_Y_NEAR, SIDE_Y_FAR = 258.0, 658.0
 SIDE_X0 = {"a": 55.0, "b": 295.0}   # panel start x, both panels 200 long
+SIDE_POS = {"a": "Front", "b": "Rear"}  # front = -X, the drawer side
 SIDE_LEN = 200.0
 
 # ============================================================ printed parts
@@ -238,11 +239,11 @@ def place_side_near(m, xc): return rot(m, lambda u, v, h: (xc - u, SIDE_Y_NEAR +
 def place_side_far(m, xc):  return rot(m, lambda u, v, h: (xc + u, SIDE_Y_FAR - h, ZC + v))
 
 # ============================================================ parts list
-LAYER = "Druckteile (gen)"
+LAYER = "Mod Frame Print Parts"
 COL = (0.95, 0.5, 0.05)
-CHAIN_LAYER = "Schlepp (gen)"
+CHAIN_LAYER = "Drag Chains"
 CHAIN_COL = COL                # chains in the theme orange (user 2026-11-03, before blue)
-TRAY_LAYER = "Tray Druckteile (gen)"   # colour = filament: red 230 V, anthracite everything else (tray.COL_ANTHRACITE)
+TRAY_LAYER = "Tray Print Parts"   # colour = filament: red 230 V, anthracite everything else (tray.COL_ANTHRACITE)
 
 def parts():
     sw, cn, hs, fp = switch_panel(), connector_panel(), iec_housing(), front_panel()
@@ -251,10 +252,10 @@ def parts():
                   ("Front Panel Hex", fp), ("Side Panel Hex", sp), ("Side Panel Fan60", spf)])
     inst = [("Rear Panel Switch", place_rear(sw, CELL_YC["right"])), ("Rear Panel Connector", place_rear(cn, CELL_YC["left"])),
             ("IEC Housing", place_rear(hs, CELL_YC["right"])),
-            ("Front Panel Left", place_front(fp, CELL_YC["left"])), ("Front Panel Right", place_front(fp, CELL_YC["right"]))]
+            ("Front Panel R", place_front(fp, CELL_YC["left"])), ("Front Panel L", place_front(fp, CELL_YC["right"]))]   # R = low Y (mainboard side)
     for k, x0 in SIDE_X0.items():
-        inst.append((f"Side Panel Near {k}", place_side_near(sp, x0 + SIDE_LEN / 2)))
-        inst.append((f"Side Panel Far {k}", place_side_far(sp, x0 + SIDE_LEN / 2)))
+        inst.append((f"Side Panel R {SIDE_POS[k]}", place_side_near(sp, x0 + SIDE_LEN / 2)))
+        inst.append((f"Side Panel L {SIDE_POS[k]}", place_side_far(sp, x0 + SIDE_LEN / 2)))
     chain, _, _ = cable.chain_links(cable.X_MOVING_EXT)
     bf, bm = cable.bracket_fixed(), cable.bracket_moving()
     local.update([("Chain Link", cable.link()), ("Chain Lid", cable.lid_print()),
@@ -451,6 +452,7 @@ if __name__ == "__main__":
     tcol = {n: c for n, c, _, _ in tray.parts()}
     def style(n):
         if n in tcol: return TRAY_LAYER, tcol[n]
+        if n.startswith("Front Panel "): return TRAY_LAYER, COL                # mounted on the tray frame, moves with it
         if n == "IEC Housing": return LAYER, tray.COL_MAINS     # 230 V touch guard: red like the mains parts
         return (CHAIN_LAYER, CHAIN_COL) if ischain(n) else (LAYER, COL)
     data = [{"name": n, "layer": style(n)[0], "color": list(style(n)[1]), "faces": planar_faces(m)} for n, m in inst]

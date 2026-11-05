@@ -50,8 +50,8 @@ def main():
         chains=[chain("wide", wide, cable.CHAIN_Y, "Chain Link ", "Chain Lid ", "Chain Bracket Fixed", "Chain Bracket Moving"),
                 chain("thin", thin, cable_thin.CHAIN_Y, "Thin Link ", "Thin Lid ", "Thin Bracket Fixed", "Thin Bracket Moving")],
         lanes_y=[[290.0, 330.0], list(cable_thin.LANE_Y)],
-        # the same parts travel_sim moves with the drawer, plus the hidden placeholders on the tray
-        moving_tops=list(travel_sim.MOVING_TOPS), moving_layers=list(travel_sim.MOVING_LAYERS) + ["Electronics (Platzhalter)"],
+        # the same parts travel_sim moves with the drawer
+        moving_tops=list(travel_sim.MOVING_TOPS), moving_layers=list(travel_sim.MOVING_LAYERS),
         middle=list(travel_sim.MIDDLE), inner=list(travel_sim.INNER), outer=list(travel_sim.OUTER))
     for c in out["chains"]:
         for l in c["links"]:

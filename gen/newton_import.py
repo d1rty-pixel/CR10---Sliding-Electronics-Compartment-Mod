@@ -3,7 +3,7 @@
 # Sets the Newton extension data (mode, reference body, joint, limits, contact exemptions) of every top-level group from
 # build/newton.json. Idempotent; run again after gen/ingetrazo_import.py, which recreates the generated groups with new IDs.
 # Kinematic tree: outer slides static; middle slides slide on them, inner slides on the middle ones (each half the travel,
-# all coupled to the near middle slide = the one drive); the drawer is welded to the near inner slide, every tray part to
+# all coupled to the R middle slide = the one drive); the tray frame is welded to the R inner slide, every tray part to
 # the drawer. Chains: link 01 hinges on the fixed bracket, each link on the previous one, the last link is pinned by a
 # hinge connection to the moving bracket (closes the loop through the drawer). Lids are welded to their link.
 # Everything else is "ignore" (shown, not simulated): the frame hulls would enclose the drawer, so there is no frame
@@ -13,7 +13,6 @@
 # Masses are assumptions (no weights known): drawer 2 kg, tray parts 0.1 kg, slide members 0.3 kg, link 10 g, lid 2 g.
 import json
 import math
-from core.history import ExplodeGroupCommand
 from core.group import world_mesh
 from ingetrazo_plugin_newton.model import Configure, KEY, settings as _nt_settings
 from ingetrazo_plugin_newton.worker import joint_settings, resolve_couplings
@@ -25,12 +24,6 @@ MASS = dict(drawer=2.0, part=0.1, slide=0.3, link=0.01, lid=0.002)
 
 def _nt():
     d = json.load(open(NEWTON_JSON))
-    # the near slide was one component (Outer/Middle/Inner as children); Newton moves only top-level groups
-    for a in [g for g in groups if str(g.name) == "Auszugschiene" and g.children]:
-        ExplodeGroupCommand(a).do(scene)
-        for g in groups:
-            if str(g.name).startswith("Slide Frame "):
-                g.name = "Auszugschiene Nah " + str(g.name)[len("Slide Frame "):]
 
     def one(name):
         hit = [g for g in groups if str(g.name) == name]
@@ -55,10 +48,10 @@ def _nt():
     near_out, far_out = one(d["outer"][0]), one(d["outer"][1])
     near_mid, far_mid = one(d["middle"][0]), one(d["middle"][1])
     near_in, far_in = one(d["inner"][0]), one(d["inner"][1])
-    drawer = one("Mod Frame Drawer")
+    drawer = one("Tray Frame")
     sl = d["slide"]
     stage = sl["stage_mm"] / 1000
-    master = dict(type="slide", drive="position", name="Auszug (je Schienenstufe s/2)", parent=near_out.uid,
+    master = dict(type="slide", drive="position", name="Drawer travel (each rail stage s/2)", parent=near_out.uid,
                   pivot=centre(near_mid), axis=sl["axis"], target=0.0, force=200.0, limited=True, lower=0.0,
                   upper=stage, max_speed=0.1, acceleration=0.5)
     follow = lambda g, parent, name: dict(type="slide", drive="free", name=name, parent=parent.uid, pivot=centre(g),
@@ -68,11 +61,11 @@ def _nt():
         cfg[g.uid] = body("static", MASS["slide"], "box")
     cfg[near_mid.uid] = body("dynamic", MASS["slide"], "box", joint=joint_settings(master), reference=near_out.uid,
                              no_collision=[drawer.uid])
-    cfg[near_in.uid] = body("dynamic", MASS["slide"], "box", joint=joint_settings(follow(near_in, near_mid, "Auszugschiene Nah Inner")),
+    cfg[near_in.uid] = body("dynamic", MASS["slide"], "box", joint=joint_settings(follow(near_in, near_mid, str(near_in.name))),
                             reference=near_mid.uid, no_collision=[near_out.uid])
-    cfg[far_mid.uid] = body("dynamic", MASS["slide"], "box", joint=joint_settings(follow(far_mid, far_out, "Auszugschiene Fern Middle")),
+    cfg[far_mid.uid] = body("dynamic", MASS["slide"], "box", joint=joint_settings(follow(far_mid, far_out, str(far_mid.name))),
                             reference=far_out.uid, no_collision=[drawer.uid])
-    cfg[far_in.uid] = body("dynamic", MASS["slide"], "box", joint=joint_settings(follow(far_in, far_mid, "Auszugschiene Fern Inner")),
+    cfg[far_in.uid] = body("dynamic", MASS["slide"], "box", joint=joint_settings(follow(far_in, far_mid, str(far_in.name))),
                            reference=far_mid.uid, no_collision=[far_out.uid, drawer.uid])
     cfg[drawer.uid] = body("dynamic", MASS["drawer"], "compound", reference=near_in.uid)
 
@@ -91,7 +84,7 @@ def _nt():
         parent = fixed
         for l in c["links"]:
             link, lid = one(l["link"]), one(l["lid"])
-            j = dict(type="hinge", drive="free", name=f"{l['link']} Gelenk", parent=parent.uid,
+            j = dict(type="hinge", drive="free", name=f"{l['link']} Hinge", parent=parent.uid,
                      pivot=[v / 1000 for v in l["pivot"]], axis=c["axis"], force=0.0, limited=True,
                      lower=math.radians(l["lower_deg"]), upper=math.radians(l["upper_deg"]), zero=None)
             cfg[link.uid] = body("dynamic", MASS["link"], joint=joint_settings(j), reference=parent.uid)
@@ -133,7 +126,7 @@ def newton_view(on=True, parts=False):
 
     on: hide every "ignore" group; parts=True also the tray parts welded to the drawer (they still move as hidden
     bodies). Hidden here = flagged in ext, so newton_view(False) shows exactly those again, also after a reload."""
-    drawer_uid = next(g.uid for g in groups if str(g.name) == "Mod Frame Drawer")
+    drawer_uid = next(g.uid for g in groups if str(g.name) == "Tray Frame")
     n = 0
     for g in groups:
         if _nt_axes.owner_key(g):

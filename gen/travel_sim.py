@@ -30,12 +30,11 @@ SCENE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "build", 
 TRAVEL = cable.TRAVEL
 STEP, POSE_STEP, VOL_EPS = 1.0, 6.0, 1e-3
 
-MOVING_TOPS = ("Mod Frame Drawer", "Front Panel", "Chain Bracket Moving", "Thin Bracket Moving", "PE Ringoese Tray", "WAGO ",
-               "Luefter 60x60x25", "Hutschiene", "PSU Mean Well", "Raspberry Pi 4 Model B", "BTT Octopus", "Image")
-MOVING_LAYERS = ("Tray Druckteile (gen)",)
-MIDDLE = ("Auszugschiene Nah Middle", "Auszugschiene Fern Middle")
-INNER = ("Auszugschiene Nah Inner", "Auszugschiene Fern Inner")
-OUTER = ("Auszugschiene Nah Outer", "Auszugschiene Fern Outer")
+MOVING_TOPS = ("Tray Frame", "Chain Bracket Moving", "Thin Bracket Moving")   # children of the tray frame have no layer of their own
+MOVING_LAYERS = ("Tray Frame", "Tray Electrics", "Tray Print Parts")  # everything on the tray layers moves with the drawer (T-042)
+MIDDLE = ("Drawer Rail R Middle", "Drawer Rail L Middle")   # R = mainboard side (low Y), L = power-supply side
+INNER = ("Drawer Rail R Inner", "Drawer Rail L Inner")
+OUTER = ("Drawer Rail R Outer", "Drawer Rail L Outer")
 CHAIN_DOC = ("Chain Link ", "Chain Lid ", "Thin Link ", "Thin Lid ")       # replaced by the generator poses
 IGNORE = ("Chain Link (new)",)
 
@@ -137,7 +136,7 @@ def main():
     parts = [Part(g, gen.get(g["path"])) for g in data if kind(g) is not None]
     names = {p.name for p in parts}
     for nm in ("Thin Bracket Fixed", "Thin Bracket Moving", "Chain Bracket Fixed", "Chain Bracket Moving"):   # always the current ones
-        if nm not in names: parts.append(Part(dict(path=nm, top=nm, layer="Schlepp (gen)"), gen[nm]))
+        if nm not in names: parts.append(Part(dict(path=nm, top=nm, layer="Drag Chains"), gen[nm]))
     bad = [p.name for p in parts if p.m is None]
     n = {k: sum(p.kind == k for p in parts) for k in FACT}
     print(f"{len(parts)} document parts: {n['moving']} moving, {n['middle']} middle, {n['fixed']} fixed; not closed (box only): {', '.join(bad) or 'none'}")
@@ -146,7 +145,7 @@ def main():
     print(f"generated parts from the generator: {sum(p.gen for p in parts)}")
     # end stop: first contact of the drawer frame with the base frame (boxes, then exact)
     stop = TRAVEL
-    for a in (p for p in mov if p.name.startswith("Mod Frame Drawer/")):
+    for a in (p for p in mov if p.name.startswith("Tray Frame/")):
         for b in (p for p in fix if p.name.startswith("Mod Frame Base/")):
             if a.lo[1] >= b.hi[1] or b.lo[1] >= a.hi[1] or a.lo[2] >= b.hi[2] or b.lo[2] >= a.hi[2]: continue
             g = b.lo[0] - a.hi[0]
@@ -176,7 +175,7 @@ def main():
     for side, inner, outer, mid_n in (("near", INNER[0], OUTER[0], MIDDLE[0]),
                                       ("far", INNER[1], OUTER[1], MIDDLE[1])):
         pi = byname[inner]
-        prof = [p for p in mov if p.name.startswith("Mod Frame Drawer/") and p.lo[0] < pi.hi[0] and pi.lo[0] < p.hi[0]
+        prof = [p for p in mov if p.name.startswith("Tray Frame/") and p.lo[0] < pi.hi[0] and pi.lo[0] < p.hi[0]
                 and p.lo[2] < pi.hi[2] and pi.lo[2] < p.hi[2]]
         for p in prof:
             dy = max(p.lo[1] - pi.hi[1], pi.lo[1] - p.hi[1])
