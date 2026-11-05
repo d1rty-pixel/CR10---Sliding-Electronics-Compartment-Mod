@@ -20,6 +20,9 @@ from ingetrazo_plugin_newton import axis_objects as _nt_axes
 
 NEWTON_JSON = "/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/build/newton.json"
 MASS = dict(drawer=2.0, part=0.1, slide=0.3, link=0.01, lid=0.002)
+import runpy
+Z0_MM = runpy.run_path("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/doc_frame.py")["Z0_MM"]
+_doc = lambda v: [v[0] / 1000, v[1] / 1000, (v[2] + Z0_MM) / 1000]   # build/newton.json is in the generator frame
 
 
 def _nt():
@@ -85,13 +88,13 @@ def _nt():
         for l in c["links"]:
             link, lid = one(l["link"]), one(l["lid"])
             j = dict(type="hinge", drive="free", name=f"{l['link']} Hinge", parent=parent.uid,
-                     pivot=[v / 1000 for v in l["pivot"]], axis=c["axis"], force=0.0, limited=True,
+                     pivot=_doc(l["pivot"]), axis=c["axis"], force=0.0, limited=True,
                      lower=math.radians(l["lower_deg"]), upper=math.radians(l["upper_deg"]), zero=None)
             cfg[link.uid] = body("dynamic", MASS["link"], joint=joint_settings(j), reference=parent.uid)
             cfg[lid.uid] = body("dynamic", MASS["lid"], reference=link.uid)
             parent = link
         cfg[parent.uid]["point_attachment"] = dict(type="hinge", target=one(c["moving"]).uid,
-                                                   point=[v / 1000 for v in c["end"]], axis=c["axis"], span=.02)
+                                                   point=_doc(c["end"]), axis=c["axis"], span=.02)
 
     # chain bodies are exempt from every simulated body in their lane (+-5 mm): brackets, channel, ducts, slides, each
     # other. Only the links keep contact with the drawer: its profile carries the lower run, else the free loop sags.

@@ -3,8 +3,11 @@
 # Writes build/doc_scene.json: every group that has faces, as world triangles in mm, with its path (top-level / ... names),
 # layer (inherited from the parent when unset) and top-level name. Hidden groups, everything below them and the layers
 # "Archive" and "Newton Axes" are left out, except the real parts in KEEP_HIDDEN (hidden only for the view). Read-only.
+# Coordinates are in the generator frame (document Z minus Z0_MM, gen/doc_frame.py), like the generator parts.
 # Used by gen/travel_sim.py (drawer travel and collisions against the document, T-006/T-007).
 import json
+import runpy
+Z0_MM = runpy.run_path("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/doc_frame.py")["Z0_MM"]   # document = generator + Z0_MM in Z (gen/doc_frame.py)
 
 SCENE_JSON = "/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/build/doc_scene.json"
 KEEP_HIDDEN = ("Tray Frame/Tray Plexiglass Plate",)      # tray floor plate (material unknown), hidden in the document
@@ -23,7 +26,7 @@ def _export():
                 for f in g.mesh.faces:
                     for tri in f.triangulate():
                         pts = [v if Mg is None else Mg.map(v) for v in tri]
-                        tris.append([[round(q.x() * 1000, 4), round(q.y() * 1000, 4), round(q.z() * 1000, 4)] for q in pts])
+                        tris.append([[round(q.x() * 1000, 4), round(q.y() * 1000, 4), round(q.z() * 1000 - Z0_MM, 4)] for q in pts])
             if tris: out.append(dict(path="/".join(p), name=name, layer=str(ly), top=t, tris=tris))
             ch = getattr(g, "children", None)
             if ch: walk(ch, Mg, p, t, ly)

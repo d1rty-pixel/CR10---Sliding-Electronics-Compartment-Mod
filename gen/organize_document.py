@@ -6,6 +6,8 @@
 # by their old or new name.
 # Generated parts get their layers from gen/cr10mod.py (re-import with gen/ingetrazo_import.py afterwards).
 from core.layers import Layer
+import runpy
+Z0_MM = runpy.run_path("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/doc_frame.py")["Z0_MM"]   # document = generator + Z0_MM in Z (gen/doc_frame.py)
 
 LAYERS = [("CR10", True), ("Mod Frame", True), ("Mod Frame Print Parts", True),
           ("Mod Frame Electrics", True), ("Drawer Rails", True), ("Tray Frame", True), ("Tray Electrics", True),
@@ -171,7 +173,7 @@ def _organize():
         hit[k].name = new
         hit[k].layer = layer or None
     motors = sorted([c for c in by["CR10 Frame"].children if str(c.name) in ("Group#4", "Motor Z R", "Motor Z L", "Motor Y")],
-                    key=lambda c: (_centre_child(by["CR10 Frame"], c, 2) < 120, _centre_child(by["CR10 Frame"], c, 1)))
+                    key=lambda c: (_centre_child(by["CR10 Frame"], c, 2) - Z0_MM < 120, _centre_child(by["CR10 Frame"], c, 1)))
     for c, n in zip(motors, ("Motor Z R", "Motor Z L", "Motor Y")):
         c.name, c.layer = n, None
     for c in by["CR10 Bed"].children:

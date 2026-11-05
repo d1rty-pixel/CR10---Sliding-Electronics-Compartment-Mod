@@ -16,6 +16,8 @@
 
 - Dokument in **Metern**, Z oben. Der Generator rechnet in mm.
 - `OSError: Eingabe-/Ausgabefehler` aus `run_python` ist eine Python-Exception, die beim Ausgeben scheitert. Code in `try/except` kapseln und `repr(e)` drucken.
+- Auch eine Exception mit der Meldung „ROLLED BACK — the document is unchanged“ stellt verschobene Punkte (`mesh.move_vertex`) nicht wieder her (beobachtet 2026-11-05). Geometrie-Änderungen per `run_python` in einem einzigen Durchgang ohne `raise` machen, danach gegen die gespeicherte `.igz` prüfen; bei Fehlern das Dokument ohne Speichern neu laden. `move_vertex(v, delta)` erwartet einen Versatz, keine Zielposition.
+- Dokument-Z = Generator-Z + 25 mm (`gen/doc_frame.py`, siehe `docs/DESIGN.md`, Koordinatensystem).
 - `Face.area` wirft. `Vertex.position` ist ein `QVector3D`.
 - Variablennamen im persistenten Scope nicht überschreiben (`a`, `b`, `c`, `d` wurden schon einmal mit Pfosten belegt). Helper im Scope: `wbox`, `leaves`, `parentM`, `apply`, `rr`, `circ`, `prism`-Helfer, `QM`, `I`.
 - `wbox(g, I)` liefert `(name, x0, x1, y0, y1, z0, z1)` in mm über alle Nachfahren; nicht ungefiltert ausgeben (sehr lang). Der Auszug-Container (`Tray Frame`, ex `Mod Frame Drawer`, `#36`) liefert ein falsches Gesamt-Bbox-Artefakt.

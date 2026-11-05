@@ -3,8 +3,10 @@
 # Puts the vendor models of build/vendor/*.json (made by gen/step_to_mesh.py) into their groups in the document. The groups
 # exist only in the model: the mesh of each is replaced in place (name, layer, position and Newton data stay), the new mesh
 # keeps the old one's lower box corner, or with `at` (world mm) puts the source origin there. A missing or ambiguous group raises (step rolls back); nothing is created or deleted.
-# `paint(c)` -> colour from a face's source-coordinate centroid.
+# `at` is in generator mm (see gen/doc_frame.py). `paint(c)` -> colour from a face's source-coordinate centroid.
 import json
+import runpy
+Z0_MM = runpy.run_path("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/doc_frame.py")["Z0_MM"]   # document = generator + Z0_MM in Z (gen/doc_frame.py)
 
 VENDOR_DIR = "/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/build/vendor/"
 # rot maps source axes to world axes: world = (s[i0]*sign0, s[i1]*sign1, s[i2]*sign2)
@@ -38,7 +40,7 @@ for m in _todo:
     R = lambda v: [v[i] * s for i, s in m["rot"]]
     V = [R(v) for v in d["verts"]]
     lo = [min(v[k] for v in V) for k in range(3)]
-    off = tuple(c / 1000 for c in m["at"]) if "at" in m else (x0 - lo[0] / 1000, y0 - lo[1] / 1000, z0 - lo[2] / 1000)
+    off = (m["at"][0] / 1000, m["at"][1] / 1000, (m["at"][2] + Z0_MM) / 1000) if "at" in m else (x0 - lo[0] / 1000, y0 - lo[1] / 1000, z0 - lo[2] / 1000)
     Q = [QVector3D(v[0] / 1000 + off[0], v[1] / 1000 + off[1], v[2] / 1000 + off[2]) for v in V]
     cols = [tuple(c) + (1.0,) for c in d["colors"]]
     SV = d["verts"]

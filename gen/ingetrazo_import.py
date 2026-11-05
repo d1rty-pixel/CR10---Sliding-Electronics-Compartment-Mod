@@ -3,6 +3,8 @@
 # (Re)imports build/parts.json. Generated groups carry ext["cr10mod"]["generated"] and are replaced; their layer comes
 # from gen/cr10mod.py and may hold hand-made or vendor groups too. Hand-built predecessors: gen/organize_document.py.
 import json
+import runpy
+Z0_MM = runpy.run_path("/home/equinox/git/private/Creality CR10 Sliding Electronics Compartment Mod/gen/doc_frame.py")["Z0_MM"]   # document = generator + Z0_MM in Z (gen/doc_frame.py)
 from collections import Counter
 from core.layers import Layer
 
@@ -31,7 +33,7 @@ def addo(msh, loop, want, holes=None, col=None):
 
 def build_mesh(d):
     m = Mesh(); col = tuple(d["color"]) + (1.0,)
-    P = lambda c: QVector3D(c[0] / 1000, c[1] / 1000, c[2] / 1000)      # mm -> m
+    P = lambda c: QVector3D(c[0] / 1000, c[1] / 1000, (c[2] + Z0_MM) / 1000)      # generator mm -> document m
     for f in d["faces"]:
         addo(m, [P(c) for c in f["outer"]], QVector3D(*f["n"]), [[P(c) for c in h] for h in f["holes"]] or None, col)
     return m
